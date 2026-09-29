@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerMovements : MonoBehaviour
 {
     private PlayerInputActions input;
     private Rigidbody rb;
@@ -28,20 +28,27 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // 1. Плавное движение (опрос — правильно для непрерывного ввода)
         Vector2 moveDirection = input.@Player.@Movement.ReadValue<Vector2>();
 
         Vector3 currentLinearVelocity = rb.linearVelocity;
 
+        // Получаем локальные оси игрока
+        Vector3 forward = transform.forward;  // Куда смотрит игрок (вперёд)
+        Vector3 right = transform.right;      // Вправо относительно игрока
+
+        // Формируем направление движения относительно игрока
+        // moveDirection.y — это вперёд/назад (W/S)
+        // moveDirection.x — это вправо/влево (A/D)
+        Vector3 moveVector = (forward * moveDirection.y + right * moveDirection.x).normalized;
+
         Vector3 newLinearVelocity = new Vector3(
-            moveDirection.x * moveSpeed, 
+            moveVector.x * moveSpeed, 
             currentLinearVelocity.y, 
-            moveDirection.y * moveSpeed
+            moveVector.z * moveSpeed
         );
 
         rb.linearVelocity = newLinearVelocity;
 
-        // 2. Прыжок (проверяем флаг, который поставило событие)
         if (jumpRequested)
         {
             rb.linearVelocity = new Vector3(
@@ -49,8 +56,6 @@ public class PlayerController : MonoBehaviour
                 jumpForce, 
                 rb.linearVelocity.z
             );
-            
-            // Сбрасываем флаг, чтобы не прыгать бесконечно
             jumpRequested = false;
         }
     }
