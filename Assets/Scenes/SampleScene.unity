@@ -246,6 +246,27 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &520509276 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2414868060660101587, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
+  m_PrefabInstance: {fileID: 8550970485605993196}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &520509280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 520509276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91e52ad8c7c1b08469fc8abdd28ba7e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHeadLook
+  headPoint: {fileID: 1352981608}
+  mouseSensitivity: 1
+  minVerticalAngle: -80
+  maxVerticalAngle: 80
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,6 +316,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1352981608 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6623752233821249167, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
+  m_PrefabInstance: {fileID: 8550970485605993196}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1987348037584677962
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -407,7 +433,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2414868060660101587, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 520509280}
   m_SourcePrefab: {fileID: 100100000, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
