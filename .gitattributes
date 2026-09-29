@@ -1,0 +1,34 @@
+# Автоопределение текстовых файлов и нормализация переносов строк (LF в репозитории)
+* text=auto
+
+# Явное указание текстовых форматов Unity
+*.cs text diff=csharp
+*.shader text
+*.cginc text
+*.hlsl text
+*.json text
+*.xml text
+*.yaml text
+*.yml text
+*.asmdef text
+*.meta text
+*.inputactions text
+
+# Явное указание бинарных форматов (Git не должен трогать в них переносы строк)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.psd binary
+*.tga binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.dll binary
+*.exe binary
+*.asset binary
+*.unity binary
+*.prefab binary
+*.anim binary
+*.controller binary
+*.mat binary
