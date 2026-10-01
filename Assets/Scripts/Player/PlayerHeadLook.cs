@@ -24,20 +24,6 @@ public class PlayerHeadLook : MonoBehaviour
                 Debug.LogError("HeadPoint не найден! Проверьте иерархию.");
             }
         }
-
-        CursorManager.Instance.LockCursor();
-    }
-
-    private void Start()
-    {
-        if (CursorManager.Instance != null)
-        {
-            CursorManager.Instance.LockCursor();
-        }
-        else
-        {
-            Debug.LogError("CursorManager не найден на сцене!");
-        }
     }
 
     private void OnEnable() => input.@Player.Enable();
