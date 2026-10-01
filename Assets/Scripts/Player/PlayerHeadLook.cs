@@ -26,6 +26,7 @@ public class PlayerHeadLook : MonoBehaviour
         }
     }
 
+    # Активируем и уничтожаем объект входе работы игры
     private void OnEnable() => input.@Player.Enable();
     private void OnDisable() => input.@Player.Disable();
     private void OnDestroy() => input.Dispose();
