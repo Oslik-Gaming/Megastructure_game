@@ -28,6 +28,18 @@ public class PlayerHeadLook : MonoBehaviour
         CursorManager.Instance.LockCursor();
     }
 
+    private void Start()
+    {
+        if (CursorManager.Instance != null)
+        {
+            CursorManager.Instance.LockCursor();
+        }
+        else
+        {
+            Debug.LogError("CursorManager не найден на сцене!");
+        }
+    }
+
     private void OnEnable() => input.@Player.Enable();
     private void OnDisable() => input.@Player.Disable();
     private void OnDestroy() => input.Dispose();
