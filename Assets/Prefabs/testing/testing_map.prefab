@@ -124,6 +124,7 @@ GameObject:
   - component: {fileID: 6704697640768244424}
   - component: {fileID: 5382944954638588232}
   - component: {fileID: 705150767701379928}
+  - component: {fileID: 6667298914140235259}
   m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -224,6 +225,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6667298914140235259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1112125021914436059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2cb903412c23a24e9b7f2718fc95500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CubeInteract
+  targetColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &2037423074772854967
 GameObject:
   m_ObjectHideFlags: 0
