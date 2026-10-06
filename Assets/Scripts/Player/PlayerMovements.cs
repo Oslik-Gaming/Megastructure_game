@@ -7,6 +7,7 @@ public class PlayerMovements : MonoBehaviour
     
     [Header("Настройки")]
     public float moveSpeed = 5f;
+    public float sprintSpeed = 8f;
     public float jumpForce = 5f;
 
     // Флаг: "игрок хочет прыгнуть"
@@ -30,21 +31,27 @@ public class PlayerMovements : MonoBehaviour
     {
         Vector2 moveDirection = input.@Player.@Movement.ReadValue<Vector2>();
 
+        // 1. Считываем, нажата ли кнопка бега. 
+        // Для типа Button значение равно 1f при нажатии и 0f при отпускании.
+        bool isSprinting = input.@Player.@Sprint.ReadValue<float>() > 0f;
+
         Vector3 currentLinearVelocity = rb.linearVelocity;
 
-        // Получаем локальные оси игрока
-        Vector3 forward = transform.forward;  // Куда смотрит игрок (вперёд)
-        Vector3 right = transform.right;      // Вправо относительно игрока
-
-        // Формируем направление движения относительно игрока
-        // moveDirection.y — это вперёд/назад (W/S)
-        // moveDirection.x — это вправо/влево (A/D)
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
+        
+        // Нормализуем, чтобы движение по диагонали не было быстрее
         Vector3 moveVector = (forward * moveDirection.y + right * moveDirection.x).normalized;
 
+        // 2. Выбираем текущую скорость: если бежим и двигаемся, то sprintSpeed, иначе moveSpeed
+        // Проверка moveDirection.magnitude > 0 нужна, чтобы анимации/звуки бега (если добавите) 
+        // не срабатывали, когда игрок просто стоит и зажимает Shift.
+        float currentSpeed = (isSprinting && moveDirection.magnitude > 0f) ? sprintSpeed : moveSpeed;
+
         Vector3 newLinearVelocity = new Vector3(
-            moveVector.x * moveSpeed, 
-            currentLinearVelocity.y, 
-            moveVector.z * moveSpeed
+            moveVector.x * currentSpeed, // Используем динамическую скорость
+            currentLinearVelocity.y,     // Сохраняем вертикальную скорость (гравитацию)
+            moveVector.z * currentSpeed  // Используем динамическую скорость
         );
 
         rb.linearVelocity = newLinearVelocity;
