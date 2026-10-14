@@ -7,6 +7,11 @@
 #
 
 .vscode/
+.idea/
+
+# TextMeshPro
+/[Aa]ssets/TextMesh Pro
+/[Aa]ssets/TextMesh Pro.meta
 
 .utmp/
 /[Ll]ibrary/
