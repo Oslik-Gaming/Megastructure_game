@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,12 +6,12 @@ using UnityEngine.UI;
 public class TrashLocationHud : MonoBehaviour
 {
     [SerializeField] private TrashLocation location;
-    [SerializeField] private Text percentText;
+    [SerializeField] private TextMeshProUGUI percentText;
     [Tooltip("Показывать оставшийся мусор: 100% -> 0%. Иначе отображается прогресс уборки.")]
     [SerializeField] private bool showRemainingTrash = true;
     [SerializeField] private string format = "{0:0}%";
 
-    public void Configure(TrashLocation trashLocation, Text text, bool displayRemainingTrash)
+    public void Configure(TrashLocation trashLocation, TextMeshProUGUI text, bool displayRemainingTrash)
     {
         if (location != null)
             location.Changed -= Refresh;

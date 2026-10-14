@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -97,22 +98,22 @@ public class TrashDemoSceneSetup : MonoBehaviour
         canvasObject.AddComponent<CanvasScaler>();
         canvasObject.AddComponent<GraphicRaycaster>();
 
-        Text title = CreateText("Title", canvasObject.transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -45f), 28);
+        TextMeshProUGUI title = CreateText("Title", canvasObject.transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -45f), 28);
         title.text = "TRASH DISPOSAL DEMO";
-        title.alignment = TextAnchor.MiddleCenter;
+        title.alignment = TextAlignmentOptions.Center;
 
-        Text percent = CreateText("Remaining Percent", canvasObject.transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -95f), 48);
-        percent.alignment = TextAnchor.MiddleCenter;
+        TextMeshProUGUI percent = CreateText("Remaining Percent", canvasObject.transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -95f), 48);
+        percent.alignment = TextAlignmentOptions.Center;
         percent.color = new Color(0.45f, 1f, 0.65f);
         percent.gameObject.AddComponent<TrashLocationHud>().Configure(location, percent, true);
 
-        Text hint = CreateText("Hint", canvasObject.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 35f), 18);
+        TextMeshProUGUI hint = CreateText("Hint", canvasObject.transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 35f), 18);
         hint.text = "Objects fall into the disposal trigger one at a time.";
-        hint.alignment = TextAnchor.MiddleCenter;
+        hint.alignment = TextAlignmentOptions.Center;
         hint.color = new Color(0.8f, 0.85f, 0.9f);
     }
 
-    private static Text CreateText(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, int fontSize)
+    private static TextMeshProUGUI CreateText(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, int fontSize)
     {
         GameObject textObject = new GameObject(name);
         textObject.transform.SetParent(parent, false);
@@ -122,8 +123,8 @@ public class TrashDemoSceneSetup : MonoBehaviour
         rectTransform.sizeDelta = new Vector2(700f, 70f);
         rectTransform.anchoredPosition = anchoredPosition;
     
-        Text text = textObject.AddComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        TextMeshProUGUI text = textObject.AddComponent<TextMeshProUGUI>();
+        text.font = Resources.GetBuiltinResource<TMP_FontAsset>("LegacyRuntime.ttf");
         text.fontSize = fontSize;
         text.color = Color.white;
         return text;
