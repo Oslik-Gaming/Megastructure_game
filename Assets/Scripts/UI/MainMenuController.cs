@@ -7,8 +7,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private string gameSceneName = "Game";
 
     private UIDocument uiDocument;
-    private VisualElement scaleContainer;
-
+    private VisualElement mainContainer;
     private Button[] menuButtons;
     private string[] baseTexts;
     private int selectedIndex;
@@ -26,7 +25,7 @@ public class MainMenuController : MonoBehaviour
         var root = uiDocument != null ? uiDocument.rootVisualElement : null;
         if (root == null) return;
 
-        scaleContainer = root.Q<VisualElement>("ScaleContainer");
+        mainContainer  = root.Q<VisualElement>("MainContainer");
         glitchTop      = root.Q<VisualElement>("GlitchTop");
         glitchBottom   = root.Q<VisualElement>("GlitchBottom");
         glitchLeft     = root.Q<VisualElement>("GlitchLeft");
@@ -73,7 +72,6 @@ public class MainMenuController : MonoBehaviour
     }
 
     // ================= Навигация =================
-
     private void SelectButton(int index)
     {
         if (menuButtons == null) return;
@@ -99,25 +97,16 @@ public class MainMenuController : MonoBehaviour
     private void OnKeyDown(KeyDownEvent evt)
     {
         if (menuButtons == null) return;
-
         switch (evt.keyCode)
         {
-            case KeyCode.UpArrow:
-            case KeyCode.W:
-                SelectButton((selectedIndex - 1 + menuButtons.Length) % menuButtons.Length);
-                break;
-            case KeyCode.DownArrow:
-            case KeyCode.S:
-                SelectButton((selectedIndex + 1) % menuButtons.Length);
-                break;
-            case KeyCode.Return:
-            case KeyCode.KeypadEnter:
-            case KeyCode.Space:
-                ActivateSelected();
-                break;
+            case KeyCode.UpArrow: case KeyCode.W:
+                SelectButton((selectedIndex - 1 + menuButtons.Length) % menuButtons.Length); break;
+            case KeyCode.DownArrow: case KeyCode.S:
+                SelectButton((selectedIndex + 1) % menuButtons.Length); break;
+            case KeyCode.Return: case KeyCode.KeypadEnter: case KeyCode.Space:
+                ActivateSelected(); break;
             case KeyCode.Escape:
-                OnExitClicked();
-                break;
+                OnExitClicked(); break;
             case KeyCode.Alpha1: case KeyCode.Keypad1: SelectButton(0); ActivateSelected(); break;
             case KeyCode.Alpha2: case KeyCode.Keypad2: SelectButton(1); ActivateSelected(); break;
             case KeyCode.Alpha3: case KeyCode.Keypad3: SelectButton(2); ActivateSelected(); break;
@@ -127,15 +116,8 @@ public class MainMenuController : MonoBehaviour
     }
 
     // ================= Действия =================
-
-    private void OnPlayClicked()
-    {
-        Debug.Log("MENU: START GAME");
-        // UnityEngine.SceneManagement.SceneManager.LoadScene(gameSceneName);
-    }
-
+    private void OnPlayClicked() => Debug.Log("MENU: START GAME");
     private void OnSettingsClicked() => Debug.Log("MENU: OPEN SETTINGS");
-
     private void OnExitClicked()
     {
 #if UNITY_EDITOR
@@ -146,23 +128,17 @@ public class MainMenuController : MonoBehaviour
     }
 
     // ================= Масштаб =================
-
     private void OnGeometryChanged(GeometryChangedEvent evt)
         => ApplyScale(evt.newRect.width, evt.newRect.height);
 
     private void ApplyScale(float w, float h)
     {
-        if (scaleContainer == null) return;
+        if (mainContainer == null) return;
         float scale = Mathf.Min(w / BASE_WIDTH, h / BASE_HEIGHT);
-        scaleContainer.style.width  = BASE_WIDTH;
-        scaleContainer.style.height = BASE_HEIGHT;
-        scaleContainer.style.left   = (w - BASE_WIDTH * scale) * 0.5f;
-        scaleContainer.style.top    = (h - BASE_HEIGHT * scale) * 0.5f;
-        scaleContainer.transform.scale = new Vector3(scale, scale, 1f);
+        mainContainer.transform.scale = new Vector3(scale, scale, 1f);
     }
 
     // ================= Эффекты =================
-
     IEnumerator GlitchAnimation()
     {
         while (true)
@@ -196,13 +172,13 @@ public class MainMenuController : MonoBehaviour
                 break;
             case 3:
                 glitchBlock1.style.opacity = Random.Range(0.1f, 0.4f);
-                glitchBlock1.style.left = Random.Range(0, (int)BASE_WIDTH);
-                glitchBlock1.style.top = Random.Range(0, (int)BASE_HEIGHT);
+                glitchBlock1.style.left = Random.Range(0, 1920);
+                glitchBlock1.style.top = Random.Range(0, 1080);
                 glitchBlock1.style.width = Random.Range(50, 300);
                 glitchBlock1.style.height = Random.Range(2, 20);
                 glitchBlock2.style.opacity = Random.Range(0.1f, 0.3f);
-                glitchBlock2.style.left = Random.Range(0, (int)BASE_WIDTH);
-                glitchBlock2.style.top = Random.Range(0, (int)BASE_HEIGHT);
+                glitchBlock2.style.left = Random.Range(0, 1920);
+                glitchBlock2.style.top = Random.Range(0, 1080);
                 glitchBlock2.style.width = Random.Range(30, 200);
                 glitchBlock2.style.height = Random.Range(2, 15);
                 yield return new WaitForSeconds(0.08f);
