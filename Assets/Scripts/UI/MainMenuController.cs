@@ -1,10 +1,12 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private string gameSceneName = "Game";
+
 
     private UIDocument uiDocument;
     private VisualElement mainContainer;
@@ -116,7 +118,18 @@ public class MainMenuController : MonoBehaviour
     }
 
     // ================= Действия =================
-    private void OnPlayClicked() => Debug.Log("MENU: START GAME");
+    private void OnPlayClicked() 
+    {
+                if (Application.CanStreamedLevelBeLoaded(gameSceneName))
+        {
+            SceneManager.LoadScene(gameSceneName);
+        }
+        else
+        {
+            Debug.LogError($"Ошибка: Сцена с именем '{gameSceneName}' не найдена в Build Settings!");
+        }
+    }
+
     private void OnSettingsClicked() => Debug.Log("MENU: OPEN SETTINGS");
     private void OnExitClicked()
     {
