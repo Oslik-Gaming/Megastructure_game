@@ -27,6 +27,10 @@ public class TrashDisposeZone : MonoBehaviour
         if (item == null || item.IsRemoved)
             return;
 
+        Grabable grabable = item.GetComponent<Grabable>();
+        if (grabable != null && grabable.IsCarried)
+            return;
+
         if (requiredLocation != null && item.HomeLocation != requiredLocation)
             return;
 

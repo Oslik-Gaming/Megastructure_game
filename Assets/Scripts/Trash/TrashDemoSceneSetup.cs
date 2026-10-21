@@ -59,6 +59,7 @@ public class TrashDemoSceneSetup : MonoBehaviour
         {
             GameObject item = GameObject.CreatePrimitive(PrimitiveType.Cube);
             item.name = $"Trash {index + 1}";
+            item.layer = LayerMask.NameToLayer("Interacting");
             item.transform.SetParent(parent);
             item.transform.position = new Vector3(
                 (index % 3 - 1) * 2.25f,
@@ -77,6 +78,7 @@ public class TrashDemoSceneSetup : MonoBehaviour
             rigidbody.AddForce(customGravity, ForceMode.Acceleration);
             rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             item.AddComponent<TrashItem>();
+            item.AddComponent<Grabable>();
         }
     }
 

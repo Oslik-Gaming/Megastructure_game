@@ -186,7 +186,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrashDisposeZone
   destroyGameObject: 1
-  destroyDelay: 10
+  destroyDelay: 1
   requiredLocation: {fileID: 1987348037584677965}
 --- !u!1 &233776717
 GameObject:
@@ -202,7 +202,8 @@ GameObject:
   - component: {fileID: 233776721}
   - component: {fileID: 233776720}
   - component: {fileID: 233776719}
-  m_Layer: 0
+  - component: {fileID: 233776724}
+  m_Layer: 6
   m_Name: Trash_01 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,8 +219,8 @@ Transform:
   m_GameObject: {fileID: 233776717}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.01, y: 9.56, z: 10.13}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 1.4748, y: 9.6931, z: 4.51}
+  m_LocalScale: {x: 0.4675, y: 0.4675, z: 0.4675}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 501604017}
@@ -342,6 +343,21 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 233776717}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &233776724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 233776717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adc323d701ed88c77b30c825bbad2bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  grabSides: []
+  bounceFactor: 0.25
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -620,6 +636,18 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   rayOrigin: {fileID: 1933514522}
+  holdDistance: 1.2
+  dockPositionSpeed: 10
+  holdPositionSpeed: 14
+  rotationSpeed: 10
+  weightSlowdown: 0.35
+  movementOffsetDistance: 0.25
+  maxSpeedForOffset: 4
+  baseThrowSpeed: 8
+  throwWeightSlowdown: 0.25
+  playerVelocityTransfer: 0.8
+  placeVelocityTransfer: 0.2
+  throwSpin: 2
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -683,7 +711,8 @@ GameObject:
   - component: {fileID: 861663021}
   - component: {fileID: 861663020}
   - component: {fileID: 861663019}
-  m_Layer: 0
+  - component: {fileID: 861663024}
+  m_Layer: 6
   m_Name: Trash_01 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -699,8 +728,8 @@ Transform:
   m_GameObject: {fileID: 861663017}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.52, y: 12.01, z: 10.13}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.77826, y: 10.839, z: 4.51}
+  m_LocalScale: {x: 0.4675, y: 0.4675, z: 0.4675}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 501604017}
@@ -823,6 +852,21 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 861663017}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &861663024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861663017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adc323d701ed88c77b30c825bbad2bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  grabSides: []
+  bounceFactor: 0.25
 --- !u!1 &1083325696
 GameObject:
   m_ObjectHideFlags: 0
@@ -837,7 +881,8 @@ GameObject:
   - component: {fileID: 1083325700}
   - component: {fileID: 1083325699}
   - component: {fileID: 1083325698}
-  m_Layer: 0
+  - component: {fileID: 1083325704}
+  m_Layer: 6
   m_Name: Trash_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -853,8 +898,8 @@ Transform:
   m_GameObject: {fileID: 1083325696}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 7.61, z: 10.13}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.53516, y: 8.7815, z: 4.51}
+  m_LocalScale: {x: 0.4675, y: 0.4675, z: 0.4675}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 501604017}
@@ -977,6 +1022,21 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1083325696}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1083325704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083325696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adc323d701ed88c77b30c825bbad2bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  grabSides: []
+  bounceFactor: 0.25
 --- !u!4 &1352981608 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6623752233821249167, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
