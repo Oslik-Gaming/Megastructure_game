@@ -10,6 +10,14 @@ public class PlayerMovements : MonoBehaviour
     public float sprintSpeed = 8f;
     public float jumpForce = 5f;
 
+    [Header("Проверка земли")]
+    [Tooltip("Расстояние от пивота до низа капсулы (Body: height 2, center 0 → низ на 1.0 ниже пивота)")]
+    public float capsuleBottomOffset = 1.0f;
+    [Tooltip("Запас (skin) ниже капсулы, чтобы не терять землю на кочках/склонах")]
+    public float groundSkin = 0.15f;
+    [Tooltip("Слои, которые считаются землёй. ~0 = все слои")]
+    public LayerMask groundLayers = ~0;
+
     // Флаг: "игрок хочет прыгнуть"
     private bool jumpRequested = false;
 
@@ -48,22 +56,62 @@ public class PlayerMovements : MonoBehaviour
         // не срабатывали, когда игрок просто стоит и зажимает Shift.
         float currentSpeed = (isSprinting && moveDirection.magnitude > 0f) ? sprintSpeed : moveSpeed;
 
-        Vector3 newLinearVelocity = new Vector3(
-            moveVector.x * currentSpeed, // Используем динамическую скорость
-            currentLinearVelocity.y,     // Сохраняем вертикальную скорость (гравитацию)
-            moveVector.z * currentSpeed  // Используем динамическую скорость
-        );
+        // 3. Проверяем, стоим ли мы на земле.
+        //    Луч от точки чуть выше низа капсулы строго вниз.
+        //    Начало луча внутри собственной капсулы не задевает её саму (backfaces не ловятся).
+        bool grounded = IsGrounded();
 
-        rb.linearVelocity = newLinearVelocity;
+        if (grounded)
+        {
+            // На земле — полное управление горизонтальной скоростью
+            Vector3 newLinearVelocity = new Vector3(
+                moveVector.x * currentSpeed, // Используем динамическую скорость
+                currentLinearVelocity.y,     // Сохраняем вертикальную скорость (гравитацию)
+                moveVector.z * currentSpeed  // Используем динамическую скорость
+            );
+
+            rb.linearVelocity = newLinearVelocity;
+        }
+        // В ВОЗДУХЕ горизонтальную скорость НЕ трогаем — инерция полёта сохраняется,
+        // "бегать" в прыжке нельзя. Гравитация по Y работает как обычно.
 
         if (jumpRequested)
         {
-            rb.linearVelocity = new Vector3(
-                rb.linearVelocity.x, 
-                jumpForce, 
-                rb.linearVelocity.z
-            );
+            // Сбрасываем флаг ВСЕГДА: нажатие в воздухе не должно "ждать" приземления
             jumpRequested = false;
+
+            // Прыгаем ТОЛЬКО с земли — иначе получался бесконечный прыжок
+            if (grounded)
+            {
+                rb.linearVelocity = new Vector3(
+                    rb.linearVelocity.x,
+                    jumpForce,
+                    rb.linearVelocity.z
+                );
+            }
         }
     }
+
+    /// <summary>
+    /// Стоит ли игрок на земле: луч вниз от точки чуть выше низа капсулы.
+    /// Свои собственные коллайдеры (Body, меши робота и т.п.) игнорируем.
+    /// </summary>
+    private bool IsGrounded()
+    {
+        Vector3 origin = transform.position + Vector3.down * (capsuleBottomOffset - 0.1f);
+        float rayLength = 0.1f + groundSkin;
+
+        int count = Physics.RaycastNonAlloc(origin, Vector3.down, groundHits, rayLength, groundLayers, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < count; i++)
+        {
+            Collider col = groundHits[i].collider;
+            // пропускаем коллайдеры самого игрока
+            if (col.attachedRigidbody == rb || col.transform.IsChildOf(transform))
+                continue;
+            return true;
+        }
+        return false;
+    }
+
+    private readonly RaycastHit[] groundHits = new RaycastHit[8];
 }
