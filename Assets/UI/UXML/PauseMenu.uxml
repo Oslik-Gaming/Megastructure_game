@@ -1,0 +1,70 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <!--
+        PauseMenu.uxml
+        Внутриигровое меню паузы. Дизайн по референсу (терминал CRT, зелёный фон).
+
+        ВАЖНО:
+        1. Если ваша структура папок отличается — обновите путь Style src ниже.
+           Поддерживаются: абсолютный путь "Assets/UI/USS/PauseMenu.uss",
+           относительный "../USS/PauseMenu.uss", или project://database/... URL с GUID.
+           GUID и fileID подставит сам Unity при первом импорте в проект.
+        2. Файл должен лежать в Assets/UI/UXML/PauseMenu.uxml (по умолчанию).
+    -->
+    <Style src="project://database/Assets/UI/USS/PauseMenu.uss#PauseMenu"/>
+    <ui:VisualElement name="ScaleContainer" class="scale-container">
+        <ui:VisualElement name="MainContainer" class="main-container">
+            <!-- CRT эффекты -->
+            <ui:VisualElement name="GlitchTop" class="glitch-line glitch-top"/>
+            <ui:VisualElement name="GlitchBottom" class="glitch-line glitch-bottom"/>
+            <ui:VisualElement name="GlitchLeft" class="glitch-line glitch-left"/>
+            <ui:VisualElement name="GlitchRight" class="glitch-line glitch-right"/>
+            <ui:VisualElement name="GlitchBlock1" class="glitch-block"/>
+            <ui:VisualElement name="GlitchBlock2" class="glitch-block"/>
+
+            <!-- Угловые декорации -->
+            <ui:VisualElement name="CornerTopLeft" class="corner corner-tl"/>
+            <ui:VisualElement name="CornerTopRight" class="corner corner-tr"/>
+            <ui:VisualElement name="CornerBottomLeft" class="corner corner-bl"/>
+            <ui:VisualElement name="CornerBottomRight" class="corner corner-br"/>
+
+            <!-- Верхняя панель -->
+            <ui:VisualElement name="TopBar" class="top-bar">
+                <ui:Label text="SYS // PAUSE MENU PROTOCOL v1.12.41" class="system-label"/>
+                <ui:VisualElement name="Cursor" class="cursor"/>
+            </ui:VisualElement>
+
+            <!-- Основной контент -->
+            <ui:VisualElement name="ContentContainer" class="content-container">
+                <!-- Левая часть — кнопки -->
+                <ui:VisualElement name="MenuSection" class="menu-section">
+                    <ui:VisualElement name="ButtonsContainer" class="buttons-container">
+                        <ui:Button text="[1] ПРОДОЛЖИТЬ" name="ResumeButton" class="menu-button"/>
+                        <ui:Button text="[2] НАСТРОЙКИ" name="SettingsButton" class="menu-button"/>
+                        <ui:Button text="[3] РЕСТАРТ С ЧЕКПОИНТА" name="RestartButton" class="menu-button"/>
+                        <ui:Button text="[4] СОХРАНИТЬ И ВЫЙТИ" name="ExitButton" class="menu-button"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Правая часть — статус -->
+                <ui:VisualElement name="StatusSection" class="status-section">
+                    <ui:Label text="ЮНИТ ID: CLR-042" name="StatusUnitId" class="status-label"/>
+                    <ui:Label text="СЕКТОР: 01" name="StatusSector" class="status-label"/>
+                    <ui:Label text=" " class="status-label"/>
+                    <ui:Label text="УБОРКА: 67%" name="StatusClean" class="status-label"/>
+                    <ui:Label text="КРАСКА: 42%" name="StatusPaint" class="status-label"/>
+                    <ui:Label text=" " class="status-label"/>
+                    <ui:Label text="ТЕМП: 38°C" name="StatusTemp" class="status-label"/>
+                    <ui:Label text="ХВАТ: СТАБИЛЬНО" name="StatusGrip" class="status-label"/>
+                    <ui:Label text=" " class="status-label"/>
+                    <ui:Label text="АНОМАЛИЯ: НЕТ" name="StatusAnomaly" class="status-label"/>
+                    <ui:Label text="ВРЕМЯ СЕССИИ: 00:00:00" name="StatusUptime" class="status-label"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Нижняя панель с подсказками -->
+            <ui:VisualElement name="BottomBar" class="bottom-bar">
+                <ui:Label text="MAIN MISSION: CLEANING" class="hint-label"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -88,7 +88,10 @@ public class EdgeGlitchEffect : MonoBehaviour
 
     private IEnumerator Flicker()
     {
-        var wait = new WaitForSeconds(tickInterval);
+        // ВАЖНО: WaitForSecondsRealtime — НЕ зависит от Time.timeScale.
+        // Меню паузы ставит timeScale = 0, и обычный WaitForSeconds
+        // замерзал бы вместе с игрой (полосы застывали в одном положении).
+        var wait = new WaitForSecondsRealtime(tickInterval);
         while (true)
         {
             for (int i = 0; i < bands.Length; i++)

@@ -14,7 +14,7 @@
             <ui:VisualElement name="CornerBottomLeft" class="corner corner-bl"/>
             <ui:VisualElement name="CornerBottomRight" class="corner corner-br"/>
             <ui:VisualElement name="TopBar" class="top-bar">
-                <ui:Label text="SYS // MAIN MENU PROTOCOL v1.0" class="system-label"/>
+                <ui:Label text="SYS // MAIN MENU PROTOCOL v61.15.146" class="system-label"/>
                 <ui:VisualElement name="Cursor" class="cursor"/>
             </ui:VisualElement>
             <ui:VisualElement name="ContentContainer" class="content-container">
@@ -39,7 +39,7 @@
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="BottomBar" class="bottom-bar">
-                <ui:Label text="[↑↓] NAVIGATE    [ENTER] SELECT    [ESC] EXIT" class="hint-label"/>
+                <ui:Label text="ALARM: MEGASTRUCTURE IS NOT CLEAN" class="hint-label"/>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

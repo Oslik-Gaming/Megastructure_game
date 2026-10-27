@@ -32,6 +32,10 @@ public class PlayerHeadLook : MonoBehaviour
 
     private void Update()
     {
+        // На паузе (меню ESC) ввод мыши полностью игнорируем —
+        // голова не должна реагировать на движение мыши.
+        if (Time.timeScale <= 0f) return;
+
         LookAround();
     }
 

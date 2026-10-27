@@ -12,10 +12,30 @@ public class CrosshairController : MonoBehaviour
     private void Awake()
     {
         _crosshair = hudDocument.rootVisualElement.Q("crosshair");
+
+        // ВАЖНО: корень HUD-документа занимает весь экран и по умолчанию
+        // перехватывает ВСЕ pointer-события — из-за этого не работали ховер и
+        // клики в меню паузы. Делаем корень и прицел прозрачными для ввода.
+        hudDocument.rootVisualElement.pickingMode = PickingMode.Ignore;
+        if (_crosshair != null)
+            _crosshair.pickingMode = PickingMode.Ignore;
     }
 
     private void Update()
     {
+        // На паузе прицел не нужен — меню его перекрывает,
+        // но явно прячем для надёжности.
+        if (PauseMenuController.GamePaused)
+        {
+            if (_crosshair != null && _crosshair.style.display != DisplayStyle.None)
+                _crosshair.style.display = DisplayStyle.None;
+            return;
+        }
+
+        // возвращаем прицел, если он был спрятан паузой
+        if (_crosshair != null && _crosshair.style.display == DisplayStyle.None)
+            _crosshair.style.display = DisplayStyle.Flex;
+
         bool looking = IsLookingAtInteractable();
 
         if (looking != _highlighted)
