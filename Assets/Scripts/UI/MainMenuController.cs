@@ -59,9 +59,26 @@ public class MainMenuController : MonoBehaviour
         root.RegisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
         root.RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
 
+        // ВАЖНО: состояние курсора (lockState/visible) в Unity переживает смену сцены.
+        // Если игрок вышел из игры в меню через паузу, курсор мог остаться
+        // захваченным и невидимым (CursorManager из игровой сцены уничтожается,
+        // но его настройки остаются) — освобождаем его явно.
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
+
         SelectButton(0);
         StartCoroutine(GlitchAnimation());
         StartCoroutine(CursorBlink());
+    }
+
+    /// <summary>
+    /// При возврате фокуса окна (Alt+Tab) в меню курсор должен оставаться свободным.
+    /// </summary>
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (!hasFocus) return;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        UnityEngine.Cursor.visible = true;
     }
 
     void OnDisable()
