@@ -10,6 +10,10 @@ public class PlayerMovements : MonoBehaviour
     public float sprintSpeed = 8f;
     public float jumpForce = 5f;
 
+    [Header("Управление в воздухе")]
+    [Tooltip("Скорость реакции направления в полёте (больше = резче управление). 0 = полная инерция.")]
+    public float airControl = 8f;
+
     [Header("Проверка земли")]
     [Tooltip("Расстояние от пивота до низа капсулы (Body: height 2, center 0 → низ на 1.0 ниже пивота)")]
     public float capsuleBottomOffset = 1.0f;
@@ -72,8 +76,35 @@ public class PlayerMovements : MonoBehaviour
 
             rb.linearVelocity = newLinearVelocity;
         }
-        // В ВОЗДУХЕ горизонтальную скорость НЕ трогаем — инерция полёта сохраняется,
-        // "бегать" в прыжке нельзя. Гравитация по Y работает как обычно.
+        else
+        {
+            // В ВОЗДУХЕ: направление движения управляется игроком,
+            // но модуль скорости (инерция) сохраняется.
+            //
+            //  - Спринт в прыжке НЕ работает: целевая скорость — moveSpeed.
+            //  - Но если игрок разогнался спринтом ДО прыжка, эта скорость
+            //    НЕ гасится — инерция полёта сохраняется (Mathf.Max).
+            //  - Без ввода горизонтальная скорость не трогается вообще.
+
+            if (moveVector.sqrMagnitude > 0.0001f)
+            {
+                Vector3 horizontal = new Vector3(currentLinearVelocity.x, 0f, currentLinearVelocity.z);
+                float currentHorizontalSpeed = horizontal.magnitude;
+
+                // Целевая скорость: обычная ходьба, но набранная инерция (спринт до прыжка) сохраняется
+                float targetSpeed = Mathf.Max(moveSpeed, currentHorizontalSpeed);
+
+                // Плавно поворачиваем горизонтальный вектор к желаемому направлению,
+                // сохраняя его длину — инерция есть, но направление ей не диктуется
+                Vector3 desired = moveVector * targetSpeed;
+                Vector3 steered = Vector3.Lerp(horizontal, desired, airControl * Time.fixedDeltaTime);
+
+                currentLinearVelocity.x = steered.x;
+                currentLinearVelocity.z = steered.z;
+                rb.linearVelocity = currentLinearVelocity;
+            }
+            // Гравитация по Y работает как обычно.
+        }
 
         if (jumpRequested)
         {
