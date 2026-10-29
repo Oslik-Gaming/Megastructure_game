@@ -1,0 +1,46 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/USS/MainMenu.uss?fileID=7433441132597879392&amp;guid=4451272bc4aa4eb48bf7863987663a19&amp;type=3#MainMenu"/>
+    <ui:VisualElement name="ScaleContainer" class="scale-container">
+        <ui:VisualElement name="MainContainer" class="main-container">
+            <ui:VisualElement name="Scanlines" class="scanlines"/>
+            <ui:VisualElement name="GlitchTop" class="glitch-line glitch-top"/>
+            <ui:VisualElement name="GlitchBottom" class="glitch-line glitch-bottom"/>
+            <ui:VisualElement name="GlitchLeft" class="glitch-line glitch-left"/>
+            <ui:VisualElement name="GlitchRight" class="glitch-line glitch-right"/>
+            <ui:VisualElement name="GlitchBlock1" class="glitch-block"/>
+            <ui:VisualElement name="GlitchBlock2" class="glitch-block"/>
+            <ui:VisualElement name="CornerTopLeft" class="corner corner-tl"/>
+            <ui:VisualElement name="CornerTopRight" class="corner corner-tr"/>
+            <ui:VisualElement name="CornerBottomLeft" class="corner corner-bl"/>
+            <ui:VisualElement name="CornerBottomRight" class="corner corner-br"/>
+            <ui:VisualElement name="TopBar" class="top-bar">
+                <ui:Label text="SYS // MAIN MENU PROTOCOL v61.15.146" class="system-label"/>
+                <ui:VisualElement name="Cursor" class="cursor"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="ContentContainer" class="content-container">
+                <ui:VisualElement name="MenuSection" class="menu-section">
+                    <ui:Label text="УЛЬТРАМЕГАКЛИННЕР" name="TitleLabel" class="game-title"/>
+                    <ui:VisualElement name="ButtonsContainer" class="buttons-container">
+                        <ui:Button text="[1] ИГРАТЬ" name="PlayButton" class="menu-button"/>
+                        <ui:Button text="[2] НАСТРОЙКИ" name="SettingsButton" class="menu-button"/>
+                        <ui:Button text="[3] ВЫХОД" name="ExitButton" class="menu-button"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="StatusSection" class="status-section">
+                    <ui:Label text="SYS // v1.0" class="status-label"/>
+                    <ui:Label text="UNIT ID: CLR-042" class="status-label"/>
+                    <ui:Label text="SECTOR: 01" class="status-label"/>
+                    <ui:Label text=" " class="status-label"/>
+                    <ui:Label text="STATUS: READY" class="status-label"/>
+                    <ui:Label text="BUILD: alpha 0.1" class="status-label"/>
+                    <ui:Label text=" " class="status-label"/>
+                    <ui:Label text="SYSTEMS: ONLINE" class="status-label"/>
+                    <ui:Label text="ANOMALY: NO" class="status-label"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="BottomBar" class="bottom-bar">
+                <ui:Label text="ALARM: MEGASTRUCTURE IS NOT CLEAN" class="hint-label"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

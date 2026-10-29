@@ -1,0 +1,233 @@
+* {
+    border-width: 0;
+    outline-width: 0;
+}
+
+.scale-container {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(5, 10, 5);
+}
+
+.main-container {
+    width: 1920px;
+    height: 1080px;
+    background-color: rgb(5, 10, 5);
+    flex-direction: column;
+    font-family: "Courier New", "Consolas", monospace;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.glitch-line {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    background-color: rgb(0, 255, 65);
+}
+
+.glitch-top {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 2px;
+}
+
+.glitch-bottom {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+}
+
+.glitch-left {
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: 100%;
+}
+
+.glitch-right {
+    right: 0;
+    top: 0;
+    width: 2px;
+    height: 100%;
+}
+
+.glitch-block {
+    position: absolute;
+    background-color: rgba(0, 255, 65, 0.1);
+    pointer-events: none;
+    opacity: 0;
+}
+
+.corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.corner-tl {
+    top: 15px;
+    left: 15px;
+    border-top-width: 2px;
+    border-top-color: rgb(0, 255, 65);
+    border-left-width: 2px;
+    border-left-color: rgb(0, 255, 65);
+}
+
+.corner-tr {
+    top: 15px;
+    right: 15px;
+    border-top-width: 2px;
+    border-top-color: rgb(0, 255, 65);
+    border-right-width: 2px;
+    border-right-color: rgb(0, 255, 65);
+}
+
+.corner-bl {
+    bottom: 15px;
+    left: 15px;
+    border-bottom-width: 2px;
+    border-bottom-color: rgb(0, 255, 65);
+    border-left-width: 2px;
+    border-left-color: rgb(0, 255, 65);
+}
+
+.corner-br {
+    bottom: 15px;
+    right: 15px;
+    border-bottom-width: 2px;
+    border-bottom-color: rgb(0, 255, 65);
+    border-right-width: 2px;
+    border-right-color: rgb(0, 255, 65);
+}
+
+.top-bar {
+    height: 50px;
+    padding-left: 40px;
+    padding-top: 15px;
+    background-color: rgba(0, 10, 0, 0.9);
+    flex-direction: row;
+    align-items: center;
+}
+
+.system-label {
+    font-size: 18px;
+    color: rgb(0, 255, 65);
+    -unity-text-align: middle-left;
+    letter-spacing: 2px;
+}
+
+.cursor {
+    width: 10px;
+    height: 20px;
+    background-color: rgb(0, 255, 65);
+    margin-left: 15px;
+}
+
+.content-container {
+    flex: 1;
+    flex-direction: row;
+    padding: 60px;
+}
+
+.menu-section {
+    flex: 2;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 80px;
+}
+
+.game-title {
+    font-size: 72px;
+    font-weight: bold;
+    color: rgb(0, 255, 65);
+    margin-bottom: 80px;
+    text-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+    -unity-text-align: middle-left;
+    letter-spacing: 6px;
+}
+
+.buttons-container {
+    flex-direction: column;
+    gap: 25px;
+}
+
+.menu-button {
+    width: 500px;
+    height: 65px;
+    font-size: 32px;
+    font-family: "Courier New", "Consolas", monospace;
+    color: rgb(0, 136, 34);
+    background-color: transparent;
+    background-image: none;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-radius: 0;
+    outline-width: 0;
+    -unity-outline-width: 0;
+    -unity-text-align: middle-left;
+    padding-left: 30px;
+}
+
+.menu-button:hover,
+.menu-button:focus,
+.menu-button:active,
+.menu-button:checked,
+.menu-button:focus-within {
+    background-color: transparent;
+    background-image: none;
+    border-width: 0;
+    outline-width: 0;
+    -unity-outline-width: 0;
+}
+
+.menu-button:hover {
+    color: rgb(0, 255, 65);
+}
+
+.menu-button.selected {
+    color: rgb(0, 255, 65);
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.7);
+    padding-left: 45px;
+}
+
+.status-section {
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: 60px;
+    padding-left: 60px;
+    border-left-width: 1px;
+    border-left-color: rgb(0, 51, 0);
+    gap: 18px;
+}
+
+.status-label {
+    font-size: 18px;
+    color: rgb(0, 204, 51);
+    -unity-text-align: middle-left;
+    letter-spacing: 1px;
+}
+
+.bottom-bar {
+    height: 50px;
+    padding-left: 40px;
+    padding-top: 15px;
+    background-color: rgba(0, 10, 0, 0.9);
+}
+
+.hint-label {
+    font-size: 16px;
+    color: rgb(0, 136, 34);
+    -unity-text-align: middle-left;
+    letter-spacing: 2px;
+}

@@ -1,0 +1,33 @@
+/* Контейнер на весь экран, центрирует прицел */
+#hud-root {
+    width: 100%;
+    height: 100%;
+    align-items: center;       /* центр по горизонтали */
+    justify-content: center;   /* центр по вертикали */
+    picking-mode: Ignore;      /* НЕ ловит мышь: клики проходят сквозь HUD в игру */
+}
+
+/* Сама точка */
+#crosshair {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;                    /* круг */
+    background-color: rgb(255, 255, 255);  /* залитая точка */
+    border-width: 0;                       /* кольца пока нет */
+    border-color: rgb(255, 255, 255);
+    picking-mode: Ignore;                  /* прицел не должен реагировать на мышь */
+
+    /* ЧТО анимируем и КАК быстро — вся плавность здесь */
+    transition-property: width, height, background-color, border-width, border-color;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
+}
+
+/* Состояние "смотрим на interactable" */
+#crosshair.highlight {
+    width: 28px;
+    height: 28px;
+    background-color: rgba(255, 255, 255, 0); /* центр становится прозрачным */
+    border-width: 2px;                        /* проявляется кольцо */
+    border-color: rgb(120, 220, 255);
+}
