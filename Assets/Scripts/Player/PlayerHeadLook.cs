@@ -4,7 +4,7 @@ public class PlayerHeadLook : MonoBehaviour
 {
     [Header("Настройки")]
     public Transform headPoint; // Ссылка на HeadPoint
-    public float mouseSensitivity = 2f;
+    // Чувствительность мыши берётся из GameSettings (экран настроек, PlayerPrefs).
     public float minVerticalAngle = -80f;
     public float maxVerticalAngle = 80f;
 
@@ -44,12 +44,15 @@ public class PlayerHeadLook : MonoBehaviour
         // Считываем движение мыши
         Vector2 mouseDelta = input.@Player.@Look.ReadValue<Vector2>();
 
+        // Чувствительность читаем каждый кадр — слайдер в настройках применяется сразу
+        float sensitivity = GameSettings.SensitivityMultiplier;
+
         // 1. Поворот ВСЕГО игрока по горизонтали (ось Y)
-        float horizontalRotation = mouseDelta.x * mouseSensitivity;
+        float horizontalRotation = mouseDelta.x * sensitivity;
         transform.Rotate(0f, horizontalRotation, 0f);
 
         // 2. Наклон HeadPoint по вертикали (ось X) с ограничениями
-        verticalRotation -= mouseDelta.y * mouseSensitivity;
+        verticalRotation -= mouseDelta.y * sensitivity;
         verticalRotation = Mathf.Clamp(verticalRotation, minVerticalAngle, maxVerticalAngle);
         
         // Применяем наклон к HeadPoint

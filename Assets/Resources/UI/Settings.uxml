@@ -1,0 +1,52 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/USS/Settings.uss#Settings"/>
+    <ui:VisualElement name="ScaleContainer" class="scale-container">
+        <ui:VisualElement name="MainContainer" class="main-container">
+            <!-- Угловые декорации (как в остальных меню) -->
+            <ui:VisualElement name="CornerTopLeft" class="corner corner-tl"/>
+            <ui:VisualElement name="CornerTopRight" class="corner corner-tr"/>
+            <ui:VisualElement name="CornerBottomLeft" class="corner corner-bl"/>
+            <ui:VisualElement name="CornerBottomRight" class="corner corner-br"/>
+
+            <!-- Верхняя панель -->
+            <ui:VisualElement name="TopBar" class="top-bar">
+                <ui:Label text="SYS // SETTINGS PROTOCOL v1.0.0" class="system-label"/>
+                <ui:VisualElement name="Cursor" class="cursor"/>
+            </ui:VisualElement>
+
+            <!-- Основной контент -->
+            <ui:VisualElement name="ContentContainer" class="settings-content">
+                <ui:Label text="НАСТРОЙКИ" class="settings-title"/>
+
+                <!-- Громкость -->
+                <ui:VisualElement name="VolumeRow" class="settings-row">
+                    <ui:VisualElement name="VolumeHeader" class="row-header">
+                        <ui:Label text="ГРОМКОСТЬ" name="VolumeLabel" class="row-label"/>
+                        <ui:Label text="100" name="VolumeValue" class="row-value"/>
+                    </ui:VisualElement>
+                    <ui:Slider name="VolumeSlider" class="settings-slider" low-value="0" high-value="100" value="100"/>
+                </ui:VisualElement>
+
+                <!-- Чувствительность мыши -->
+                <ui:VisualElement name="SensitivityRow" class="settings-row">
+                    <ui:VisualElement name="SensitivityHeader" class="row-header">
+                        <ui:Label text="ЧУВСТВИТЕЛЬНОСТЬ МЫШИ" name="SensitivityLabel" class="row-label"/>
+                        <ui:Label text="40" name="SensitivityValue" class="row-value"/>
+                    </ui:VisualElement>
+                    <ui:Slider name="SensitivitySlider" class="settings-slider" low-value="0" high-value="100" value="40"/>
+                </ui:VisualElement>
+
+                <!-- Управление (только просмотр, бинды менять нельзя) -->
+                <ui:Label text="УПРАВЛЕНИЕ" class="section-label"/>
+                <ui:VisualElement name="ControlsList" class="controls-list"/>
+
+                <ui:Button text="    НАЗАД" name="BackButton" class="menu-button back-button"/>
+            </ui:VisualElement>
+
+            <!-- Нижняя панель -->
+            <ui:VisualElement name="BottomBar" class="bottom-bar">
+                <ui:Label text="НАСТРОЙКИ ПРИМЕНЯЮТСЯ СРАЗУ И СОХРАНЯЮТСЯ // ESC — НАЗАД" class="hint-label"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

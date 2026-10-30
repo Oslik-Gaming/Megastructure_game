@@ -9,6 +9,7 @@ public class MainMenuController : MonoBehaviour
 
 
     private UIDocument uiDocument;
+    private VisualElement rootView;
     private VisualElement mainContainer;
     private Button[] menuButtons;
     private string[] baseTexts;
@@ -26,6 +27,8 @@ public class MainMenuController : MonoBehaviour
         uiDocument = GetComponent<UIDocument>();
         var root = uiDocument != null ? uiDocument.rootVisualElement : null;
         if (root == null) return;
+
+        rootView = root;
 
         mainContainer  = root.Q<VisualElement>("MainContainer");
         glitchTop      = root.Q<VisualElement>("GlitchTop");
@@ -116,6 +119,10 @@ public class MainMenuController : MonoBehaviour
     private void OnKeyDown(KeyDownEvent evt)
     {
         if (menuButtons == null) return;
+
+        // Пока открыт экран настроек — меню не реагирует на клавиатуру
+        if (SettingsPanelController.Instance != null && SettingsPanelController.Instance.IsShown) return;
+
         switch (evt.keyCode)
         {
             case KeyCode.UpArrow: case KeyCode.W:
@@ -147,7 +154,21 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    private void OnSettingsClicked() => Debug.Log("MENU: OPEN SETTINGS");
+    private void OnSettingsClicked()
+    {
+        // Компонент добавится сам, если его ещё нет — настраивать ничего не нужно
+        var panel = GetComponent<SettingsPanelController>();
+        if (panel == null) panel = gameObject.AddComponent<SettingsPanelController>();
+        panel.Show();
+    }
+
+    /// <summary>Вернуть клавиатурный фокус в меню (вызывается при закрытии настроек).</summary>
+    public void FocusMenuRoot()
+    {
+        if (rootView == null) return;
+        rootView.focusable = true;
+        rootView.Focus();
+    }
     private void OnExitClicked()
     {
 #if UNITY_EDITOR
