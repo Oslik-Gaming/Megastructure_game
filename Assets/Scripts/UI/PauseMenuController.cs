@@ -221,7 +221,17 @@ public class PauseMenuController : MonoBehaviour
     private void OnPausePerformed(InputAction.CallbackContext ctx)
     {
         // Вызывается и при Time.timeScale = 0 — Input System не зависит от масштаба времени.
-        if (isShown) ResumeGame();
+        if (isShown)
+        {
+            // Пока открыт экран настроек — Esc закрывает настройки, а не игру
+            var settings = GetComponent<SettingsPanelController>();
+            if (settings != null && settings.IsShown)
+            {
+                settings.Hide();
+                return;
+            }
+            ResumeGame();
+        }
         else Show();
     }
 
@@ -275,6 +285,14 @@ public class PauseMenuController : MonoBehaviour
     public void ResumeGame() => Hide();
     public bool IsShown => isShown;
 
+    /// <summary>Вернуть клавиатурный фокус в меню (вызывается при закрытии настроек).</summary>
+    public void FocusMenuRoot()
+    {
+        if (root == null) return;
+        root.focusable = true;
+        root.Focus();
+    }
+
     /// <summary>Глобальный флаг паузы — другие скрипты (курсор, ввод) могут по нему ориентироваться.</summary>
     public static bool GamePaused { get; private set; }
 
@@ -308,7 +326,13 @@ public class PauseMenuController : MonoBehaviour
     // =====================================================================
 
     protected virtual void OnResume()   => ResumeGame();
-    protected virtual void OnSettings() => Debug.Log("[PAUSE] SETTINGS — заглушка. Откройте здесь экран настроек.");
+    protected virtual void OnSettings()
+    {
+        // Компонент добавится сам, если его ещё нет — настраивать ничего не нужно
+        var panel = GetComponent<SettingsPanelController>();
+        if (panel == null) panel = gameObject.AddComponent<SettingsPanelController>();
+        panel.Show();
+    }
     protected virtual void OnRestart()  { Debug.Log("[PAUSE] RESTART TO CHECKPOINT — заглушка."); LoadCheckpoint(); }
     protected virtual void OnExit()      { Debug.Log("[PAUSE] SAVE & EXIT — заглушка."); SaveGameStub(); LoadMainMenu(); }
 
