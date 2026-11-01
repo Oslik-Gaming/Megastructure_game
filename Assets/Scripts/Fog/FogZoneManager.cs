@@ -37,6 +37,7 @@ public class FogZoneManager : MonoBehaviour
     private Color startColour;
     private float startMaxDistance;
     private bool initialValuesCaptured;
+    private bool materialWarningShown;
 
     // стек активных зон (игрок может стоять в нескольких)
     private readonly List<FogZone> activeZones = new List<FogZone>();
@@ -70,7 +71,14 @@ public class FogZoneManager : MonoBehaviour
     private void Update()
     {
         if (fogMaterial == null)
+        {
+            if (!materialWarningShown)
+            {
+                materialWarningShown = true;
+                Debug.LogWarning($"[{nameof(FogZoneManager)}] Материал тумана не указан! Перетащи fog_mat.mat в поле Material в инспекторе.");
+            }
             return;
+        }
 
         float t = transitionSpeed > 0f ? Time.deltaTime / transitionSpeed : 1f;
         if (t > 1f) t = 1f;
@@ -140,6 +148,8 @@ public class FogZoneManager : MonoBehaviour
             targetColour = best.Colour;
             targetMaxDistance = best.MaxDistance;
             transitionSpeed = best.Smooth ? best.TransitionTime : 0.01f;
+
+            Debug.Log($"[FogZoneManager] Цель из зоны '{best.name}': density={targetDensity}, colour={targetColour}, maxDist={targetMaxDistance}");
         }
         else
         {
@@ -147,6 +157,8 @@ public class FogZoneManager : MonoBehaviour
             targetColour = defaultColour;
             targetMaxDistance = defaultMaxDistance;
             transitionSpeed = defaultTransitionTime;
+
+            Debug.Log($"[FogZoneManager] Возврат к дефолту: density={targetDensity}, maxDist={targetMaxDistance}");
         }
     }
 

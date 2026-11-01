@@ -56,8 +56,15 @@ public class FogZone : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        if (FogZoneManager.Instance != null)
-            FogZoneManager.Instance.EnterZone(this);
+        Debug.Log($"[FogZone] Игрок вошёл в зону '{name}'.");
+
+        if (FogZoneManager.Instance == null)
+        {
+            Debug.LogWarning($"[FogZone] FogZoneManager не найден на сцене! Зона '{name}' не работает. Создай объект с компонентом FogZoneManager и укажи в нём материал fog_mat.");
+            return;
+        }
+
+        FogZoneManager.Instance.EnterZone(this);
     }
 
     private void OnTriggerExit(Collider other)
@@ -68,6 +75,8 @@ public class FogZone : MonoBehaviour
         // Persistent-зона «пропитывает» туман: при выходе ничего не откатываем
         if (mode == FogZoneMode.Persistent)
             return;
+
+        Debug.Log($"[FogZone] Игрок вышел из зоны '{name}'.");
 
         if (FogZoneManager.Instance != null)
             FogZoneManager.Instance.ExitZone(this);
