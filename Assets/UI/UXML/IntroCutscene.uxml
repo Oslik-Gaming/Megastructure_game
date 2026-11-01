@@ -1,0 +1,8 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/USS/Intro.uss#Intro"/>
+    <ui:VisualElement name="IntroRoot" class="intro-root" style="display: none;">
+        <ui:Label name="TerminalLabel" text="" class="terminal-text"/>
+        <ui:Label name="PromptLabel" text="" class="prompt-text"/>
+        <ui:VisualElement name="Blackout" class="blackout"/>
+    </ui:VisualElement>
+</ui:UXML>
