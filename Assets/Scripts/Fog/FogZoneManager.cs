@@ -32,6 +32,12 @@ public class FogZoneManager : MonoBehaviour
     private float targetMaxDistance;
     private float transitionSpeed = 1f; // за сколько секунд проходит переход
 
+    // Исходные значения материала (для отката в редакторе после Play-режима)
+    private float startDensity;
+    private Color startColour;
+    private float startMaxDistance;
+    private bool initialValuesCaptured;
+
     // стек активных зон (игрок может стоять в нескольких)
     private readonly List<FogZone> activeZones = new List<FogZone>();
 
@@ -76,6 +82,18 @@ public class FogZoneManager : MonoBehaviour
         fogMaterial.SetFloat("_Density", currentDensity);
         fogMaterial.SetColor("_Colour", currentColour);
         fogMaterial.SetFloat("_Max_Distance", currentMaxDistance);
+
+        if (!initialValuesCaptured)
+        {
+            // Запоминаем исходные значения материала на момент старта игры —
+            // чтобы вернуть их при выходе из Play-режима в редакторе.
+            // Иначе изменения тумана, сделанные во время игры, НАВСЕГДА сохранятся
+            // в ассет (известная ловушка Unity), и материал можно случайно испортить.
+            startDensity = currentDensity;
+            startColour = currentColour;
+            startMaxDistance = currentMaxDistance;
+            initialValuesCaptured = true;
+        }
     }
 
     public void EnterZone(FogZone zone)
@@ -131,6 +149,22 @@ public class FogZoneManager : MonoBehaviour
             transitionSpeed = defaultTransitionTime;
         }
     }
+
+#if UNITY_EDITOR
+    private void OnDisable()
+    {
+        // Выход из Play-режима в редакторе — откатываем материал к исходным значениям,
+        // чтобы тестовые изменения не сохранились в ассет fog_mat.mat
+        if (Application.isPlaying && initialValuesCaptured && fogMaterial != null)
+        {
+            fogMaterial.SetFloat("_Density", startDensity);
+            fogMaterial.SetColor("_Colour", startColour);
+            fogMaterial.SetFloat("_Max_Distance", startMaxDistance);
+            UnityEditor.EditorUtility.SetDirty(fogMaterial);
+            Debug.Log($"[{nameof(FogZoneManager)}] Материал тумана возвращён к исходным значениям после выхода из Play-режима.");
+        }
+    }
+#endif
 
 #if UNITY_EDITOR
     private void OnValidate()
