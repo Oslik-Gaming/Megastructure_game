@@ -60,6 +60,7 @@ public class MainMenuController : MonoBehaviour
             baseTexts[i] = menuButtons[i].text;
 
         play.clicked     += OnPlayClicked;
+        continueBtn.clicked += OnContinueClicked;
         settings.clicked += OnSettingsClicked;
         exit.clicked     += OnExitClicked;
 
@@ -168,6 +169,9 @@ public class MainMenuController : MonoBehaviour
     // ================= Действия =================
     private void OnPlayClicked() 
     {
+        // Новая игра: сбрасываем сохранённый чекпоинт — игрок начнёт со старта
+        GameProgress.ClearCheckpoint();
+
         // Новая игра: интро проигрывается всегда, даже если уже смотрели
         GameProgress.RequestNewGame();
         LoadGameScene();
