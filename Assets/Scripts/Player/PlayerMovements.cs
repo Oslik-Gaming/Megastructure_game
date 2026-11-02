@@ -31,6 +31,10 @@ public class PlayerMovements : MonoBehaviour
     // Флаг: "игрок хочет прыгнуть"
     private bool jumpRequested = false;
 
+    // Публичное состояние для других скриптов (звуки шагов и т.п.)
+    public bool IsOnGround { get; private set; }
+    public bool IsSprinting { get; private set; }
+
     // Был ли на земле в прошлом физическом кадре (для гашения подбросов)
     private bool wasGrounded;
     // Совершён ли прыжок в текущем/прошлом кадре (чтобы не гасить собственный прыжок)
@@ -106,6 +110,10 @@ public class PlayerMovements : MonoBehaviour
         //    Луч от точки чуть выше низа капсулы строго вниз.
         //    Начало луча внутри собственной капсулы не задевает её саму (backfaces не ловятся).
         bool grounded = IsGrounded();
+
+        // Публичное состояние для других скриптов (звуки шагов и т.п.)
+        IsOnGround = grounded;
+        IsSprinting = isSprinting && moveDirection.magnitude > 0f;
 
         if (grounded)
         {
