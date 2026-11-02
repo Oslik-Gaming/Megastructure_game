@@ -22,8 +22,18 @@ public class PlayerMovements : MonoBehaviour
     [Tooltip("Слои, которые считаются землёй. ~0 = все слои")]
     public LayerMask groundLayers = ~0;
 
+    [Header("Анимация")]
+    [Tooltip("Аниматор робота. Если пуст — найдётся в детях.")]
+    public Animator animator;
+
+    private static readonly int SpeedParam = Animator.StringToHash("Speed");
+
     // Флаг: "игрок хочет прыгнуть"
     private bool jumpRequested = false;
+
+    // Публичное состояние для других скриптов (звуки шагов и т.п.)
+    public bool IsOnGround { get; private set; }
+    public bool IsSprinting { get; private set; }
 
     // Был ли на земле в прошлом физическом кадре (для гашения подбросов)
     private bool wasGrounded;
@@ -34,6 +44,8 @@ public class PlayerMovements : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         input = new PlayerInputActions();
+
+        if (animator == null) animator = GetComponentInChildren<Animator>();
 
         // Подписываемся на событие прыжка.
         // Это сработает МГНОВЕННО в момент нажатия, независимо от FixedUpdate.
@@ -98,6 +110,10 @@ public class PlayerMovements : MonoBehaviour
         //    Луч от точки чуть выше низа капсулы строго вниз.
         //    Начало луча внутри собственной капсулы не задевает её саму (backfaces не ловятся).
         bool grounded = IsGrounded();
+
+        // Публичное состояние для других скриптов (звуки шагов и т.п.)
+        IsOnGround = grounded;
+        IsSprinting = isSprinting && moveDirection.magnitude > 0f;
 
         if (grounded)
         {
@@ -175,6 +191,13 @@ public class PlayerMovements : MonoBehaviour
         // Сбрасываем флаг прыжка, как только реально оторвались от земли
         if (!grounded) justJumped = false;
         wasGrounded = grounded;
+
+        // Кормим аниматор горизонтальной скоростью: Idle <-> Walk
+        if (animator != null)
+        {
+            float horizontalSpeed = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z).magnitude;
+            animator.SetFloat(SpeedParam, horizontalSpeed);
+        }
     }
 
     /// <summary>
