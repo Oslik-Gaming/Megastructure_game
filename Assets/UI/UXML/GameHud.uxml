@@ -1,0 +1,29 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/USS/GameHud.uss?fileID=7433441132597879392&amp;guid=1991c0c331ad4d479ddf1e1000000008&amp;type=3#GameHud" />
+    <ui:VisualElement name="MainContainer" class="hud-root">
+        <ui:VisualElement class="task panel">
+            <ui:Label text="SYS // 7.3.1" class="caption" />
+            <ui:Label text="GLOBAL TASK" class="caption" />
+            <ui:Label name="task-text" class="task-text" />
+        </ui:VisualElement>
+        <ui:VisualElement class="meters">
+            <ui:Label text="CLEAN" class="meter-label" />
+            <ui:VisualElement class="meter"><ui:VisualElement name="clean-fill" class="fill" /></ui:VisualElement>
+            <ui:Label text="PAINT" class="meter-label" />
+            <ui:VisualElement class="meter"><ui:VisualElement name="paint-fill" class="fill" /></ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="object-card" class="object-card panel">
+            <ui:Label name="object-title" class="object-title" />
+            <ui:Label name="object-description" class="object-description" />
+        </ui:VisualElement>
+        <ui:VisualElement class="controls panel">
+            <ui:Label text="[WASD]  MOVE" />
+            <ui:Label text="[SHIFT] SPRINT" />
+            <ui:Label text="[SPACE] JUMP" />
+            <ui:Label text="[E]     INTERACT" />
+        </ui:VisualElement>
+        <ui:Label text="TIME" class="time" />
+        <ui:Label name="critical-warning" class="critical-warning" />
+        <ui:VisualElement name="hud-root" class="crosshair-host"><ui:VisualElement name="crosshair" /></ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
