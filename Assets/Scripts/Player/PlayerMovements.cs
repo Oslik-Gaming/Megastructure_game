@@ -22,6 +22,12 @@ public class PlayerMovements : MonoBehaviour
     [Tooltip("Слои, которые считаются землёй. ~0 = все слои")]
     public LayerMask groundLayers = ~0;
 
+    [Header("Анимация")]
+    [Tooltip("Аниматор робота. Если пуст — найдётся в детях.")]
+    public Animator animator;
+
+    private static readonly int SpeedParam = Animator.StringToHash("Speed");
+
     // Флаг: "игрок хочет прыгнуть"
     private bool jumpRequested = false;
 
@@ -34,6 +40,8 @@ public class PlayerMovements : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         input = new PlayerInputActions();
+
+        if (animator == null) animator = GetComponentInChildren<Animator>();
 
         // Подписываемся на событие прыжка.
         // Это сработает МГНОВЕННО в момент нажатия, независимо от FixedUpdate.
@@ -175,6 +183,13 @@ public class PlayerMovements : MonoBehaviour
         // Сбрасываем флаг прыжка, как только реально оторвались от земли
         if (!grounded) justJumped = false;
         wasGrounded = grounded;
+
+        // Кормим аниматор горизонтальной скоростью: Idle <-> Walk
+        if (animator != null)
+        {
+            float horizontalSpeed = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z).magnitude;
+            animator.SetFloat(SpeedParam, horizontalSpeed);
+        }
     }
 
     /// <summary>

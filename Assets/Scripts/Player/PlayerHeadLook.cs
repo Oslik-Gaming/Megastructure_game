@@ -74,12 +74,14 @@ public class PlayerHeadLook : MonoBehaviour
     private void OnDisable() => input.@Player.Disable();
     private void OnDestroy() => input.Dispose();
 
-    private void Update()
+    private void LateUpdate()
     {
         // На паузе (меню ESC) ввод мыши полностью игнорируем —
         // голова не должна реагировать на движение мыши.
         if (Time.timeScale <= 0f) return;
 
+        // LateUpdate: применяем поворот ПОСЛЕ Animator,
+        // иначе анимация каждый кадр перезаписывает наклон головы.
         LookAround();
     }
 
