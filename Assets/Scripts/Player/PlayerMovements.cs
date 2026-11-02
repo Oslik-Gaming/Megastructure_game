@@ -15,8 +15,8 @@ public class PlayerMovements : MonoBehaviour
     public float airControl = 8f;
 
     [Header("Проверка земли")]
-    [Tooltip("Расстояние от пивота до низа капсулы (Body: height 2, center 0 → низ на 1.0 ниже пивота)")]
-    public float capsuleBottomOffset = 1.0f;
+    [Tooltip("Расстояние от пивота до низа коллайдера. Если 0 — вычисляется автоматически из коллайдера при старте (рекомендуется).")]
+    public float capsuleBottomOffset = 0f;
     [Tooltip("Запас (skin) ниже капсулы, чтобы не терять землю на кочках/склонах")]
     public float groundSkin = 0.15f;
     [Tooltip("Слои, которые считаются землёй. ~0 = все слои")]
@@ -33,6 +33,35 @@ public class PlayerMovements : MonoBehaviour
         // Подписываемся на событие прыжка.
         // Это сработает МГНОВЕННО в момент нажатия, независимо от FixedUpdate.
         input.@Player.@Jump.performed += ctx => jumpRequested = true;
+
+        AutoDetectCapsuleBottom();
+    }
+
+    /// <summary>
+    /// Автоматически вычисляем расстояние от пивота до низа коллайдера.
+    /// Это спасает от рассинхрона при смене скейла/размера капсулы:
+    /// если offset задан вручную больше реального, луч земли уходит ПОД землю
+    /// и прыжок перестаёт работать (grounded всегда false).
+    /// </summary>
+    private void AutoDetectCapsuleBottom()
+    {
+        if (capsuleBottomOffset > 0.001f)
+            return; // значение задано вручную — не трогаем
+
+        Collider col = GetComponent<Collider>();
+        if (col == null) col = GetComponentInChildren<Collider>();
+        if (col == null)
+        {
+            Debug.LogWarning("[PlayerMovements] Не найден коллайдер — проверка земли не будет работать!", this);
+            return;
+        }
+
+        float distanceToBottom = transform.position.y - col.bounds.min.y;
+        if (distanceToBottom > 0.01f)
+        {
+            capsuleBottomOffset = distanceToBottom;
+            Debug.Log($"[PlayerMovements] capsuleBottomOffset вычислен автоматически: {distanceToBottom:0.000}", this);
+        }
     }
 
     private void OnEnable() => input.@Player.Enable();
