@@ -3,7 +3,7 @@
     <ui:VisualElement name="MainContainer" class="hud-root">
         <ui:VisualElement class="task panel">
             <ui:Label text="SYS // 7.3.1" class="caption" />
-            <ui:Label text="GLOBAL TASK" class="caption" />
+            <ui:Label text="GLOBAL TASK" class="caption task-heading" />
             <ui:Label name="task-text" class="task-text" />
         </ui:VisualElement>
         <ui:VisualElement class="meters">
@@ -22,7 +22,7 @@
             <ui:Label text="[SPACE] JUMP" />
             <ui:Label text="[E]     INTERACT" />
         </ui:VisualElement>
-        <ui:Label text="TIME" class="time" />
+        <ui:Label name="time" text="TIME  00:00" class="time" />
         <ui:Label name="critical-warning" class="critical-warning" />
         <ui:VisualElement name="hud-root" class="crosshair-host"><ui:VisualElement name="crosshair" /></ui:VisualElement>
     </ui:VisualElement>

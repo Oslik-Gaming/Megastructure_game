@@ -72,7 +72,11 @@ public class CrosshairController : MonoBehaviour
         // }
 
         // Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)); // центр экрана
-        Transform origin = FindObjectOfType<PlayerRaycastInteract>().transform;
+        PlayerRaycastInteract player = FindFirstObjectByType<PlayerRaycastInteract>();
+        if (player == null)
+            return false;
+
+        Transform origin = player.transform;
         Ray ray = new Ray(origin.position, origin.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, rayDistance))
         {

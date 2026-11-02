@@ -79,6 +79,8 @@ public sealed class GameHud : MonoBehaviour
     {
         if (timeLabel != null)
             timeLabel.text = "TIME  " + Time.timeSinceLevelLoad.ToString("00:00");
+        else
+            Debug.Log("Нету time label");
     }
 
     public void SetPaint(float value)
