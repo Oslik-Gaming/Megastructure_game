@@ -60,6 +60,7 @@ public class MainMenuController : MonoBehaviour
             baseTexts[i] = menuButtons[i].text;
 
         play.clicked     += OnPlayClicked;
+        continueBtn.clicked += OnContinueClicked;
         settings.clicked += OnSettingsClicked;
         exit.clicked     += OnExitClicked;
 
