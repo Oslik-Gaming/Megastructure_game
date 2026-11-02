@@ -10,6 +10,10 @@ using UnityEngine;
 public static class GameProgress
 {
     private const string KeyIntroSeen = "Progress_IntroSeen";
+    private const string KeyCheckpoint = "Progress_CheckpointId";
+
+    /// <summary>ID последнего активированного чекпоинта. -1 = чекпоинта нет (старт игры).</summary>
+    public static int SavedCheckpointId => PlayerPrefs.GetInt(KeyCheckpoint, -1);
 
     /// <summary>Флаг запроса "Новая игра". Живёт только внутри запуска приложения:
     /// ставится в главном меню перед загрузкой сцены, съедается катсценой в SampleScene.</summary>
@@ -39,10 +43,25 @@ public static class GameProgress
         return requested;
     }
 
+    /// <summary>Сохранить последний активированный чекпоинт (переживает перезапуск игры).</summary>
+    public static void SaveCheckpoint(int checkpointId)
+    {
+        PlayerPrefs.SetInt(KeyCheckpoint, checkpointId);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>Сбросить сохранённый чекпоинт (например, при "Новой игре").</summary>
+    public static void ClearCheckpoint()
+    {
+        PlayerPrefs.DeleteKey(KeyCheckpoint);
+        PlayerPrefs.Save();
+    }
+
     /// <summary>Полный сброс прогресса (пригодится для отладки).</summary>
     public static void ResetProgress()
     {
         PlayerPrefs.DeleteKey(KeyIntroSeen);
+        PlayerPrefs.DeleteKey(KeyCheckpoint);
         PlayerPrefs.Save();
     }
 }
