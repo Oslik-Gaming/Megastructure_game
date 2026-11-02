@@ -1,0 +1,209 @@
+/* Game HUD — terminal interface, tuned for 1920x1080. */
+.hud-root {
+    width: 100%;
+    height: 100%;
+    color: rgb(0, 255, 110);
+    -unity-font-style: bold;
+    font-size: 13px;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+/* Shared translucent terminal panel. */
+.panel {
+    position: absolute;
+    border-width: 1px;
+    border-color: rgb(0, 255, 110);
+    background-color: rgba(0, 18, 10, 0.72);
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-top: 11px;
+    padding-bottom: 11px;
+}
+
+/* Mission data, upper-left. */
+.task {
+    left: 28px;
+    top: 27px;
+    width: 310px;
+    min-height: 88px;
+}
+
+.caption {
+    font-size: 11px;
+    color: rgb(102, 255, 155);
+    letter-spacing: 2px;
+}
+
+.task-heading {
+    margin-top: 10px;
+    color: rgb(0, 255, 110);
+}
+
+.task-text {
+    white-space: normal;
+    margin-top: 6px;
+    color: rgb(0, 255, 110);
+    font-size: 12px;
+}
+
+/* Resource meters, upper-right. */
+.meters {
+    position: absolute;
+    right: 30px;
+    top: 29px;
+    width: 250px;
+}
+
+.meter-label {
+    font-size: 11px;
+    margin-top: 4px;
+    color: rgb(0, 255, 110);
+    letter-spacing: 2px;
+}
+
+.meter {
+    height: 11px;
+    margin-top: 3px;
+    border-width: 1px;
+    border-color: rgb(0, 255, 110);
+    background-color: rgba(0, 45, 20, 0.7);
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.fill {
+    height: 100%;
+    width: 100%;
+    background-color: rgb(0, 255, 110);
+}
+
+/* Interaction hints, lower-left. */
+.controls {
+    left: 28px;
+    bottom: 28px;
+    width: 235px;
+    min-height: 91px;
+    color: rgb(0, 255, 110);
+    font-size: 12px;
+}
+
+.controls > Label {
+    margin-bottom: 8px;
+}
+
+/* Inspectable object information. */
+.object-card {
+    left: 58%;
+    top: 48%;
+    width: 305px;
+    min-height: 96px;
+    border-width: 1px;
+}
+
+.object-title {
+    font-size: 14px;
+    margin-bottom: 7px;
+    color: rgb(0, 255, 110);
+    letter-spacing: 2px;
+}
+
+.object-description {
+    white-space: normal;
+    font-size: 11px;
+    color: rgb(0, 255, 110);
+    letter-spacing: 0.5px;
+}
+
+/* Session time, lower-right. */
+.time {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+    font-size: 11px;
+    color: rgb(0, 255, 110);
+    letter-spacing: 2px;
+}
+
+/* Static danger-zone warning. GameHud toggles the critical class. */
+.critical-warning {
+    position: absolute;
+    left: 660px;
+    top: 320px;
+    width: 600px;
+    min-height: 72px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-width: 1px;
+    border-color: rgb(255, 35, 60);
+    background-color: rgba(55, 0, 8, 0.78);
+    -unity-text-align: middle-center;
+    font-size: 25px;
+    color: rgb(255, 35, 60);
+    letter-spacing: 3px;
+}
+
+/* Crosshair. */
+.crosshair-host {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+#crosshair {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: rgb(0, 255, 110);
+    border-width: 0;
+    border-color: rgb(0, 255, 110);
+    transition-property: width, height, background-color, border-width, border-color;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
+}
+
+#crosshair.highlight {
+    width: 26px;
+    height: 26px;
+    background-color: rgba(0, 255, 110, 0);
+    border-width: 2px;
+    border-color: rgb(0, 255, 110);
+}
+
+/* Critical state: same layout, red terminal palette. */
+.critical .panel,
+.critical .meter {
+    border-color: rgb(255, 35, 60);
+}
+
+.critical .fill {
+    background-color: rgb(255, 35, 60);
+}
+
+.critical .task,
+.critical .meters,
+.critical .controls,
+.critical .object-card,
+.critical .time,
+.critical .caption,
+.critical .task-text,
+.critical .meter-label,
+.critical .object-title,
+.critical .object-description {
+    color: rgb(255, 35, 60);
+}
+
+.critical #crosshair {
+    background-color: rgb(255, 35, 60);
+    border-color: rgb(255, 35, 60);
+}
+
+.critical #crosshair.highlight {
+    background-color: rgba(255, 35, 60, 0);
+}
