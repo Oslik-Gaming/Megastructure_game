@@ -40,15 +40,27 @@ public class MainMenuController : MonoBehaviour
         cursor         = root.Q<VisualElement>("Cursor");
 
         var play     = root.Q<Button>("PlayButton");
+        var continueBtn = root.Q<Button>("ContinueButton");
         var settings = root.Q<Button>("SettingsButton");
         var exit     = root.Q<Button>("ExitButton");
-        menuButtons  = new[] { play, settings, exit };
+        menuButtons  = new[] { play, continueBtn, settings, exit };
+
+        // "Продолжить" видна только если интро уже просмотрено
+        if (GameProgress.HasSeenIntro)
+        {
+            continueBtn.style.display = DisplayStyle.Flex;
+        }
+        else
+        {
+            continueBtn.style.display = DisplayStyle.None;
+        }
 
         baseTexts = new string[menuButtons.Length];
         for (int i = 0; i < menuButtons.Length; i++)
             baseTexts[i] = menuButtons[i].text;
 
         play.clicked     += OnPlayClicked;
+        continueBtn.clicked += OnContinueClicked;
         settings.clicked += OnSettingsClicked;
         exit.clicked     += OnExitClicked;
 
@@ -94,10 +106,21 @@ public class MainMenuController : MonoBehaviour
     }
 
     // ================= Навигация =================
-    private void SelectButton(int index)
+    private void SelectButton(int index, int direction = 1)
     {
         if (menuButtons == null) return;
-        selectedIndex = Mathf.Clamp(index, 0, menuButtons.Length - 1);
+
+        // Пропускаем скрытые кнопки (например "Продолжить" до первого прохождения интро)
+        int count = menuButtons.Length;
+        int target = Mathf.Clamp(index, 0, count - 1);
+        for (int step = 0; step < count; step++)
+        {
+            if (menuButtons[target].style.display != DisplayStyle.None)
+                break;
+            target = (target + count + direction) % count;
+        }
+
+        selectedIndex = Mathf.Clamp(target, 0, count - 1);
         for (int i = 0; i < menuButtons.Length; i++)
         {
             bool selected = i == selectedIndex;
@@ -111,7 +134,8 @@ public class MainMenuController : MonoBehaviour
         switch (selectedIndex)
         {
             case 0:  OnPlayClicked(); break;
-            case 1:  OnSettingsClicked(); break;
+            case 1:  OnContinueClicked(); break;
+            case 2:  OnSettingsClicked(); break;
             default: OnExitClicked(); break;
         }
     }
@@ -126,9 +150,9 @@ public class MainMenuController : MonoBehaviour
         switch (evt.keyCode)
         {
             case KeyCode.UpArrow: case KeyCode.W:
-                SelectButton((selectedIndex - 1 + menuButtons.Length) % menuButtons.Length); break;
+                SelectButton((selectedIndex - 1 + menuButtons.Length) % menuButtons.Length, -1); break;
             case KeyCode.DownArrow: case KeyCode.S:
-                SelectButton((selectedIndex + 1) % menuButtons.Length); break;
+                SelectButton((selectedIndex + 1) % menuButtons.Length, 1); break;
             case KeyCode.Return: case KeyCode.KeypadEnter: case KeyCode.Space:
                 ActivateSelected(); break;
             case KeyCode.Escape:
@@ -136,6 +160,7 @@ public class MainMenuController : MonoBehaviour
             case KeyCode.Alpha1: case KeyCode.Keypad1: SelectButton(0); ActivateSelected(); break;
             case KeyCode.Alpha2: case KeyCode.Keypad2: SelectButton(1); ActivateSelected(); break;
             case KeyCode.Alpha3: case KeyCode.Keypad3: SelectButton(2); ActivateSelected(); break;
+            case KeyCode.Alpha4: case KeyCode.Keypad4: SelectButton(3); ActivateSelected(); break;
             default: return;
         }
         evt.StopPropagation();
@@ -144,7 +169,23 @@ public class MainMenuController : MonoBehaviour
     // ================= Действия =================
     private void OnPlayClicked() 
     {
-                if (Application.CanStreamedLevelBeLoaded(gameSceneName))
+        // Новая игра: сбрасываем сохранённый чекпоинт — игрок начнёт со старта
+        GameProgress.ClearCheckpoint();
+
+        // Новая игра: интро проигрывается всегда, даже если уже смотрели
+        GameProgress.RequestNewGame();
+        LoadGameScene();
+    }
+
+    private void OnContinueClicked()
+    {
+        // Продолжить: интро пропускается, игрок сразу в игре
+        LoadGameScene();
+    }
+
+    private void LoadGameScene()
+    {
+        if (Application.CanStreamedLevelBeLoaded(gameSceneName))
         {
             SceneManager.LoadScene(gameSceneName);
         }
