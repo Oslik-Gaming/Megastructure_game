@@ -15,8 +15,8 @@ public class PlayerMovements : MonoBehaviour
     public float airControl = 8f;
 
     [Header("Проверка земли")]
-    [Tooltip("Расстояние от пивота до низа капсулы (Body: height 2, center 0 → низ на 1.0 ниже пивота)")]
-    public float capsuleBottomOffset = 1.0f;
+    [Tooltip("Расстояние от пивота до низа коллайдера. Если 0 — вычисляется автоматически из коллайдера при старте (рекомендуется).")]
+    public float capsuleBottomOffset = 0f;
     [Tooltip("Запас (skin) ниже капсулы, чтобы не терять землю на кочках/склонах")]
     public float groundSkin = 0.15f;
     [Tooltip("Слои, которые считаются землёй. ~0 = все слои")]
@@ -24,6 +24,11 @@ public class PlayerMovements : MonoBehaviour
 
     // Флаг: "игрок хочет прыгнуть"
     private bool jumpRequested = false;
+
+    // Был ли на земле в прошлом физическом кадре (для гашения подбросов)
+    private bool wasGrounded;
+    // Совершён ли прыжок в текущем/прошлом кадре (чтобы не гасить собственный прыжок)
+    private bool justJumped;
 
     private void Awake()
     {
@@ -33,6 +38,35 @@ public class PlayerMovements : MonoBehaviour
         // Подписываемся на событие прыжка.
         // Это сработает МГНОВЕННО в момент нажатия, независимо от FixedUpdate.
         input.@Player.@Jump.performed += ctx => jumpRequested = true;
+
+        AutoDetectCapsuleBottom();
+    }
+
+    /// <summary>
+    /// Автоматически вычисляем расстояние от пивота до низа коллайдера.
+    /// Это спасает от рассинхрона при смене скейла/размера капсулы:
+    /// если offset задан вручную больше реального, луч земли уходит ПОД землю
+    /// и прыжок перестаёт работать (grounded всегда false).
+    /// </summary>
+    private void AutoDetectCapsuleBottom()
+    {
+        if (capsuleBottomOffset > 0.001f)
+            return; // значение задано вручную — не трогаем
+
+        Collider col = GetComponent<Collider>();
+        if (col == null) col = GetComponentInChildren<Collider>();
+        if (col == null)
+        {
+            Debug.LogWarning("[PlayerMovements] Не найден коллайдер — проверка земли не будет работать!", this);
+            return;
+        }
+
+        float distanceToBottom = transform.position.y - col.bounds.min.y;
+        if (distanceToBottom > 0.01f)
+        {
+            capsuleBottomOffset = distanceToBottom;
+            Debug.Log($"[PlayerMovements] capsuleBottomOffset вычислен автоматически: {distanceToBottom:0.000}", this);
+        }
     }
 
     private void OnEnable() => input.@Player.Enable();
@@ -67,10 +101,17 @@ public class PlayerMovements : MonoBehaviour
 
         if (grounded)
         {
-            // На земле — полное управление горизонтальной скоростью
+            // На земле — полное управление горизонтальной скоростью.
+            // Вертикальную скорость сохраняем ТОЛЬКО сразу после прыжка.
+            // Иначе при наезде на наклонную поверхность коллизия каждый кадр
+            // добавляет +Y, скорость накапливается и игрока подбрасывает как на батуте.
+            float verticalVelocity = justJumped
+                ? currentLinearVelocity.y
+                : Mathf.Min(currentLinearVelocity.y, 0f); // вверх не даём, вниз (гравитация) — можно
+
             Vector3 newLinearVelocity = new Vector3(
                 moveVector.x * currentSpeed, // Используем динамическую скорость
-                currentLinearVelocity.y,     // Сохраняем вертикальную скорость (гравитацию)
+                verticalVelocity,            // Гравитация/прыжок, но без подбросов от коллизий
                 moveVector.z * currentSpeed  // Используем динамическую скорость
             );
 
@@ -104,6 +145,14 @@ public class PlayerMovements : MonoBehaviour
                 rb.linearVelocity = currentLinearVelocity;
             }
             // Гравитация по Y работает как обычно.
+
+            // Только что оторвались от земли БЕЗ прыжка — это подброс
+            // от наклонной поверхности (края пандуса, порога и т.п.). Гасим взлёт.
+            if (wasGrounded && !justJumped && currentLinearVelocity.y > 0f)
+            {
+                currentLinearVelocity.y = 0f;
+                rb.linearVelocity = currentLinearVelocity;
+            }
         }
 
         if (jumpRequested)
@@ -119,8 +168,13 @@ public class PlayerMovements : MonoBehaviour
                     jumpForce,
                     rb.linearVelocity.z
                 );
+                justJumped = true;
             }
         }
+
+        // Сбрасываем флаг прыжка, как только реально оторвались от земли
+        if (!grounded) justJumped = false;
+        wasGrounded = grounded;
     }
 
     /// <summary>
