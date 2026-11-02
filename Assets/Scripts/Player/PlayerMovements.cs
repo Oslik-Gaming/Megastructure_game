@@ -25,6 +25,11 @@ public class PlayerMovements : MonoBehaviour
     // Флаг: "игрок хочет прыгнуть"
     private bool jumpRequested = false;
 
+    // Был ли на земле в прошлом физическом кадре (для гашения подбросов)
+    private bool wasGrounded;
+    // Совершён ли прыжок в текущем/прошлом кадре (чтобы не гасить собственный прыжок)
+    private bool justJumped;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -96,10 +101,17 @@ public class PlayerMovements : MonoBehaviour
 
         if (grounded)
         {
-            // На земле — полное управление горизонтальной скоростью
+            // На земле — полное управление горизонтальной скоростью.
+            // Вертикальную скорость сохраняем ТОЛЬКО сразу после прыжка.
+            // Иначе при наезде на наклонную поверхность коллизия каждый кадр
+            // добавляет +Y, скорость накапливается и игрока подбрасывает как на батуте.
+            float verticalVelocity = justJumped
+                ? currentLinearVelocity.y
+                : Mathf.Min(currentLinearVelocity.y, 0f); // вверх не даём, вниз (гравитация) — можно
+
             Vector3 newLinearVelocity = new Vector3(
                 moveVector.x * currentSpeed, // Используем динамическую скорость
-                currentLinearVelocity.y,     // Сохраняем вертикальную скорость (гравитацию)
+                verticalVelocity,            // Гравитация/прыжок, но без подбросов от коллизий
                 moveVector.z * currentSpeed  // Используем динамическую скорость
             );
 
@@ -133,6 +145,14 @@ public class PlayerMovements : MonoBehaviour
                 rb.linearVelocity = currentLinearVelocity;
             }
             // Гравитация по Y работает как обычно.
+
+            // Только что оторвались от земли БЕЗ прыжка — это подброс
+            // от наклонной поверхности (края пандуса, порога и т.п.). Гасим взлёт.
+            if (wasGrounded && !justJumped && currentLinearVelocity.y > 0f)
+            {
+                currentLinearVelocity.y = 0f;
+                rb.linearVelocity = currentLinearVelocity;
+            }
         }
 
         if (jumpRequested)
@@ -148,8 +168,13 @@ public class PlayerMovements : MonoBehaviour
                     jumpForce,
                     rb.linearVelocity.z
                 );
+                justJumped = true;
             }
         }
+
+        // Сбрасываем флаг прыжка, как только реально оторвались от земли
+        if (!grounded) justJumped = false;
+        wasGrounded = grounded;
     }
 
     /// <summary>
