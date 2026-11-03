@@ -84,17 +84,6 @@ public class PlayerRaycastInteract : MonoBehaviour
         inputActions.Dispose();
     }
 
-    private void Update()
-    {
-        if (carriedItem == null)
-            return;
-
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-            ThrowCurrent();
-        else if (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame)
-            PlaceCurrent();
-    }
-
     private void FixedUpdate()
     {
         if (carriedItem == null || carriedItem.Body == null)
@@ -124,8 +113,30 @@ public class PlayerRaycastInteract : MonoBehaviour
         TryInteract();
     }
 
-    // Логика рейкаста остается точно такой же, как и была!
     private void TryInteract()
+    {
+        Vector3 origin = rayOrigin != null ? rayOrigin.position : transform.position;
+        Vector3 direction = rayOrigin != null ? rayOrigin.forward : transform.forward;
+
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, interactDistance, interactLayer))
+        {
+            Grabable grabable = hit.collider.GetComponentInParent<Grabable>();
+            if (grabable != null)
+                return;
+
+            IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
+
+            if (interactable != null)
+            {
+                interactable.Interact();
+            }
+        }
+    }
+
+    /// <summary>
+    /// ЛКМ гравизахвата: захватывает объект или устанавливает удерживаемый объект.
+    /// </summary>
+    public void TryGrabOrPlace()
     {
         if (carriedItem != null)
         {
@@ -136,23 +147,29 @@ public class PlayerRaycastInteract : MonoBehaviour
         Vector3 origin = rayOrigin != null ? rayOrigin.position : transform.position;
         Vector3 direction = rayOrigin != null ? rayOrigin.forward : transform.forward;
 
-        if (Physics.Raycast(origin, direction, out RaycastHit hit, interactDistance, interactLayer))
-        {
-            Grabable grabable = hit.collider.GetComponentInParent<Grabable>();
-            if (grabable != null && !grabable.IsCarried)
-            {
-                StartGrab(grabable);
-                return;
-            }
+        if (!Physics.Raycast(origin, direction, out RaycastHit hit, interactDistance, interactLayer))
+            return;
 
-            IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
-
-            if (interactable != null)
-            {
-                interactable.Interact();
-            }
-        }
+        Grabable grabable = hit.collider.GetComponentInParent<Grabable>();
+        if (grabable != null && !grabable.IsCarried)
+            StartGrab(grabable);
     }
+
+    /// <summary>Бросает удерживаемый объект.</summary>
+    public void ThrowHeldObject()
+    {
+        if (carriedItem != null)
+            ThrowCurrent();
+    }
+
+    /// <summary>Устанавливает удерживаемый объект.</summary>
+    public void PlaceHeldObject()
+    {
+        if (carriedItem != null)
+            PlaceCurrent();
+    }
+
+    public bool HasCarriedItem => carriedItem != null;
 
     private void StartGrab(Grabable item)
     {
