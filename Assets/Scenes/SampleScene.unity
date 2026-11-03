@@ -323,10 +323,10 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 2.21
-  MinDistance: 62.315582
-  MaxDistance: 107.940384
+  MinDistance: 51.108383
+  MaxDistance: 79.68023
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -917,10 +917,10 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1.63
-  MinDistance: 62.31558
-  MaxDistance: 107.9404
+  MinDistance: 50.236343
+  MaxDistance: 84.71918
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -2680,6 +2680,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1796680524888526030, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
+      propertyPath: 'landSounds.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 1c9e976229401f34a8926de0a8d231c8, type: 3}
     - target: {fileID: 2485656303669102556, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
       propertyPath: jumpForce
       value: 4
@@ -2763,10 +2767,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8166813404425495217, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1850830426}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
 --- !u!1 &1127732001
 GameObject:
@@ -4757,11 +4758,6 @@ Transform:
   - {fileID: 678647094}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1788179834 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8166813404425495217, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
-  m_PrefabInstance: {fileID: 1100036561}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1792030830
 GameObject:
   m_ObjectHideFlags: 0
@@ -4983,38 +4979,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2485656303669102556, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
   m_PrefabInstance: {fileID: 1100036561}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1788179834}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bde6391a919164441ab6932caccd6a17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovements
---- !u!114 &1850830426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1788179834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85287a89ac770c040be8dcfa2bcebf0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FootstepSystem
-  footsteps:
-  - {fileID: 8300000, guid: 7eff795c700db9541a7ee29cdfe67afd, type: 3}
-  - {fileID: 8300000, guid: 6af85295aedff3c429e673e1c025c10d, type: 3}
-  - {fileID: 8300000, guid: 3eb12a724933316429325b811b9a2185, type: 3}
-  - {fileID: 8300000, guid: 7fb8d7e41efc56a4cb827efc6837bf37, type: 3}
-  - {fileID: 8300000, guid: 54342120e16ff1644bb09cb391c29b07, type: 3}
-  walkStepDistance: 1.4
-  sprintStepDistance: 1.9
-  walkVolume: 0.187
-  sprintVolume: 0.306
-  minPitch: 0.92
-  maxPitch: 1.08
-  sprintPitchBoost: 1.06
-  resetInAir: 1
 --- !u!1 &1851326317 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -9064114903961122858, guid: 22f81ee7ead3ea941a576106b071479a, type: 3}

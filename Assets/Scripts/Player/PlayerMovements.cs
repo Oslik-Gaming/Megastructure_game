@@ -35,6 +35,13 @@ public class PlayerMovements : MonoBehaviour
     public bool IsOnGround { get; private set; }
     public bool IsSprinting { get; private set; }
 
+    // События для звука/эффектов: прыжок и приземление (с силой удара, м/с)
+    public event System.Action Jumped;
+    public event System.Action<float> Landed;
+
+    // Максимальная скорость падения за время полёта (для силы приземления)
+    private float airPeakFallSpeed;
+
     // Был ли на земле в прошлом физическом кадре (для гашения подбросов)
     private bool wasGrounded;
     // Совершён ли прыжок в текущем/прошлом кадре (чтобы не гасить собственный прыжок)
@@ -185,10 +192,23 @@ public class PlayerMovements : MonoBehaviour
                     rb.linearVelocity.z
                 );
                 justJumped = true;
+                Jumped?.Invoke();
             }
         }
 
         // Сбрасываем флаг прыжка, как только реально оторвались от земли
+        // Приземление: были в воздухе — стали на землю.
+        // Отдаём силу удара (пиковая скорость падения) — звук/эффекты могут от неё зависеть.
+        if (grounded && !wasGrounded)
+        {
+            Landed?.Invoke(airPeakFallSpeed);
+            airPeakFallSpeed = 0f;
+        }
+
+        // В полёте запоминаем, насколько сильно падаем
+        if (!grounded)
+            airPeakFallSpeed = Mathf.Max(airPeakFallSpeed, -currentLinearVelocity.y);
+
         if (!grounded) justJumped = false;
         wasGrounded = grounded;
 

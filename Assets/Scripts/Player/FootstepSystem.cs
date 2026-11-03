@@ -9,6 +9,7 @@ using UnityEngine;
 ///  - AudioSource создаётся автоматически (3D-звук).
 ///
 /// Настройка: перетащи в footsteps 4–8 вариаций звука шага (бетон/метал).
+/// Прыжок и приземление — в jumpSounds / landSounds (можно по одной штуке).
 /// </summary>
 [RequireComponent(typeof(PlayerMovements))]
 public class FootstepSystem : MonoBehaviour
@@ -33,6 +34,23 @@ public class FootstepSystem : MonoBehaviour
     [SerializeField] private float maxPitch = 1.08f;
     [Tooltip("Дополнительный множитель питча при беге")]
     [SerializeField] private float sprintPitchBoost = 1.06f;
+
+    [Header("Звуки прыжка и приземления")]
+    [Tooltip("Звук прыжка (отрыв от земли). Играется случайная вариация. Если пусто — звук не играется.")]
+    [SerializeField] private AudioClip[] jumpSounds;
+    [Tooltip("Звук приземления. Играется случайная вариация. Если пусто — звук не играется.")]
+    [SerializeField] private AudioClip[] landSounds;
+
+    [Tooltip("Громкость прыжка")]
+    [Range(0f, 1f)] [SerializeField] private float jumpVolume = 0.7f;
+    [Tooltip("Громкость приземления при лёгком падении")]
+    [Range(0f, 1f)] [SerializeField] private float landVolume = 0.6f;
+    [Tooltip("Дополнительная громкость приземления при жёстком падении (подмешивается по силе удара)")]
+    [Range(0f, 1f)] [SerializeField] private float hardLandVolumeBoost = 0.3f;
+    [Tooltip("Минимальная скорость падения (м/с), при которой слышно приземление (чтобы не было звука при сходе с бордюра)")]
+    [Min(0f)] [SerializeField] private float minLandSpeed = 1.5f;
+    [Tooltip("Скорость падения (м/с), считающаяся жёстким приземлением")]
+    [Min(0f)] [SerializeField] private float hardLandSpeed = 12f;
 
     [Header("Полёт")]
     [Tooltip("Обнулять накопитель дистанции в воздухе (чтобы после прыжка не было мгновенного шага)")]
@@ -60,6 +78,52 @@ public class FootstepSystem : MonoBehaviour
         }
 
         lastPosition = transform.position;
+    }
+
+    private void OnEnable()
+    {
+        if (player == null) player = GetComponent<PlayerMovements>();
+        if (player != null)
+        {
+            player.Jumped += OnJumped;
+            player.Landed += OnLanded;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (player != null)
+        {
+            player.Jumped -= OnJumped;
+            player.Landed -= OnLanded;
+        }
+    }
+
+    private void OnJumped()
+    {
+        PlayRandom(jumpSounds, jumpVolume);
+    }
+
+    private void OnLanded(float fallSpeed)
+    {
+        if (landSounds == null || landSounds.Length == 0) return;
+        if (fallSpeed < minLandSpeed) return; // слишком слабый удар — молчим
+
+        // Чем сильнее удар — тем громче (до hardLandSpeed и выше)
+        float t = hardLandSpeed > 0.01f ? Mathf.Clamp01(fallSpeed / hardLandSpeed) : 1f;
+        float volume = landVolume + hardLandVolumeBoost * t;
+        PlayRandom(landSounds, Mathf.Clamp01(volume));
+    }
+
+    private void PlayRandom(AudioClip[] clips, float volume)
+    {
+        if (clips == null || clips.Length == 0) return;
+
+        AudioClip clip = clips[Random.Range(0, clips.Length)];
+        if (clip == null) return;
+
+        source.pitch = Random.Range(minPitch, maxPitch);
+        source.PlayOneShot(clip, volume);
     }
 
     private void Update()
