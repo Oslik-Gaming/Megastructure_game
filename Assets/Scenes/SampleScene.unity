@@ -2324,11 +2324,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8799340056526354443, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.26
+      value: 6.82
       objectReference: {fileID: 0}
     - target: {fileID: 8799340056526354443, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 59.823
+      value: 7.62
       objectReference: {fileID: 0}
     - target: {fileID: 8799340056526354443, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3008,6 +3008,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1433101317}
   - component: {fileID: 1433101316}
+  - component: {fileID: 1433101318}
   m_Layer: 0
   m_Name: fan_Audio Source
   m_TagString: Untagged
@@ -3030,7 +3031,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 0.666
   m_Pitch: 0.72
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -3127,6 +3128,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1433101318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433101315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1121a7dd8641de1439db30819e70f28c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayAudioInterval
+  audioSource: {fileID: 1433101316}
+  interval: 6
 --- !u!1 &1463198865
 GameObject:
   m_ObjectHideFlags: 0
@@ -4922,7 +4937,7 @@ Transform:
   m_GameObject: {fileID: 1995817770}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.9, y: 51.13, z: 196.5}
+  m_LocalPosition: {x: 1.9, y: 17.6, z: 137.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4942,15 +4957,15 @@ AudioSource:
   m_Resource: {fileID: 8300000, guid: b55698f75af565a4097dbec17ff03ac3, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
-  m_Pitch: 0.88
+  m_Pitch: 0.84
   Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1.43
-  MinDistance: 81.08607
-  MaxDistance: 123.220924
+  MinDistance: 30.047035
+  MaxDistance: 69.99454
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 1
