@@ -17,6 +17,9 @@ public class CheckpointManager : MonoBehaviour
 {
     public static CheckpointManager Instance { get; private set; }
 
+    /// <summary>Событие: игрок заспавнился на чекпоинте после смерти (для звуков/событий, которые должны сбрасываться).</summary>
+    public static event System.Action PlayerRespawned;
+
     [Header("Игрок")]
     [Tooltip("Ссылка на игрока. Если пусто — найдётся автоматически по компоненту PlayerMovements.")]
     [SerializeField] private PlayerMovements player;
@@ -193,6 +196,8 @@ public class CheckpointManager : MonoBehaviour
             yield return screenFader.FadeIn();
 
         respawning = false;
+
+        PlayerRespawned?.Invoke();
     }
 
     private void TeleportPlayer(Vector3 pos, Quaternion rot)
