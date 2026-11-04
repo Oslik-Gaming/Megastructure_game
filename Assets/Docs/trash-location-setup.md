@@ -10,8 +10,6 @@ Location
 │   ├── Trash_001
 │   └── Trash_002
 ├── DisposeZone
-└── Canvas
-    └── TrashPercentText
 ```
 
 ## 1. Настройте локацию
@@ -43,25 +41,3 @@ Location
 Компонент автоматически включает `Is Trigger` у Collider. Чтобы зона принимала только мусор конкретной локации, назначьте её в поле `Required Location`.
 
 При попадании в зону мусор отмечается удалённым, процент пересчитывается, а объект уничтожается. Отключите `Destroy Game Object`, если объект должен остаться в сцене.
-
-## 4. Подключите HUD
-
-1. Создайте `Canvas` и текстовый UI-элемент с компонентом `UnityEngine.UI.Text`.
-2. Добавьте `TrashLocationHud` на текст или другой объект HUD.
-3. Назначьте поля `Location` и `Percent Text`.
-
-Параметр `Show Remaining Trash`:
-
-- включён: `100% -> 0%`, сколько мусора осталось;
-- выключен: `0% -> 100%`, прогресс уборки.
-
-## Динамический мусор
-
-Если объект мусора создаётся во время игры, после `Instantiate` зарегистрируйте его:
-
-```csharp
-TrashItem item = spawnedObject.GetComponent<TrashItem>();
-trashLocation.RegisterRuntimeTrash(item);
-```
-
-Не уничтожайте учтённый мусор напрямую. Сначала вызовите `item.Remove()`, затем при необходимости `Destroy(item.gameObject)`.

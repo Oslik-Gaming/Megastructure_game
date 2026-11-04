@@ -9,8 +9,25 @@ public class CrosshairController : MonoBehaviour
     private VisualElement _crosshair;
     private bool _highlighted;
 
+    public void Configure(UIDocument hud)
+    {
+        hudDocument = hud;
+        Initialize();
+    }
+
     private void Awake()
     {
+        Initialize();
+    }
+
+    private void Start() => Initialize();
+
+    private void Initialize()
+    {
+        if (hudDocument == null || hudDocument.rootVisualElement == null) {
+            Debug.Log("hudDocument == null || hudDocument.rootVisualElement == null");
+            return;   
+        }
         _crosshair = hudDocument.rootVisualElement.Q("crosshair");
 
         // ВАЖНО: корень HUD-документа занимает весь экран и по умолчанию
@@ -48,13 +65,23 @@ public class CrosshairController : MonoBehaviour
 
     private bool IsLookingAtInteractable()
     {
-        Camera cam = Camera.main;
-        if (cam == null) return false;
+        // Camera cam = Camera.main;
+        // if (cam == null) {
+        //     Debug.Log("Камера main == null");
+        //     return false;
+        // }
 
-        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)); // центр экрана
+        // Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)); // центр экрана
+        PlayerRaycastInteract player = FindFirstObjectByType<PlayerRaycastInteract>();
+        if (player == null)
+            return false;
+
+        Transform origin = player.transform;
+        Ray ray = new Ray(origin.position, origin.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, rayDistance))
         {
-            return hit.collider.TryGetComponent<IInteractable>(out _);
+            return hit.collider.GetComponentInParent<IInteractable>() != null
+                || hit.collider.GetComponentInParent<Grabable>() != null;
         }
         return false;
     }
