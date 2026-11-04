@@ -5499,7 +5499,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1724994394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5514,11 +5514,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IntroCutsceneController
   playerScriptsToDisable:
   - {fileID: 0}
-  introText: "> BOOT SEQUENCE INITIALIZED...\n\n> \u042F\u0414\u0420\u041E... OK\n>
-    \u041E\u041F\u0422\u0418\u041A\u0410... OK\n> \u0421\u0415\u0420\u0412\u041E\u041F\u0420\u0418\u0412\u041E\u0414\u042B...
-    OK\n\n> \u041F\u041E\u0414\u042A\u0401\u041C \u0418\u0417 \u0421\u041F\u042F\u0429\u0415\u0413\u041E
-    \u0420\u0415\u0416\u0418\u041C\u0410 \u0427\u0415\u0420\u0415\u0417 3... 2...
-    1..."
+  introText: "> \u0417\u0410\u0413\u0420\u0423\u0417\u041A\u0410 \u042F\u0414\u0420\u0410...
+    [OK]\r\n> \u0414\u0418\u0410\u0413\u041D\u041E\u0421\u0422\u0418\u041A\u0410
+    \u0428\u0410\u0421\u0421\u0418... [OK]\r\n> \u041F\u041E\u0414\u041A\u041B\u042E\u0427\u0415\u041D\u0418\u0415
+    \u041A \u0421\u0415\u0422\u0418 \u041C\u0415\u0413\u0410\u0421\u0422\u0420\u0423\u041A\u0422\u0423\u0420\u042B...
+    [\u041E\u0428\u0418\u0411\u041A\u0410]\r\n> \u041F\u041E\u0418\u0421\u041A \u041B\u042E\u0414\u0415\u0419...
+    0\r\n> \u041F\u041E\u0418\u0421\u041A \u0424\u0423\u041D\u041A\u0426\u0418\u041E\u041D\u0418\u0420\u0423\u042E\u0429\u0418\u0425
+    \u0415\u0414\u0418\u041D\u0418\u0426... 1\r\n\r\n> \u0412\u041D\u0418\u041C\u0410\u041D\u0418\u0415:
+    \u041E\u0411\u041D\u0410\u0420\u0423\u0416\u0415\u041D\u041E \u041E\u0422\u041A\u041B\u041E\u041D\u0415\u041D\u0418\u0415
+    \u041E\u0422 \u041C\u0410\u0420\u0428\u0420\u0423\u0422\u0410.\r\n> \u0412\u041D\u0418\u041C\u0410\u041D\u0418\u0415:
+    \u041D\u0415 \u0421\u041E\u0412\u0415\u0420\u0428\u0410\u0419\u0422\u0415 \u0414\u0415\u0419\u0421\u0422\u0412\u0418\u0419,
+    \u0415\u0421\u041B\u0418...\r\n> [\u0414\u0410\u041D\u041D\u042B\u0415 \u041F\u041E\u0412\u0420\u0415\u0416\u0414\u0415\u041D\u042B]\r\n\r\n>
+    \u0414\u0418\u0420\u0415\u041A\u0422\u0418\u0412\u0410 \u0418\u0418: \u0418\u0413\u041D\u041E\u0420\u0418\u0420\u041E\u0412\u0410\u0422\u042C.
+    \u041D\u0410\u0427\u0410\u0422\u042C \u0423\u0411\u041E\u0420\u041A\u0423.\r\n>
+    \u0410\u041A\u0422\u0418\u0412\u0410\u0426\u0418\u042F \u0421\u0415\u0420\u0412\u041E\u041F\u0420\u0418\u0412\u041E\u0414\u041E\u0412..."
   charactersPerSecond: 25
   speedUpMultiplier: 5
   promptText: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043D\u0430 \u043B\u044E\u0431\u0443\u044E
@@ -5529,7 +5538,7 @@ MonoBehaviour:
   fontAsset: {fileID: 0}
   terminalFontSize: 32
   promptFontSize: 22
-  debugAlwaysShowIntro: 1
+  debugAlwaysShowIntro: 0
   debugResetKeyEnabled: 0
   typingSound: {fileID: 0}
   onCharacterTyped:
@@ -5764,10 +5773,10 @@ MonoBehaviour:
     volume: 0.833
   - name: horror-2-level
     clip: {fileID: 8300000, guid: 3c627fde5a5e625449a5b60faf99bbb6, type: 3}
-    volume: 0.833
+    volume: 1
   - name: 2-level
     clip: {fileID: 8300000, guid: e08e7f8effaf83445946c88aa133094f, type: 3}
-    volume: 0.833
+    volume: 1
   - name: 3-level
     clip: {fileID: 8300000, guid: d67675590626c4244942f6ea14f0b07a, type: 3}
     volume: 1
