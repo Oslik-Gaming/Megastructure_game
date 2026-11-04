@@ -32,6 +32,12 @@ public class MusicZoneTrigger : MonoBehaviour
         Custom       // своё значение в секундах
     }
 
+    public enum SameTrackPolicy
+    {
+        KeepPlaying,          // трек уже играет — продолжаем, не обрываем (по умолчанию)
+        RestartFromBeginning  // перезапустить трек с начала
+    }
+
     [Header("Трек")]
     [Tooltip("Имя трека из списка Tracks у MusicManager, который включить при входе в зону.")]
     [SerializeField] private string trackName;
@@ -56,6 +62,10 @@ public class MusicZoneTrigger : MonoBehaviour
 
     [Tooltip("Длительность фейда при выходе (сек). Используется только при режиме Custom.")]
     [Min(0.01f)] [SerializeField] private float exitFadeTime = 2f;
+
+    [Header("Если трек уже играет")]
+    [Tooltip("Когда запрошенный трек (на входе или на выходе) уже играет: продолжать его без изменений или перезапустить с начала.")]
+    [SerializeField] private SameTrackPolicy ifAlreadyPlaying = SameTrackPolicy.KeepPlaying;
 
     [Header("Правила срабатывания")]
     [Tooltip("Сработать только один раз за игровую сессию (для зон-событий; для обычных локаций выключи).")]
@@ -164,15 +174,17 @@ public class MusicZoneTrigger : MonoBehaviour
 
         float exitFade = ResolveFade(exitFadeMode, exitFadeTime);
 
+        bool restart = ifAlreadyPlaying == SameTrackPolicy.RestartFromBeginning;
+
         if (!string.IsNullOrEmpty(exitTrackName))
         {
             // Свой трек на выход (тоже с "владельцем", чтобы не перебить соседнюю зону)
-            MusicManager.Instance.PlayTrack(exitTrackName, exitFade, this);
+            MusicManager.Instance.PlayTrack(exitTrackName, exitFade, this, restart);
             if (debugLog) Debug.Log($"[MusicZoneTrigger] '{name}' выход из зоны → трек '{exitTrackName}'.", this);
         }
         else if (restoreDefaultOnExit)
         {
-            MusicManager.Instance.PlayDefault(exitFade, this);
+            MusicManager.Instance.PlayDefault(exitFade, this, restart);
             if (debugLog) Debug.Log($"[MusicZoneTrigger] '{name}' выход из зоны → основной трек.", this);
         }
     }
@@ -184,7 +196,8 @@ public class MusicZoneTrigger : MonoBehaviour
             Debug.LogWarning($"[MusicZoneTrigger] '{name}' в сцене нет MusicManager (объект MusicManager).", this);
             return;
         }
-        MusicManager.Instance.PlayTrack(trackName, ResolveFade(enterFadeMode, enterFadeTime), this);
+        MusicManager.Instance.PlayTrack(trackName, ResolveFade(enterFadeMode, enterFadeTime), this,
+            ifAlreadyPlaying == SameTrackPolicy.RestartFromBeginning);
         if (debugLog) Debug.Log($"[MusicZoneTrigger] '{name}' {reason} → трек '{trackName}'.", this);
     }
 

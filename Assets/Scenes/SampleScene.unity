@@ -919,7 +919,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 2.1154976
-  MaxDistance: 11.785763
+  MaxDistance: 13.211937
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
@@ -1003,7 +1003,7 @@ Transform:
   m_GameObject: {fileID: 267921235}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.04, y: 10.52, z: -47.15}
+  m_LocalPosition: {x: -0.24, y: 14.76, z: -47.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1108,6 +1108,7 @@ MonoBehaviour:
   exitTrackName: 2-level
   exitFadeMode: 0
   exitFadeTime: 2
+  ifAlreadyPlaying: 0
   triggerOnce: 0
   rearmOnRespawn: 1
   debugLog: 0
@@ -2268,6 +2269,7 @@ MonoBehaviour:
   exitTrackName: 2-level
   exitFadeMode: 2
   exitFadeTime: 5
+  ifAlreadyPlaying: 0
   triggerOnce: 0
   rearmOnRespawn: 1
   debugLog: 0

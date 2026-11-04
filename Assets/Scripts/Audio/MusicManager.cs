@@ -153,12 +153,14 @@ public class MusicManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Переключить трек по имени из списка Tracks. Если такой трек уже играет — ничего не делает.
+    /// Переключить трек по имени из списка Tracks. Если такой трек уже играет — он просто
+    /// продолжает играть (без рестарта и обрыва), если restartIfSame = false.
     /// </summary>
     /// <param name="trackName">Имя трека из списка Tracks.</param>
     /// <param name="fadeSeconds">0 = Default Fade Time из менеджера; меньше 0 = мгновенно; больше 0 = своя длительность (сек).</param>
     /// <param name="requester">Зона/компонент-владелец (для корректной работы пересекающихся зон).</param>
-    public void PlayTrack(string trackName, float fadeSeconds = -1f, Object requester = null)
+    /// <param name="restartIfSame">Если true — перезапустить трек с начала, даже если он уже играет.</param>
+    public void PlayTrack(string trackName, float fadeSeconds = -1f, Object requester = null, bool restartIfSame = false)
     {
         MusicTrack track = FindTrack(trackName);
         if (track == null)
@@ -166,24 +168,25 @@ public class MusicManager : MonoBehaviour
             Debug.LogWarning($"[MusicManager] Трек '{trackName}' не найден в списке Tracks.", this);
             return;
         }
-        CrossfadeTo(track, fadeSeconds, requester);
+        CrossfadeTo(track, fadeSeconds, requester, restartIfSame);
     }
 
     /// <summary>Переключить трек по индексу в списке Tracks.</summary>
-    public void PlayTrack(int index, float fadeSeconds = -1f, Object requester = null)
+    public void PlayTrack(int index, float fadeSeconds = -1f, Object requester = null, bool restartIfSame = false)
     {
         if (index < 0 || index >= tracks.Count)
         {
             Debug.LogWarning($"[MusicManager] Индекс трека {index} вне списка Tracks.", this);
             return;
         }
-        CrossfadeTo(tracks[index], fadeSeconds, requester);
+        CrossfadeTo(tracks[index], fadeSeconds, requester, restartIfSame);
     }
 
     /// <summary>Вернуть основной (первый в списке) трек.</summary>
     /// <param name="requester">Если задан, сработает только если музыка сейчас "держится" этим же владельцем
     /// (или никем) — так выход из старой зоны не перебивает трек только что вошедшей.</param>
-    public void PlayDefault(float fadeSeconds = -1f, Object requester = null)
+    /// <param name="restartIfSame">Если true — перезапустить трек с начала, даже если он уже играет.</param>
+    public void PlayDefault(float fadeSeconds = -1f, Object requester = null, bool restartIfSame = false)
     {
         MusicTrack def = DefaultTrack;
         if (def == null) return;
@@ -193,7 +196,7 @@ public class MusicManager : MonoBehaviour
             return;
 
         if (requester != null) currentRequester = null;
-        CrossfadeTo(def, fadeSeconds, requester);
+        CrossfadeTo(def, fadeSeconds, requester, restartIfSame);
     }
 
     /// <summary>Остановить музыку (с фейдом в тишину).</summary>
@@ -224,9 +227,18 @@ public class MusicManager : MonoBehaviour
         return fadeSeconds;                        // своё значение
     }
 
-    private void CrossfadeTo(MusicTrack track, float fadeSeconds, Object requester)
+    private void CrossfadeTo(MusicTrack track, float fadeSeconds, Object requester, bool restartIfSame)
     {
-        if (track == CurrentTrack) return; // уже играет — не рестартуем и не фейдим в себя
+        // Тот же трек (по ссылке или по клипу — если в списке дубли с разными именами):
+        // не обрываем и не рестартуем — музыка просто продолжает играть.
+        bool sameTrack = track == CurrentTrack ||
+                         (CurrentTrack != null && CurrentTrack.clip != null && CurrentTrack.clip == track.clip);
+        if (sameTrack && !restartIfSame)
+        {
+            if (requester != null) currentRequester = requester;
+            if (debugLog) Debug.Log($"[MusicManager] '{track.name}' уже играет — продолжаем без изменений.", this);
+            return;
+        }
 
         if (requester != null) currentRequester = requester;
 
