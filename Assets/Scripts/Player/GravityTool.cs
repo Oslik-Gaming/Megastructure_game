@@ -46,13 +46,33 @@ public class GravityTool : MonoBehaviour
 
     private void OnPrimaryPerformed(InputAction.CallbackContext context)
     {
-        if (IsActiveAndReady())
+        if (!IsActiveAndReady() || !toolBase.TryStartUsing())
+            return;
+
+        try
+        {
+            // ЛКМ: захватить новый объект или установить удерживаемый.
             playerInteract.TryGrabOrPlace();
+        }
+        finally
+        {
+            toolBase.StopUsing();
+        }
     }
 
     private void OnSecondaryPerformed(InputAction.CallbackContext context)
     {
-        if (IsActiveAndReady())
+        if (!IsActiveAndReady() || !toolBase.TryStartUsing())
+            return;
+
+        try
+        {
+            // ПКМ: бросить удерживаемый объект.
             playerInteract.ThrowHeldObject();
+        }
+        finally
+        {
+            toolBase.StopUsing();
+        }
     }
 }
