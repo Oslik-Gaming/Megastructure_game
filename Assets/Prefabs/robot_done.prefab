@@ -298,6 +298,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 568ea5708c7859945b69eb42d66b73d3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3534237100634374178}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 568ea5708c7859945b69eb42d66b73d3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1796680524888526030}
   m_SourcePrefab: {fileID: 100100000, guid: 568ea5708c7859945b69eb42d66b73d3, type: 3}
 --- !u!4 &586176306483920184 stripped
 Transform:
@@ -453,6 +456,40 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1796680524888526030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8166813404425495217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85287a89ac770c040be8dcfa2bcebf0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FootstepSystem
+  footsteps:
+  - {fileID: 8300000, guid: 7eff795c700db9541a7ee29cdfe67afd, type: 3}
+  - {fileID: 8300000, guid: 6af85295aedff3c429e673e1c025c10d, type: 3}
+  - {fileID: 8300000, guid: 3eb12a724933316429325b811b9a2185, type: 3}
+  - {fileID: 8300000, guid: 7fb8d7e41efc56a4cb827efc6837bf37, type: 3}
+  - {fileID: 8300000, guid: 54342120e16ff1644bb09cb391c29b07, type: 3}
+  walkStepDistance: 1.4
+  sprintStepDistance: 1.9
+  walkVolume: 0.187
+  sprintVolume: 0.306
+  minPitch: 0.92
+  maxPitch: 1.08
+  sprintPitchBoost: 1.06
+  jumpSounds: []
+  landSounds:
+  - {fileID: 8300000, guid: 12fbe0be0eb883f4dabf398ed8e57338, type: 3}
+  jumpVolume: 0.7
+  landVolume: 0.6
+  hardLandVolumeBoost: 0.3
+  minLandSpeed: 1.5
+  hardLandSpeed: 12
+  resetInAir: 1
 --- !u!4 &8799340056526354443 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 568ea5708c7859945b69eb42d66b73d3, type: 3}
