@@ -1070,7 +1070,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5197860532492686111, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.39889115
       objectReference: {fileID: 0}
     - target: {fileID: 5197860532492686111, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1078,23 +1078,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5197860532492686111, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.59475636
       objectReference: {fileID: 0}
     - target: {fileID: 5197860532492686111, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.55700535
       objectReference: {fileID: 0}
     - target: {fileID: 5197860532492686111, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5197860532492686111, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.830509
       objectReference: {fileID: 0}
     - target: {fileID: 5197860532492686111, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5197860532492686111, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1102,7 +1102,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5197860532492686111, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -112.302
       objectReference: {fileID: 0}
     - target: {fileID: 5197860532492686111, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -1158,6 +1158,7 @@ MonoBehaviour:
   playerVelocityTransfer: 0.8
   placeVelocityTransfer: 0.2
   throwSpin: 2
+  animator: {fileID: 0}
 --- !u!114 &1773250850
 MonoBehaviour:
   m_ObjectHideFlags: 0
