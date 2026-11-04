@@ -178,8 +178,9 @@ public class MusicZoneTrigger : MonoBehaviour
 
         if (!string.IsNullOrEmpty(exitTrackName))
         {
-            // Свой трек на выход (тоже с "владельцем", чтобы не перебить соседнюю зону)
-            MusicManager.Instance.PlayTrack(exitTrackName, exitFade, this, restart);
+            // Свой трек на выход. takeOwnership = false: выход не "забирает" музыку —
+            // владение остаётся у зоны, в которую игрок вошёл (или освобождается)
+            MusicManager.Instance.PlayTrack(exitTrackName, exitFade, this, restart, takeOwnership: false);
             if (debugLog) Debug.Log($"[MusicZoneTrigger] '{name}' выход из зоны → трек '{exitTrackName}'.", this);
         }
         else if (restoreDefaultOnExit)

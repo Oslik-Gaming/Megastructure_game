@@ -160,7 +160,9 @@ public class MusicManager : MonoBehaviour
     /// <param name="fadeSeconds">0 = Default Fade Time из менеджера; меньше 0 = мгновенно; больше 0 = своя длительность (сек).</param>
     /// <param name="requester">Зона/компонент-владелец (для корректной работы пересекающихся зон).</param>
     /// <param name="restartIfSame">Если true — перезапустить трек с начала, даже если он уже играет.</param>
-    public void PlayTrack(string trackName, float fadeSeconds = -1f, Object requester = null, bool restartIfSame = false)
+    /// <param name="takeOwnership">true — requester становится владельцем музыки (вход в зону);
+    /// false — requester лишь просит смену, не забирая владение (выход из зоны).</param>
+    public void PlayTrack(string trackName, float fadeSeconds = -1f, Object requester = null, bool restartIfSame = false, bool takeOwnership = true)
     {
         MusicTrack track = FindTrack(trackName);
         if (track == null)
@@ -168,18 +170,18 @@ public class MusicManager : MonoBehaviour
             Debug.LogWarning($"[MusicManager] Трек '{trackName}' не найден в списке Tracks.", this);
             return;
         }
-        CrossfadeTo(track, fadeSeconds, requester, restartIfSame);
+        CrossfadeTo(track, fadeSeconds, requester, restartIfSame, takeOwnership);
     }
 
     /// <summary>Переключить трек по индексу в списке Tracks.</summary>
-    public void PlayTrack(int index, float fadeSeconds = -1f, Object requester = null, bool restartIfSame = false)
+    public void PlayTrack(int index, float fadeSeconds = -1f, Object requester = null, bool restartIfSame = false, bool takeOwnership = true)
     {
         if (index < 0 || index >= tracks.Count)
         {
             Debug.LogWarning($"[MusicManager] Индекс трека {index} вне списка Tracks.", this);
             return;
         }
-        CrossfadeTo(tracks[index], fadeSeconds, requester, restartIfSame);
+        CrossfadeTo(tracks[index], fadeSeconds, requester, restartIfSame, takeOwnership);
     }
 
     /// <summary>Вернуть основной (первый в списке) трек.</summary>
@@ -195,8 +197,9 @@ public class MusicManager : MonoBehaviour
         if (requester != null && currentRequester != null && currentRequester != requester)
             return;
 
+        // PlayDefault — это всегда "выходная" семантика: не забираем владение музыкой себе
         if (requester != null) currentRequester = null;
-        CrossfadeTo(def, fadeSeconds, requester, restartIfSame);
+        CrossfadeTo(def, fadeSeconds, requester, restartIfSame, false);
     }
 
     /// <summary>Остановить музыку (с фейдом в тишину).</summary>
@@ -227,20 +230,27 @@ public class MusicManager : MonoBehaviour
         return fadeSeconds;                        // своё значение
     }
 
-    private void CrossfadeTo(MusicTrack track, float fadeSeconds, Object requester, bool restartIfSame)
+    private void CrossfadeTo(MusicTrack track, float fadeSeconds, Object requester, bool restartIfSame, bool takeOwnership)
     {
+        // Владение музыкой:
+        //  - вход в зону (takeOwnership = true) — requester становится владельцем;
+        //  - выход из зоны (takeOwnership = false) — освобождает владение, только если оно
+        //    и было у этой зоны; чужое (уже вошедшую зону) не трогает.
+        if (requester != null)
+        {
+            if (takeOwnership) currentRequester = requester;
+            else if (currentRequester == requester) currentRequester = null;
+        }
+
         // Тот же трек (по ссылке или по клипу — если в списке дубли с разными именами):
         // не обрываем и не рестартуем — музыка просто продолжает играть.
         bool sameTrack = track == CurrentTrack ||
                          (CurrentTrack != null && CurrentTrack.clip != null && CurrentTrack.clip == track.clip);
         if (sameTrack && !restartIfSame)
         {
-            if (requester != null) currentRequester = requester;
             if (debugLog) Debug.Log($"[MusicManager] '{track.name}' уже играет — продолжаем без изменений.", this);
             return;
         }
-
-        if (requester != null) currentRequester = requester;
 
         float t = ResolveFade(fadeSeconds);
         string fadeInfo = t > 0.0001f ? $"фейд {t:0.##} сек" : "мгновенно";

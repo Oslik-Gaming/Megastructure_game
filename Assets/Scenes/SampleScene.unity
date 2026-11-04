@@ -1068,7 +1068,7 @@ GameObject:
   - component: {fileID: 287717362}
   - component: {fileID: 287717361}
   m_Layer: 0
-  m_Name: MusicZone-start
+  m_Name: MusicZone-start to second level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1131,8 +1131,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 15.761843, y: 4, z: 79.56061}
-  m_Center: {x: 1.7510483, y: 0, z: 3.894699}
+  m_Size: {x: 15.761843, y: 4, z: 34.64629}
+  m_Center: {x: 1.7510481, y: 0, z: 26.351858}
 --- !u!1 &289340235
 GameObject:
   m_ObjectHideFlags: 0
@@ -3363,7 +3363,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8799340056526354443, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.34
+      value: 0.173
       objectReference: {fileID: 0}
     - target: {fileID: 8799340056526354443, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3371,7 +3371,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8799340056526354443, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 85.32
+      value: -27
       objectReference: {fileID: 0}
     - target: {fileID: 8799340056526354443, guid: cf091fe574e99874f93793976a05e3f3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4273,6 +4273,8 @@ Transform:
   m_Children:
   - {fileID: 287717360}
   - {fileID: 785460258}
+  - {fileID: 2104232994}
+  - {fileID: 2065341254}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!64 &1507518349
@@ -4923,7 +4925,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1724994394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5192,6 +5194,9 @@ MonoBehaviour:
   - name: 2-level
     clip: {fileID: 8300000, guid: e08e7f8effaf83445946c88aa133094f, type: 3}
     volume: 0.833
+  - name: 3-level
+    clip: {fileID: 8300000, guid: d67675590626c4244942f6ea14f0b07a, type: 3}
+    volume: 1
   mainSource: {fileID: 678647095}
   defaultFadeTime: 5
   masterVolume: 1
@@ -6069,6 +6074,83 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -9222346444379729782, guid: a69889315c10f0c4e8ac8d455d566d4e, type: 3}
+--- !u!1 &2065341253
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2065341254}
+  - component: {fileID: 2065341256}
+  - component: {fileID: 2065341255}
+  m_Layer: 0
+  m_Name: MusicZone-start to third level
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2065341254
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065341253}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.05, y: 0, z: -6.03}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1501758398}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2065341255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065341253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea1d403da628b45ac53282d9272690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicZoneTrigger
+  trackName: Universal
+  enterFadeMode: 0
+  enterFadeTime: 2
+  restoreDefaultOnExit: 1
+  exitTrackName: Universal
+  exitFadeMode: 0
+  exitFadeTime: 2
+  ifAlreadyPlaying: 0
+  triggerOnce: 0
+  rearmOnRespawn: 1
+  debugLog: 0
+--- !u!65 &2065341256
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065341253}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 14.264053, y: 4, z: 71.28203}
+  m_Center: {x: 3.1320276, y: 0, z: -20.593956}
 --- !u!1 &2079000569
 GameObject:
   m_ObjectHideFlags: 0
@@ -6294,6 +6376,83 @@ Transform:
   - {fileID: 289340236}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2104232993
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2104232994}
+  - component: {fileID: 2104232996}
+  - component: {fileID: 2104232995}
+  m_Layer: 0
+  m_Name: MusicZone_3-level
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2104232994
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104232993}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.85, y: 0, z: -72.63}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1501758398}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2104232995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104232993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea1d403da628b45ac53282d9272690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicZoneTrigger
+  trackName: 3-level
+  enterFadeMode: 2
+  enterFadeTime: 1
+  restoreDefaultOnExit: 0
+  exitTrackName: 
+  exitFadeMode: 0
+  exitFadeTime: 2
+  ifAlreadyPlaying: 0
+  triggerOnce: 0
+  rearmOnRespawn: 1
+  debugLog: 0
+--- !u!65 &2104232996
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104232993}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 8, y: 4, z: 8}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!64 &2122046060
 MeshCollider:
   m_ObjectHideFlags: 0
