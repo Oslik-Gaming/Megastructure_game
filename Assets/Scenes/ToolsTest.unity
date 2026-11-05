@@ -2810,6 +2810,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4788684348795700268, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1628608667}
+    - targetCorrespondingSourceObject: {fileID: 4788684348795700268, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1440650164}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2414868060660101587, guid: 78d9fa674f53ed4479ba2a90f8000d9d, type: 3}
       insertIndex: -1
@@ -3039,19 +3042,19 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1628608667}
+    m_TransformParent: {fileID: 309147677}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 774e7f48bd3541216967ec36c20eff6d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.211
+      value: 0.28900003
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 774e7f48bd3541216967ec36c20eff6d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.06
+      value: -0.44
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 774e7f48bd3541216967ec36c20eff6d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 774e7f48bd3541216967ec36c20eff6d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3088,6 +3091,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 774e7f48bd3541216967ec36c20eff6d, type: 3}
       propertyPath: m_Name
       value: SprayerTool
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 774e7f48bd3541216967ec36c20eff6d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3907,7 +3914,6 @@ GameObject:
   - component: {fileID: 1583765707}
   - component: {fileID: 1583765710}
   - component: {fileID: 1583765709}
-  - component: {fileID: 1583765708}
   m_Layer: 0
   m_Name: HeaterZoneVisual
   m_TagString: Untagged
@@ -3930,27 +3936,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 962221932}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &1583765708
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1583765706}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1583765709
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4040,7 +4025,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 356281758}
-  - {fileID: 1440650164}
   - {fileID: 1079870906}
   - {fileID: 1705928475}
   m_Father: {fileID: 309147677}
@@ -4059,7 +4043,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToolController
   tools:
   - {fileID: 356281764}
-  - {fileID: 1440650165}
   - {fileID: 1079870908}
   - {fileID: 1705928477}
   startingToolIndex: 0

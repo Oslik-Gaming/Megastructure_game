@@ -151,12 +151,6 @@ public class ToolController : MonoBehaviour
 
     private bool HasValidToolSetup()
     {
-        if (tools == null || tools.Length != 4)
-        {
-            Debug.LogError("[ToolController] В списке Tools должно быть ровно 4 инструмента.", this);
-            return false;
-        }
-
         for (int i = 0; i < tools.Length; i++)
         {
             if (tools[i] != null)
