@@ -57,11 +57,18 @@ public static class GameProgress
         PlayerPrefs.Save();
     }
 
+    /// <summary>Сбросить состояние мусора (вызывается при "Новой игре").</summary>
+    public static void ResetTrash()
+    {
+        TrashPersistence.ResetAllTrash();
+    }
+
     /// <summary>Полный сброс прогресса (пригодится для отладки).</summary>
     public static void ResetProgress()
     {
         PlayerPrefs.DeleteKey(KeyIntroSeen);
         PlayerPrefs.DeleteKey(KeyCheckpoint);
+        TrashPersistence.ResetAllTrash();
         PlayerPrefs.Save();
     }
 }

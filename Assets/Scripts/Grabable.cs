@@ -3,7 +3,7 @@ using UnityEngine;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody))]
-public class Grabable : MonoBehaviour, IInteractable
+public class Grabable : MonoBehaviour
 {
     [Header("Weight")]
     [Min(0.01f)]
@@ -91,7 +91,4 @@ public class Grabable : MonoBehaviour, IInteractable
 
         placeBounceEnabled = false;
     }
-
-    // Заглушка для реализации интерфейса
-    public void Interact() {}
 }
