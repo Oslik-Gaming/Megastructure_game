@@ -172,6 +172,9 @@ public class MainMenuController : MonoBehaviour
         // Новая игра: сбрасываем сохранённый чекпоинт — игрок начнёт со старта
         GameProgress.ClearCheckpoint();
 
+        // Новая игра: сбрасываем состояние мусора
+        GameProgress.ResetTrash();
+
         // Новая игра: интро проигрывается всегда, даже если уже смотрели
         GameProgress.RequestNewGame();
         LoadGameScene();

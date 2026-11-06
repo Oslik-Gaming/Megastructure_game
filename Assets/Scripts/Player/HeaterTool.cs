@@ -7,9 +7,19 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class HeaterTool : MonoBehaviour
 {
-    [Header("Визуальная зона нагрева")]
-    [SerializeField] private GameObject heatZoneVisual;
-    [SerializeField, Min(0f)] private float heatRadius = 1.5f;
+    [Header("Конус нагрева")]
+    [SerializeField] private Transform heatZoneOrigin;
+    [SerializeField] private HeaterConeVisual coneVisual;
+    [SerializeField, Min(0.1f)] private float coneLength = 3f;
+    [SerializeField, Range(5f, 120f)] private float coneOpeningAngle = 45f;
+
+    [Header("Урон")]
+    [Tooltip("Урон в секунду, наносимый паразитам.")]
+    [SerializeField, Min(0f)] private float damagePerSecond = 20f;
+    [Tooltip("Множитель урона в зависимости от расстояния (0 = у вершины, 1 = у основания).")]
+    [SerializeField] private AnimationCurve distanceDamageMultiplier = AnimationCurve.Linear(0f, 1f, 1f, 0.5f);
+
+    private Collider[] overlapBuffer = new Collider[32];
 
     private ToolBase toolBase;
     private ToolController toolController;
@@ -27,11 +37,13 @@ public class HeaterTool : MonoBehaviour
             Debug.LogError("[HeaterTool] На объекте не найден ToolBase.", this);
         if (toolController == null)
             Debug.LogError("[HeaterTool] В родителях не найден ToolController.", this);
-        if (heatZoneVisual == null)
-            Debug.LogError("[HeaterTool] Не назначен Heat Zone Visual.", this);
+        if (heatZoneOrigin == null)
+            Debug.LogError("[HeaterTool] Не назначен Heat Zone Origin.", this);
+        if (coneVisual == null)
+            Debug.LogError("[HeaterTool] Не назначен Cone Visual.", this);
 
-        ApplyHeatZoneScale();
-        SetHeatZoneVisible(false);
+        ApplyConeParameters();
+        SetConeVisible(false);
     }
 
     private void OnEnable()
@@ -75,7 +87,10 @@ public class HeaterTool : MonoBehaviour
             toolBase.TryStartUsing();
 
         if (toolBase.State == ToolState.Using)
-            SetHeatZoneVisible(true);
+        {
+            SetConeVisible(true);
+            ApplyDamageToParasites();
+        }
     }
 
     private void OnPrimaryStarted(InputAction.CallbackContext context)
@@ -102,26 +117,82 @@ public class HeaterTool : MonoBehaviour
 
     private void StopHeating()
     {
-        SetHeatZoneVisible(false);
+        SetConeVisible(false);
 
         if (toolBase != null && toolBase.State == ToolState.Using)
             toolBase.StopUsing();
     }
 
-    private void ApplyHeatZoneScale()
+    private void ApplyConeParameters()
     {
-        if (heatZoneVisual != null)
-            heatZoneVisual.transform.localScale = Vector3.one * (heatRadius * 2f);
+        if (coneVisual != null)
+            coneVisual.SetConeParameters(coneLength, coneOpeningAngle);
     }
 
-    private void SetHeatZoneVisible(bool visible)
+    private void SetConeVisible(bool visible)
     {
-        if (heatZoneVisual != null && heatZoneVisual.activeSelf != visible)
-            heatZoneVisual.SetActive(visible);
+        if (coneVisual != null && coneVisual.gameObject.activeSelf != visible)
+            coneVisual.gameObject.SetActive(visible);
+    }
+
+    /// <summary>
+    /// Find all parasites in cone and apply damage.
+    /// Uses OverlapSphere for broad phase, then mathematical cone test.
+    /// </summary>
+    private void ApplyDamageToParasites()
+    {
+        if (heatZoneOrigin == null)
+            return;
+
+        Vector3 origin = heatZoneOrigin.position;
+        Vector3 forward = heatZoneOrigin.forward;
+        float baseRadius = coneLength * Mathf.Tan(coneOpeningAngle * 0.5f * Mathf.Deg2Rad);
+
+        // Broad phase: sphere overlap
+        int hitCount = Physics.OverlapSphereNonAlloc(origin, coneLength, overlapBuffer, -1, QueryTriggerInteraction.Ignore);
+
+        // Collect unique parasites (avoid duplicates from multiple colliders)
+        System.Collections.Generic.HashSet<Parasite> hitParasites = new System.Collections.Generic.HashSet<Parasite>();
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Parasite parasite = overlapBuffer[i].GetComponentInParent<Parasite>();
+            if (parasite != null && !parasite.IsRemoved)
+            {
+                hitParasites.Add(parasite);
+            }
+        }
+
+        // Narrow phase: cone test and damage application
+        foreach (Parasite parasite in hitParasites)
+        {
+            Vector3 targetPos = parasite.transform.position;
+            Vector3 toTarget = targetPos - origin;
+
+            // Check if target is in front of origin
+            float distanceAlongAxis = Vector3.Dot(toTarget, forward);
+            if (distanceAlongAxis < 0f || distanceAlongAxis > coneLength)
+                continue;
+
+            // Check if target is within cone radius at this distance
+            Vector3 pointOnAxis = origin + forward * distanceAlongAxis;
+            float distanceFromAxis = Vector3.Distance(targetPos, pointOnAxis);
+            float maxRadiusAtDistance = baseRadius * (distanceAlongAxis / coneLength);
+
+            if (distanceFromAxis <= maxRadiusAtDistance)
+            {
+                // Target is inside cone - apply damage
+                float normalizedDistance = distanceAlongAxis / coneLength;
+                float damageMultiplier = distanceDamageMultiplier.Evaluate(normalizedDistance);
+                float damage = damagePerSecond * damageMultiplier * Time.deltaTime;
+
+                parasite.ApplyDamage(damage);
+            }
+        }
     }
 
     private void OnValidate()
     {
-        ApplyHeatZoneScale();
+        ApplyConeParameters();
     }
 }

@@ -26,11 +26,19 @@ public class TrashItem : MonoBehaviour
 
         IsRemoved = true;
         Removed?.Invoke(this);
+        OnAfterRemoved();
     }
 
     // Use this only when returning an item to an object pool.
     public void ResetForReuse()
     {
         IsRemoved = false;
+        OnResetForReuse();
     }
+
+    /// <summary>Called after the item has been removed. Override to add cleanup logic.</summary>
+    protected virtual void OnAfterRemoved() { }
+
+    /// <summary>Called when the item is reset for reuse. Override to restore initial state.</summary>
+    protected virtual void OnResetForReuse() { }
 }

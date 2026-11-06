@@ -10,7 +10,13 @@ public class DestructorTool : MonoBehaviour
     [Header("Луч")]
     [SerializeField] private Transform beamOrigin;
     [SerializeField] private LineRenderer beamRenderer;
-    [SerializeField, Min(0f)] private float beamLength = 5f;
+    [SerializeField, Min(0f)] private float beamLength = 50f;
+
+    [Header("Урон")]
+    [Tooltip("Слои, которые блокируют луч (окружение + цели).")]
+    [SerializeField] private LayerMask beamBlockerMask = -1;
+    [Tooltip("Урон в секунду, наносимый камням (BigRock).")]
+    [SerializeField, Min(0f)] private float beamDamagePerSecond = 25f;
 
     private ToolBase toolBase;
     private ToolController toolController;
@@ -110,7 +116,33 @@ public class DestructorTool : MonoBehaviour
         beamRenderer.enabled = true;
         beamRenderer.positionCount = 2;
         beamRenderer.SetPosition(0, beamOrigin.position);
-        beamRenderer.SetPosition(1, beamOrigin.position + beamOrigin.forward * beamLength);
+
+        // Raycast to find the first obstacle
+        Vector3 endPoint;
+        BigRock hitRock = null;
+
+        if (Physics.Raycast(beamOrigin.position, beamOrigin.forward, out RaycastHit hit, beamLength, beamBlockerMask, QueryTriggerInteraction.Ignore))
+        {
+            // Hit something - end beam at hit point
+            endPoint = hit.point;
+
+            // Check if it's a BigRock
+            hitRock = hit.collider.GetComponentInParent<BigRock>();
+        }
+        else
+        {
+            // Nothing hit - beam extends to max length
+            endPoint = beamOrigin.position + beamOrigin.forward * beamLength;
+        }
+
+        beamRenderer.SetPosition(1, endPoint);
+
+        // Apply damage to BigRock if found
+        if (hitRock != null && !hitRock.IsRemoved)
+        {
+            float damage = beamDamagePerSecond * Time.deltaTime;
+            hitRock.ApplyDamage(damage);
+        }
     }
 
     private void StopBeam()

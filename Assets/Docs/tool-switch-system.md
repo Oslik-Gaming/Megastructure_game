@@ -117,7 +117,7 @@ Player
 На `DestructorTool` добавьте:
 
 - `DestructorTool`;
-- `LineRenderer`.
+- `LineRenderer` (можно несколько для многослойного эффекта).
 
 Создайте дочерний объект `BeamOrigin` на конце сопла и направьте его локальную ось `Z` вдоль луча.
 
@@ -125,15 +125,23 @@ Player
 
 - `Beam Origin` — `BeamOrigin`;
 - `Beam Renderer` — `LineRenderer` на корневом объекте, либо оставьте поле пустым для автоматического поиска;
-- `Beam Length` — длина визуального луча, обычно `5`.
+- `Beam Length` — максимальная длина луча, обычно `50`;
+- `Beam Blocker Mask` — слои, блокирующие луч (должны включать окружение и `ToolTarget`);
+- `Beam Damage Per Second` — урон BigRock в секунду (по умолчанию `25`).
 
 В `LineRenderer` настройте:
 
 - `Position Count` — `2`;
 - `Use World Space` — включено;
-- ширину, цвет, градиент и материал.
+- ширину, цвет, градиент и материал (для улучшенного визуала используйте `DestructorBeamBody.mat` или аналогичные).
 
-ЛКМ показывает луч, пока удерживается. Raycast и игровое разрушение на этом этапе не выполняются.
+**Функциональность:**
+- ЛКМ показывает луч, пока удерживается
+- Луч обрывается на первом препятствии из Beam Blocker Mask
+- Наносит урон только BigRock объектам
+- Камни разрушаются через стадии повреждения
+
+Подробнее см. `special-trash-and-tools-setup.md`.
 
 ### HeaterTool
 
@@ -144,14 +152,32 @@ Player
 ```text
 HeaterTool
 └── HeatZoneOrigin
-    └── HeatZoneVisual
+    └── ConeVisual (HeaterConeVisual + MeshRenderer)
 ```
 
-`HeatZoneOrigin` разместите у сопла. `HeatZoneVisual` должен быть сферой с полупрозрачным материалом и находиться в локальной позиции `(0, 0, 0)` относительно `HeatZoneOrigin`.
+`HeatZoneOrigin` разместите у сопла и направьте локальную ось `Z` вперёд.
 
-В `HeaterTool` назначьте `HeatZoneVisual` в поле `Heat Zone Visual`. Параметр `Heat Radius` задаёт радиус сферы; скрипт устанавливает диаметр равным `Heat Radius × 2`.
+На `ConeVisual` добавьте:
+- `HeaterConeVisual` — генерирует процедурный конус
+- `MeshFilter` и `MeshRenderer` (добавляются автоматически)
+- Материал `HeaterCone.mat` или аналогичный прозрачный
 
-ЛКМ включает сферу на время удержания. Игрового нагрева, поиска объектов, урона и разрушения нет.
+В `HeaterTool` назначьте:
+
+- `Heat Zone Origin` — `HeatZoneOrigin`;
+- `Cone Visual` — компонент `HeaterConeVisual`;
+- `Cone Length` — длина конуса (по умолчанию `3`);
+- `Cone Opening Angle` — угол раскрытия в градусах (по умолчанию `45°`);
+- `Damage Per Second` — урон паразитам в секунду (по умолчанию `20`);
+- `Distance Damage Multiplier` — кривая урона по расстоянию.
+
+**Функциональность:**
+- ЛКМ включает конус на время удержания
+- Все Parasite внутри конуса получают урон одновременно
+- Урон проходит сквозь стены (нет проверки line of sight)
+- Паразиты уменьшаются и исчезают при нуле здоровья
+
+Подробнее см. `special-trash-and-tools-setup.md`.
 
 ## Ввод
 
@@ -170,9 +196,15 @@ HeaterTool
 - `ToolBobbing` — общее покачивание активного инструмента при ходьбе и беге;
 - `GravityTool` — ввод гравизахвата;
 - `PaintSprayerTool` — запас краски, втягивание, распыление и вибрация при пустом запасе;
-- `DestructorTool` — визуальный луч `LineRenderer`;
-- `HeaterTool` — визуальная сферическая зона;
+- `DestructorTool` — луч с raycast, обрыв на препятствиях, урон BigRock;
+- `HeaterTool` — процедурный конус, поиск Parasite внутри конуса, массовый урон;
+- `HeaterConeVisual` — генерация mesh конуса для Heater;
 - `PlayerRaycastInteract` — рейкаст, захват, установка и бросок объектов;
 - `PlayerMovements` — состояния земли и бега, используемые bobbing-системой;
 - `GameHud` — отображение запаса краски через `SetPaint`;
-- `PlayerInputActions` — сгенерированный класс новой Input System.
+- `PlayerInputActions` — сгенерированный класс новой Input System;
+- `TrashItem` — базовый класс для всех видов мусора;
+- `DamageableTrashItem` — базовый класс для повреждаемого мусора с HP;
+- `BigRock` — большой камень, разрушаемый через стадии;
+- `Parasite` — паразит, уменьшающийся при уроне;
+- `TrashPersistence` — сохранение состояния удаления мусора между сессиями.

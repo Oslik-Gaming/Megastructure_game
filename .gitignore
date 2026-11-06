@@ -8,6 +8,10 @@
 
 .vscode/
 .idea/
+ProjectSettings/
+plans/
+opencode.json
+summaryes/
 
 # TextMeshPro
 /[Aa]ssets/TextMesh Pro
