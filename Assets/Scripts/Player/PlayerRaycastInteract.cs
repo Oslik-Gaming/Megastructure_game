@@ -35,6 +35,9 @@ public class PlayerRaycastInteract : MonoBehaviour
     [Tooltip("Аниматор робота (триггеры Grab/Release). Если пуст — найдётся в детях.")]
     [SerializeField] private Animator animator;
 
+    [Tooltip("Анимация поднятия предмета (Grab/Release) robot_done. Сейчас отключена — включите галочкой, если понадобится снова.")]
+    [SerializeField] private bool grabAnimationEnabled = false;
+
     private static readonly int GrabTrigger = Animator.StringToHash("Grab");
     private static readonly int ReleaseTrigger = Animator.StringToHash("Release");
 
@@ -189,7 +192,7 @@ public class PlayerRaycastInteract : MonoBehaviour
         item.IgnoreCollisionsWith(playerColliders, true);
 
         // Вытягиваем руку (телекинез)
-        if (animator != null) animator.SetTrigger(GrabTrigger);
+        if (animator != null && grabAnimationEnabled) animator.SetTrigger(GrabTrigger);
     }
 
     private void ThrowCurrent()
@@ -230,7 +233,7 @@ public class PlayerRaycastInteract : MonoBehaviour
         grabState = GrabState.None;
 
         // Убираем руку (телекинез завершается)
-        if (animator != null) animator.SetTrigger(ReleaseTrigger);
+        if (animator != null && grabAnimationEnabled) animator.SetTrigger(ReleaseTrigger);
     }
 
     private Vector3 GetHoldTargetPosition()
