@@ -36,6 +36,20 @@ public class GravityTool : MonoBehaviour
 
     private void OnDestroy() => input.Dispose();
 
+    private void Update()
+    {
+        if (toolBase == null || toolController == null || playerInteract == null)
+            return;
+
+        // Если гравизахват больше не активный инструмент (переключились на другой) —
+        // удерживаемый предмет просто падает, а не остаётся висеть в воздухе.
+        if (playerInteract.HasCarriedItem &&
+            (toolController.ActiveTool != toolBase || toolController.IsSwitching))
+        {
+            playerInteract.DropHeldObject();
+        }
+    }
+
     private bool IsActiveAndReady()
     {
         return toolBase != null && toolController != null && playerInteract != null &&

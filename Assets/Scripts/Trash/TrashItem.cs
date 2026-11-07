@@ -4,11 +4,13 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class TrashItem : MonoBehaviour
 {
-    [Tooltip("Вес мусора. Если весь мусор одинаковый, оставьте 1.")]
-    [Min(0.0001f)]
-    [SerializeField] private float weight = 1f;
+    private Rigidbody body;
 
-    public float Weight => weight;
+    /// <summary>Вес предмета = масса Rigidbody (задаётся в одном месте — в инспекторе Rigidbody). Без Rigidbody — 1.</summary>
+    public float Weight => body != null ? body.mass : 1f;
+
+    protected virtual void Awake() => body = GetComponent<Rigidbody>();
+
     public TrashLocation HomeLocation { get; private set; }
     public bool IsRemoved { get; private set; }
 

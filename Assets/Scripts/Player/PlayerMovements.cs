@@ -22,6 +22,12 @@ public class PlayerMovements : MonoBehaviour
     [Tooltip("Слои, которые считаются землёй. ~0 = все слои")]
     public LayerMask groundLayers = ~0;
 
+    [Header("Толкание предметов")]
+    [Tooltip("Сила толкания тела (Н). Предмет массой M можно толкать не быстрее pushForce / M м/с,\nпоэтому тяжёлые предметы почти не двигаются, лёгкие — как обычно.")]
+    public float pushForce = 100f;
+    [Tooltip("Слои предметов, которые игрок может толкать телом. ~0 = все слои")]
+    public LayerMask pushLayers = ~0;
+
     [Header("Анимация")]
     [Tooltip("Аниматор робота. Если пуст — найдётся в детях.")]
     public Animator animator;
@@ -112,6 +118,10 @@ public class PlayerMovements : MonoBehaviour
         // Проверка moveDirection.magnitude > 0 нужна, чтобы анимации/звуки бега (если добавите) 
         // не срабатывали, когда игрок просто стоит и зажимает Shift.
         float currentSpeed = (isSprinting && moveDirection.magnitude > 0f) ? sprintSpeed : moveSpeed;
+
+        // Ограничиваем скорость толкания массой предмета перед нами:
+        // тяжёлый предмет нельзя разогнать до скорости ходьбы.
+        currentSpeed = GetPushLimitedSpeed(moveVector, currentSpeed);
 
         // 3. Проверяем, стоим ли мы на земле.
         //    Луч от точки чуть выше низа капсулы строго вниз.
@@ -218,6 +228,33 @@ public class PlayerMovements : MonoBehaviour
             float horizontalSpeed = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z).magnitude;
             animator.SetFloat(SpeedParam, horizontalSpeed);
         }
+    }
+
+    /// <summary>
+    /// Если прямо по ходу движения стоит динамический Rigidbody, ограничивает скорость игрока
+    /// величиной pushForce / масса предмета. Чем тяжелее предмет — тем медленнее его можно толкать.
+    /// Стены (статичные коллайдеры) не ограничивают — их обрабатывает физика как раньше.
+    /// </summary>
+    private float GetPushLimitedSpeed(Vector3 moveDirection, float speed)
+    {
+        if (rb == null || moveDirection.sqrMagnitude < 0.0001f || speed <= 0f)
+            return speed;
+
+        // SweepTest — заметающий луч по всем коллайдерам игрока вперёд по движению.
+        // Свои коллайдеры игнорируются автоматически.
+        float probeDistance = speed * Time.fixedDeltaTime + 0.05f;
+        if (rb.SweepTest(moveDirection, out RaycastHit hit, probeDistance, QueryTriggerInteraction.Ignore))
+        {
+            Rigidbody other = hit.rigidbody;
+            if (other != null && !other.isKinematic &&
+                ((1 << other.gameObject.layer) & pushLayers.value) != 0)
+            {
+                float maxPushSpeed = pushForce / Mathf.Max(0.01f, other.mass);
+                return Mathf.Min(speed, maxPushSpeed);
+            }
+        }
+
+        return speed;
     }
 
     /// <summary>

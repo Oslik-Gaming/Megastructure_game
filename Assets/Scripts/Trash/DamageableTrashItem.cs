@@ -21,6 +21,8 @@ public abstract class DamageableTrashItem : TrashItem
 
     protected virtual void Awake()
     {
+        base.Awake(); // TrashItem: кэшируем Rigidbody для Weight
+
         currentHealth = maxHealth;
 
         // Check if this item was already removed in a previous session
