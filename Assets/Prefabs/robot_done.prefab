@@ -1405,6 +1405,7 @@ MonoBehaviour:
   placeVelocityTransfer: 0.2
   throwSpin: 2
   animator: {fileID: 0}
+  grabAnimationEnabled: 0
 --- !u!136 &6760240368096067439
 CapsuleCollider:
   m_ObjectHideFlags: 0

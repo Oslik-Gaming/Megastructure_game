@@ -81,10 +81,16 @@ Parasite is a smaller trash item that shrinks as it takes damage from the Heater
 - **Visual Root**: Transform to scale (default: self)
   - Assign a child object if you want the root to stay fixed while the visual shrinks
   - Leave empty to scale the entire GameObject
+- **Shrink Axes**: which axes shrink as health decreases (all enabled by default)
+  - `Shrink X` / `Shrink Y` / `Shrink Z` — enable/disable shrinking per axis
+  - Disabled axes keep their initial scale
+  - Examples: disable `Shrink Y` — the parasite shrinks width-wise only and never flattens in height; leave only `Shrink Y` enabled — it flattens like a pancake; disable two axes — it shrinks into a thin stripe
 
 ### Visual Behavior
 
-The Parasite smoothly scales from its initial size to zero as health decreases. At 0% health, it's removed and destroyed.
+The Parasite smoothly scales from its initial size to zero **along the enabled axes only** as health decreases. At 0% health, it's removed and destroyed.
+
+The axis selection only affects the health-based shrink. The periodic pulsing (`ParasitePulse`, see `parasite-pulse-setup.md`) always pulses all axes proportionally to the current scale, so it works correctly with any axis combination.
 
 ### Example Hierarchy
 
