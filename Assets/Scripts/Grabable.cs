@@ -13,6 +13,16 @@ public class Grabable : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float bounceFactor = 0.25f;
 
+    [Header("Impact Sound")]
+    [Tooltip("Список звуков удара о поверхность. Играет случайный клип при столкновении со скоростью выше Impact Min Speed.")]
+    [SerializeField] private AudioClip[] impactSounds;
+
+    [Tooltip("Минимальная скорость столкновения (м/с), при которой играет звук удара.")]
+    [SerializeField, Min(0f)] private float impactMinSpeed = 1f;
+
+    [Tooltip("AudioSource для звука удара. Пусто — берётся AudioSource с этого же объекта, если он есть.")]
+    [SerializeField] private AudioSource impactAudioSource;
+
     /// <summary>Вес предмета = масса Rigidbody (задаётся в одном месте — в инспекторе Rigidbody).</summary>
     public float Weight => Body != null ? Body.mass : 1f;
     public Transform[] GrabSides => grabSides;
@@ -29,6 +39,9 @@ public class Grabable : MonoBehaviour
     {
         Body = GetComponent<Rigidbody>();
         ownColliders = GetComponentsInChildren<Collider>();
+
+        if (impactAudioSource == null)
+            impactAudioSource = GetComponent<AudioSource>();
     }
 
     public void BeginCarry()
@@ -71,6 +84,9 @@ public class Grabable : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        // Звук удара о поверхность — работает при любом столкновении, включая удары при переносе и сбросе предмета.
+        PlayImpactSound(collision);
+
         if (!placeBounceEnabled || Body.isKinematic || collision.contactCount == 0)
             return;
 
@@ -87,5 +103,18 @@ public class Grabable : MonoBehaviour
         }
 
         placeBounceEnabled = false;
+    }
+
+    private void PlayImpactSound(Collision collision)
+    {
+        if (impactAudioSource == null || impactSounds == null || impactSounds.Length == 0)
+            return;
+
+        if (collision.relativeVelocity.magnitude < impactMinSpeed)
+            return;
+
+        AudioClip clip = impactSounds[UnityEngine.Random.Range(0, impactSounds.Length)];
+        if (clip != null)
+            impactAudioSource.PlayOneShot(clip);
     }
 }

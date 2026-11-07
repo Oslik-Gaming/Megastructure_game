@@ -8,21 +8,35 @@ using UnityEngine;
 public class BigRock : DamageableTrashItem
 {
     [Header("BigRock Visual Stages")]
-    [Tooltip("Visual mesh for 100% health (pristine). Active at start.")]
-    [SerializeField] private GameObject visualFull;
+    [Tooltip("Объекты стадий разрушения, от целого (100% здоровья) к полностью разрушенному. " +
+             "Каждый элемент — либо дочерний объект сцены, либо ПРЕФАБ: префабы автоматически инстанцируются " +
+             "при старте, поэтому на сцене ничего создавать не нужно. " +
+             "Пороги стадий делят диапазон здоровья равномерно и автоматически.")]
+    [SerializeField] private GameObject[] destructionStages = new GameObject[0];
 
-    [Tooltip("Visual mesh for 75% health or less.")]
-    [SerializeField] private GameObject visual75;
+    [Header("Stage Transition Sound")]
+    [Tooltip("Звуки перехода между стадиями разрушения. При каждой смене стадии играет случайный клип из списка.")]
+    [SerializeField] private AudioClip[] stageTransitionSounds;
 
-    [Tooltip("Visual mesh for 50% health or less.")]
-    [SerializeField] private GameObject visual50;
+    [Tooltip("Громкость звука перехода между стадиями.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float stageTransitionVolume = 1f;
 
-    [Tooltip("Visual mesh for 25% health or less.")]
-    [SerializeField] private GameObject visual25;
+    [Tooltip("AudioSource для звука перехода. Пусто — берётся AudioSource с этого же объекта, если он есть; " +
+             "если его нет — временный 3D-источник в точке камня.")]
+    [SerializeField] private AudioSource stageTransitionAudioSource;
+
+    private GameObject[] stageInstances;
+    private int currentStageIndex = -1;
 
     protected override void Awake()
     {
         base.Awake();
+        CreateStageInstances();
+
+        if (stageTransitionAudioSource == null)
+            stageTransitionAudioSource = GetComponent<AudioSource>();
+
         UpdateVisual();
     }
 
@@ -39,35 +53,96 @@ public class BigRock : DamageableTrashItem
     }
 
     /// <summary>
-    /// Update which visual stage is active based on current health percentage.
+    /// Порядок стадии: 0 = исходный (100% здоровья), последняя = полностью разрушенный.
+    /// Пороги делят диапазон здоровья равномерно: 4 стадии → >75%, >50%, >25%, иначе.
+    /// </summary>
+    private int GetCurrentStageIndex()
+    {
+        int stageCount = destructionStages.Length;
+        if (stageCount == 0)
+            return -1;
+
+        float healthPercent = Mathf.Clamp01(CurrentHealth / MaxHealth);
+        for (int i = 0; i < stageCount - 1; i++)
+        {
+            if (healthPercent > (stageCount - 1 - i) / (float)stageCount)
+                return i;
+        }
+        return stageCount - 1;
+    }
+
+    /// <summary>
+    /// Активирует только стадию, соответствующую текущему здоровью.
+    /// При смене стадии проигрывает случайный звук перехода.
     /// </summary>
     private void UpdateVisual()
     {
-        float healthPercent = CurrentHealth / MaxHealth;
+        int stageIndex = GetCurrentStageIndex();
+        if (stageIndex == currentStageIndex)
+            return;
 
-        // Deactivate all visuals first
-        if (visualFull != null) visualFull.SetActive(false);
-        if (visual75 != null) visual75.SetActive(false);
-        if (visual50 != null) visual50.SetActive(false);
-        if (visual25 != null) visual25.SetActive(false);
+        bool hadStage = currentStageIndex >= 0;
+        currentStageIndex = stageIndex;
 
-        // Activate the appropriate stage
-        if (healthPercent > 0.75f)
+        if (stageInstances != null)
         {
-            if (visualFull != null) visualFull.SetActive(true);
+            for (int i = 0; i < stageInstances.Length; i++)
+            {
+                GameObject stage = stageInstances[i];
+                if (stage != null)
+                    stage.SetActive(i == stageIndex);
+            }
         }
-        else if (healthPercent > 0.5f)
+
+        if (hadStage)
+            PlayStageTransitionSound();
+    }
+
+    /// <summary>
+    /// Подготовка стадий: дочерние объекты сцены используются напрямую,
+    /// префабы инстанцируются под камень (сцена не засоряется ручными объектами).
+    /// </summary>
+    private void CreateStageInstances()
+    {
+        if (destructionStages.Length == 0)
+            return;
+
+        stageInstances = new GameObject[destructionStages.Length];
+        for (int i = 0; i < destructionStages.Length; i++)
         {
-            if (visual75 != null) visual75.SetActive(true);
+            GameObject stage = destructionStages[i];
+            if (stage == null)
+                continue;
+
+            if (stage.gameObject.scene.IsValid())
+            {
+                // Дочерний объект сцены — используем напрямую.
+                stageInstances[i] = stage;
+                stage.SetActive(false);
+            }
+            else
+            {
+                // Префаб — инстанцируем под камень.
+                GameObject instance = Instantiate(stage, transform);
+                instance.name = stage.name;
+                stageInstances[i] = instance;
+            }
         }
-        else if (healthPercent > 0.25f)
-        {
-            if (visual50 != null) visual50.SetActive(true);
-        }
+    }
+
+    private void PlayStageTransitionSound()
+    {
+        if (stageTransitionSounds == null || stageTransitionSounds.Length == 0)
+            return;
+
+        AudioClip clip = stageTransitionSounds[UnityEngine.Random.Range(0, stageTransitionSounds.Length)];
+        if (clip == null)
+            return;
+
+        if (stageTransitionAudioSource != null)
+            stageTransitionAudioSource.PlayOneShot(clip, stageTransitionVolume);
         else
-        {
-            if (visual25 != null) visual25.SetActive(true);
-        }
+            AudioSource.PlayClipAtPoint(clip, transform.position, stageTransitionVolume);
     }
 
 #if UNITY_EDITOR
@@ -76,7 +151,7 @@ public class BigRock : DamageableTrashItem
         base.OnValidate();
 
         // Ensure at least one visual is assigned
-        if (visualFull == null && visual75 == null && visual50 == null && visual25 == null)
+        if (destructionStages == null || destructionStages.Length == 0)
         {
             Debug.LogWarning($"[{gameObject.name}] BigRock has no visual stages assigned.", this);
         }

@@ -1656,13 +1656,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a2c3d4e5f6a7b8c9d0e1f2a3b4c5d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BigRock
-  weight: 1
+  destructionStages:
+  - {fileID: 363122304}
+  - {fileID: 1368189874}
+  - {fileID: 402878113}
+  - {fileID: 1606078966}
+  stageTransitionSounds: []
+  stageTransitionVolume: 1
+  stageTransitionAudioSource: {fileID: 0}
   maxHealth: 100
   persistentId: 
-  visualFull: {fileID: 363122304}
-  visual75: {fileID: 1368189874}
-  visual50: {fileID: 402878113}
-  visual25: {fileID: 1606078966}
 --- !u!54 &471369894
 Rigidbody:
   m_ObjectHideFlags: 0
