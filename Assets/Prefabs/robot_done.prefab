@@ -160,7 +160,7 @@ MonoBehaviour:
   - {fileID: 1707175695997256410}
   - {fileID: 2187277472412050637}
   - {fileID: 6132457118412448608}
-  startingToolIndex: 0
+  toolTypes: 00000000010000000200000003000000
 --- !u!114 &8566950297642706289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1315,6 +1315,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 568ea5708c7859945b69eb42d66b73d3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1796680524888526030}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 568ea5708c7859945b69eb42d66b73d3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4481062126139285897}
   m_SourcePrefab: {fileID: 100100000, guid: 568ea5708c7859945b69eb42d66b73d3, type: 3}
 --- !u!4 &586176306483920184 stripped
 Transform:
@@ -1509,6 +1512,18 @@ MonoBehaviour:
   minLandSpeed: 1.5
   hardLandSpeed: 12
   resetInAir: 1
+--- !u!114 &4481062126139285897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8166813404425495217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ed9b41da523f9239886572fecf995ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Progression.ToolInventory
 --- !u!4 &8799340056526354443 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 568ea5708c7859945b69eb42d66b73d3, type: 3}

@@ -11,6 +11,8 @@ public class TrashItem : MonoBehaviour
     [Tooltip("AudioSource для звука разрушения. Пусто — звук сыграет в точке объекта как временный 3D-источник (громкость 1).")]
     [SerializeField] private AudioSource removalAudioSource;
 
+    [SerializeField, HideInInspector] private string persistentId;
+
     private Rigidbody body;
 
     /// <summary>Вес предмета = масса Rigidbody (задаётся в одном месте — в инспекторе Rigidbody). Без Rigidbody — 1.</summary>
@@ -22,17 +24,6 @@ public class TrashItem : MonoBehaviour
 
         if (removalAudioSource == null)
             removalAudioSource = GetComponent<AudioSource>();
-    }
-
-    public string PersistentId => persistentId;
-    public TrashLocation HomeLocation { get; private set; }
-    public bool IsRemoved { get; private set; }
-
-    public event Action<TrashItem> Removed;
-
-    protected virtual void Awake()
-    {
-        body = GetComponent<Rigidbody>();
 
         if (!string.IsNullOrEmpty(persistentId) && TrashPersistence.IsRemoved(persistentId))
         {
@@ -43,6 +34,12 @@ public class TrashItem : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+
+    public string PersistentId => persistentId;
+    public TrashLocation HomeLocation { get; private set; }
+    public bool IsRemoved { get; private set; }
+
+    public event Action<TrashItem> Removed;
 
     public void SetLocation(TrashLocation location)
     {
@@ -112,6 +109,11 @@ public class TrashItem : MonoBehaviour
         {
             persistentId = Guid.NewGuid().ToString("N");
             UnityEditor.EditorUtility.SetDirty(this);
+
+            // Для префаб-инстансов сгенерированный ID нужно записать как
+            // override инстанса, иначе он не сохранится в файл сцены и
+            // состояние удаления такого объекта не будет восстанавливаться.
+            UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(this);
         }
     }
 #endif

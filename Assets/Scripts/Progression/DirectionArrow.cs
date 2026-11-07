@@ -10,7 +10,8 @@ namespace Progression
     public class DirectionArrow : MonoBehaviour
     {
         [SerializeField] private UIDocument hudDocument;
-        [SerializeField] private Camera playerCamera;
+        [SerializeField, Tooltip("Точка отсчёта для расчёта направления стрелки. Пусто — используется Camera.main.")]
+        private Transform referenceTransform;
 
         private VisualElement arrowElement;
         private Transform target;
@@ -18,11 +19,13 @@ namespace Progression
         private Transform overrideTarget;
         private bool isVisible = false;
 
+        private Transform Reference => referenceTransform != null ? referenceTransform : Camera.main != null ? Camera.main.transform : null;
+
         private void Start()
         {
-            if (playerCamera == null)
+            if (Reference == null)
             {
-                playerCamera = Camera.main;
+                Debug.LogWarning($"{name}: не задана точка отсчёта (Reference Transform) и не найдена Camera.main. Стрелка направления работать не будет.");
             }
 
             if (hudDocument != null)
@@ -65,7 +68,7 @@ namespace Progression
 
         private void Update()
         {
-            if (isVisible && target != null && playerCamera != null && arrowElement != null)
+            if (isVisible && target != null && Reference != null && arrowElement != null)
             {
                 UpdateArrowDirection();
             }
@@ -109,14 +112,14 @@ namespace Progression
 
         private void UpdateArrowDirection()
         {
-            if (target == null || playerCamera == null) return;
+            if (target == null || Reference == null) return;
 
             // Вычислить направление к цели
-            Vector3 directionToTarget = (target.position - playerCamera.transform.position).normalized;
+            Vector3 directionToTarget = (target.position - Reference.position).normalized;
             
-            // Проецировать на плоскость камеры
-            Vector3 forward = playerCamera.transform.forward;
-            Vector3 right = playerCamera.transform.right;
+            // Проецировать на плоскость отсчёта
+            Vector3 forward = Reference.forward;
+            Vector3 right = Reference.right;
             
             float x = Vector3.Dot(directionToTarget, right);
             float y = Vector3.Dot(directionToTarget, forward);
