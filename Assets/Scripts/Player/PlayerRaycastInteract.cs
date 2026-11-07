@@ -50,6 +50,12 @@ public class PlayerRaycastInteract : MonoBehaviour
     private Rigidbody playerBody;
     private Collider[] playerColliders;
 
+    // Данные удерживаемого предмета для проверки стен (чтобы предмет не проходил сквозь геометрию)
+    private Collider[] heldColliders;
+    private float heldRadius;
+    private readonly RaycastHit[] holdHitBuffer = new RaycastHit[16];
+    private const float HoldObstacleSkin = 0.05f;
+
     private void Awake()
     {
         // Создаем экземпляр сгенерированного класса
@@ -96,7 +102,7 @@ public class PlayerRaycastInteract : MonoBehaviour
         float weightFactor = 1f + carriedItem.Weight * weightSlowdown;
         float positionSpeed = (grabState == GrabState.Docking ? dockPositionSpeed : holdPositionSpeed) / weightFactor;
         float turnSpeed = rotationSpeed / weightFactor;
-        Vector3 targetPosition = GetHoldTargetPosition();
+        Vector3 targetPosition = ClampHoldTarget(body.position, GetHoldTargetPosition());
         Quaternion targetRotation = GetHoldTargetRotation();
 
         body.MovePosition(Vector3.Lerp(body.position, targetPosition, positionSpeed * Time.fixedDeltaTime));
@@ -184,6 +190,10 @@ public class PlayerRaycastInteract : MonoBehaviour
         grabState = GrabState.Docking;
         smoothedMovementOffset = Vector3.zero;
 
+        // Запоминаем коллайдеры и радиус предмета для проверки стен при переносе
+        heldColliders = item.GetComponentsInChildren<Collider>();
+        heldRadius = ComputeBoundingRadius(heldColliders);
+
         Rigidbody body = item.Body;
         body.isKinematic = true;
         body.linearVelocity = Vector3.zero;
@@ -231,9 +241,105 @@ public class PlayerRaycastInteract : MonoBehaviour
         carriedItem = null;
         grabSide = null;
         grabState = GrabState.None;
+        heldColliders = null;
+        heldRadius = 0f;
 
         // Убираем руку (телекинез завершается)
         if (animator != null && grabAnimationEnabled) animator.SetTrigger(ReleaseTrigger);
+    }
+
+    /// <summary>
+    /// Отпускает удерживаемый объект без броска — он просто падает.
+    /// Вызывается при переключении инструмента с гравизахвата.
+    /// </summary>
+    public void DropHeldObject()
+    {
+        if (carriedItem != null)
+            PlaceCurrent();
+    }
+
+    /// <summary>
+    /// Ограничивает целевую точку удержания, чтобы предмет не проходил сквозь стены/пол:
+    /// пускаем луч от текущей позиции предмета к цели и останавливаем предмет перед препятствием.
+    /// </summary>
+    private Vector3 ClampHoldTarget(Vector3 from, Vector3 target)
+    {
+        if (heldColliders == null || heldColliders.Length == 0)
+            return target;
+
+        Vector3 delta = target - from;
+        float distance = delta.magnitude;
+        if (distance < 0.01f)
+            return target;
+
+        Vector3 direction = delta / distance;
+        float clearance = heldRadius + HoldObstacleSkin;
+
+        int hitCount = Physics.RaycastNonAlloc(from, direction, holdHitBuffer, distance + clearance,
+            ~0, QueryTriggerInteraction.Ignore);
+
+        float nearestBlocking = float.PositiveInfinity;
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider hitCollider = holdHitBuffer[i].collider;
+
+            // Свои коллайдеры и коллайдеры игрока препятствиями не считаем
+            if (IsOwnOrPlayerCollider(hitCollider))
+                continue;
+
+            if (holdHitBuffer[i].distance < nearestBlocking)
+                nearestBlocking = holdHitBuffer[i].distance;
+        }
+
+        // Препятствие дальше, чем точка удержания с запасом — ничего не режем
+        if (nearestBlocking >= distance + clearance)
+            return target;
+
+        float allowedDistance = Mathf.Clamp(nearestBlocking - clearance, 0f, distance);
+        return from + direction * allowedDistance;
+    }
+
+    private bool IsOwnOrPlayerCollider(Collider collider)
+    {
+        if (collider == null)
+            return true;
+
+        foreach (Collider held in heldColliders)
+            if (held == collider)
+                return true;
+
+        if (playerColliders != null)
+        {
+            foreach (Collider playerCollider in playerColliders)
+                if (playerCollider == collider)
+                    return true;
+        }
+
+        return false;
+    }
+
+    private float ComputeBoundingRadius(Collider[] colliders)
+    {
+        Bounds bounds = default;
+        bool hasBounds = false;
+
+        foreach (Collider collider in colliders)
+        {
+            if (collider == null)
+                continue;
+
+            if (!hasBounds)
+            {
+                bounds = collider.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(collider.bounds);
+            }
+        }
+
+        return hasBounds ? bounds.extents.magnitude : 0.5f;
     }
 
     private Vector3 GetHoldTargetPosition()
