@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 4655213415384754120}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -218,7 +218,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
+  sprintSpeed: 8
   jumpForce: 5
+  airControl: 8
+  capsuleBottomOffset: 0
+  groundSkin: 0.15
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  animator: {fileID: 0}
 --- !u!54 &4655213415384754120
 Rigidbody:
   m_ObjectHideFlags: 0

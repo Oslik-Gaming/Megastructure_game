@@ -71,8 +71,10 @@ public class BigRock : DamageableTrashItem
     }
 
 #if UNITY_EDITOR
-    private void OnValidate()
+    protected override void OnValidate()
     {
+        base.OnValidate();
+
         // Ensure at least one visual is assigned
         if (visualFull == null && visual75 == null && visual50 == null && visual25 == null)
         {
