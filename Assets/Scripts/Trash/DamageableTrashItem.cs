@@ -10,28 +10,15 @@ public abstract class DamageableTrashItem : TrashItem
     [Tooltip("Maximum health. The item is destroyed when health reaches zero.")]
     [SerializeField] protected float maxHealth = 100f;
 
-    [Tooltip("Unique identifier for persistence. Must be unique within the scene. Leave empty to disable persistence.")]
-    [SerializeField] private string persistentId = "";
-
     private float currentHealth;
 
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
-    public string PersistentId => persistentId;
-
-    protected virtual void Awake()
+    protected override void Awake()
     {
         base.Awake(); // TrashItem: кэшируем Rigidbody для Weight
 
         currentHealth = maxHealth;
-
-        // Check if this item was already removed in a previous session
-        if (!string.IsNullOrEmpty(persistentId) && TrashPersistence.IsRemoved(persistentId))
-        {
-            // Already removed, destroy immediately
-            gameObject.SetActive(false);
-            Destroy(gameObject);
-        }
     }
 
     /// <summary>
@@ -64,12 +51,6 @@ public abstract class DamageableTrashItem : TrashItem
     {
         base.OnAfterRemoved();
 
-        // Save removal state for persistence
-        if (!string.IsNullOrEmpty(persistentId))
-        {
-            TrashPersistence.MarkAsRemoved(persistentId);
-        }
-
         // Destroy the GameObject after a short delay to allow events to complete
         Destroy(gameObject, 0.1f);
     }
@@ -88,22 +69,24 @@ public abstract class DamageableTrashItem : TrashItem
     protected virtual void OnHealthRestored() { }
 
 #if UNITY_EDITOR
-    private void OnValidate()
+    protected override void OnValidate()
     {
-        // Warn about duplicate or empty IDs
-        if (!string.IsNullOrEmpty(persistentId))
+        base.OnValidate();
+
+        // Warn about duplicate IDs
+        if (!string.IsNullOrEmpty(PersistentId))
         {
             var allItems = FindObjectsOfType<DamageableTrashItem>();
             int duplicateCount = 0;
             foreach (var item in allItems)
             {
-                if (item != this && item.persistentId == persistentId)
+                if (item != this && item.PersistentId == PersistentId)
                     duplicateCount++;
             }
 
             if (duplicateCount > 0)
             {
-                Debug.LogWarning($"[{gameObject.name}] Duplicate Persistent ID '{persistentId}' detected. Each ID must be unique within the scene.", this);
+                Debug.LogWarning($"[{gameObject.name}] Duplicate Persistent ID '{PersistentId}' detected. Each ID must be unique within the scene.", this);
             }
         }
     }

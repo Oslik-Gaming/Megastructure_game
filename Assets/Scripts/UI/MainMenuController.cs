@@ -45,8 +45,8 @@ public class MainMenuController : MonoBehaviour
         var exit     = root.Q<Button>("ExitButton");
         menuButtons  = new[] { play, continueBtn, settings, exit };
 
-        // "Продолжить" видна только если интро уже просмотрено
-        if (GameProgress.HasSeenIntro)
+        // "Продолжить" доступна только при наличии незавершённого сохранения.
+        if (GameProgress.HasSavedPlayerTransform && !GameProgress.IsGameCompleted)
         {
             continueBtn.style.display = DisplayStyle.Flex;
         }
@@ -172,8 +172,15 @@ public class MainMenuController : MonoBehaviour
         // Новая игра: сбрасываем сохранённый чекпоинт — игрок начнёт со старта
         GameProgress.ClearCheckpoint();
 
+        // Новая игра: переключаем поколение прогресса. Старые состояния
+        // инструментов, дверей и других одноразовых событий больше не читаются.
+        GameProgress.StartNewGame();
+
         // Новая игра: сбрасываем состояние мусора
         GameProgress.ResetTrash();
+        
+        // Новая игра: сбрасываем прогрессию
+        GameProgress.ResetProgressionStep();
 
         // Новая игра: интро проигрывается всегда, даже если уже смотрели
         GameProgress.RequestNewGame();
@@ -183,18 +190,24 @@ public class MainMenuController : MonoBehaviour
     private void OnContinueClicked()
     {
         // Продолжить: интро пропускается, игрок сразу в игре
-        LoadGameScene();
+        string savedScene = GameProgress.SavedPlayerScene;
+        LoadGameScene(string.IsNullOrEmpty(savedScene) ? gameSceneName : savedScene);
     }
 
     private void LoadGameScene()
     {
-        if (Application.CanStreamedLevelBeLoaded(gameSceneName))
+        LoadGameScene(gameSceneName);
+    }
+
+    private void LoadGameScene(string sceneName)
+    {
+        if (Application.CanStreamedLevelBeLoaded(sceneName))
         {
-            SceneManager.LoadScene(gameSceneName);
+            SceneManager.LoadScene(sceneName);
         }
         else
         {
-            Debug.LogError($"Ошибка: Сцена с именем '{gameSceneName}' не найдена в Build Settings!");
+            Debug.LogError($"Ошибка: Сцена с именем '{sceneName}' не найдена в Build Settings!");
         }
     }
 

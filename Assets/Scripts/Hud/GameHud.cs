@@ -19,6 +19,9 @@ public sealed class GameHud : MonoBehaviour
     private Label timeLabel;
     private bool outsideZone;
 
+    public TrashLocation CurrentLocation => location;
+    public event System.Action<TrashLocation> LocationChanged;
+
     public void Configure(UIDocument hudDocument, TrashLocation trashLocation)
     {
         if (location != null)
@@ -27,6 +30,26 @@ public sealed class GameHud : MonoBehaviour
         location = trashLocation;
         if (isActiveAndEnabled && location != null)
             location.Changed += RefreshClean;
+    }
+
+    /// <summary>Установить текст текущего задания.</summary>
+    public void SetTask(string taskText)
+    {
+        task = taskText;
+        if (taskLabel != null)
+            taskLabel.text = taskText;
+    }
+
+    /// <summary>Переключить отслеживание на новую локацию.</summary>
+    public void SwitchLocation(TrashLocation newLocation)
+    {
+        if (location != null)
+            location.Changed -= RefreshClean;
+        location = newLocation;
+        if (location != null)
+            location.Changed += RefreshClean;
+        RefreshClean();
+        LocationChanged?.Invoke(location);
     }
 
     private void OnEnable()
