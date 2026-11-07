@@ -9,12 +9,9 @@ public class TrashItem : MonoBehaviour
     /// <summary>Вес предмета = масса Rigidbody (задаётся в одном месте — в инспекторе Rigidbody). Без Rigidbody — 1.</summary>
     public float Weight => body != null ? body.mass : 1f;
 
-    protected virtual void Awake() => body = GetComponent<Rigidbody>();
-
     [Tooltip("Generated automatically for scene objects. Do not edit manually.")]
     [SerializeField] private string persistentId;
 
-    public float Weight => weight;
     public string PersistentId => persistentId;
     public TrashLocation HomeLocation { get; private set; }
     public bool IsRemoved { get; private set; }
@@ -23,6 +20,8 @@ public class TrashItem : MonoBehaviour
 
     protected virtual void Awake()
     {
+        body = GetComponent<Rigidbody>();
+
         if (!string.IsNullOrEmpty(persistentId) && TrashPersistence.IsRemoved(persistentId))
         {
             // Keep the object in the hierarchy long enough for TrashLocation
