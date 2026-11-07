@@ -11,17 +11,18 @@ public class TrashItem : MonoBehaviour
     [Tooltip("AudioSource для звука разрушения. Пусто — звук сыграет в точке объекта как временный 3D-источник (громкость 1).")]
     [SerializeField] private AudioSource removalAudioSource;
 
+    [Header("Weight")]
+    [Tooltip("Вес мусора для HUD-индикатора чистоты локации (TrashLocation). Не связан с физикой — масса задаётся в Rigidbody.")]
+    [Min(0.0001f)]
+    [SerializeField] private float weight = 1f;
+
     [SerializeField, HideInInspector] private string persistentId;
 
-    private Rigidbody body;
-
-    /// <summary>Вес предмета = масса Rigidbody (задаётся в одном месте — в инспекторе Rigidbody). Без Rigidbody — 1.</summary>
-    public float Weight => body != null ? body.mass : 1f;
+    /// <summary>Игровой вес предмета для HUD-индикатора чистоты локации (не масса Rigidbody).</summary>
+    public float Weight => weight;
 
     protected virtual void Awake()
     {
-        body = GetComponent<Rigidbody>();
-
         if (removalAudioSource == null)
             removalAudioSource = GetComponent<AudioSource>();
 

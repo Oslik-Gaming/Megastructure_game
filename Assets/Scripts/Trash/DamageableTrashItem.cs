@@ -16,7 +16,7 @@ public abstract class DamageableTrashItem : TrashItem
     public float MaxHealth => maxHealth;
     protected override void Awake()
     {
-        base.Awake(); // TrashItem: кэшируем Rigidbody для Weight
+        base.Awake(); // TrashItem: инициализация звука и состояния удаления
 
         currentHealth = maxHealth;
     }
