@@ -18,7 +18,7 @@ BigRock is a large, immovable trash item that requires the Destructor tool to br
 
 ### BigRock Component Configuration
 
-- **Weight**: The weight value for trash tracking (default: 1)
+- **Weight**: taken from the Rigidbody `Mass` field (set it there) — used for trash tracking (default: 1 if no Rigidbody)
 - **Max Health**: Total health points (default: 100)
 - **Persistent Id**: Unique identifier for saving removal state across sessions
   - **Must be unique within the scene**
@@ -72,7 +72,7 @@ Parasite is a smaller trash item that shrinks as it takes damage from the Heater
 
 ### Parasite Component Configuration
 
-- **Weight**: The weight value for trash tracking (default: 1)
+- **Weight**: taken from the Rigidbody `Mass` field (set it there) — used for trash tracking (default: 1 if no Rigidbody)
 - **Max Health**: Total health points (default: 50)
 - **Persistent Id**: Unique identifier for saving removal state
   - **Must be unique within the scene**

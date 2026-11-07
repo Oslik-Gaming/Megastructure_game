@@ -5,10 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Grabable : MonoBehaviour
 {
-    [Header("Weight")]
-    [Min(0.01f)]
-    [SerializeField] private float weight = 1f;
-
     [Header("Grab Sides")]
     [Tooltip("Empty child transforms. Their local Z axis must point out from the item.")]
     [SerializeField] private Transform[] grabSides;
@@ -17,7 +13,8 @@ public class Grabable : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float bounceFactor = 0.25f;
 
-    public float Weight => weight;
+    /// <summary>Вес предмета = масса Rigidbody (задаётся в одном месте — в инспекторе Rigidbody).</summary>
+    public float Weight => Body != null ? Body.mass : 1f;
     public Transform[] GrabSides => grabSides;
     public bool IsCarried { get; private set; }
     public Rigidbody Body { get; private set; }
