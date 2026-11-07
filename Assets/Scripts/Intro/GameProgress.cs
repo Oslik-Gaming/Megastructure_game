@@ -11,6 +11,7 @@ public static class GameProgress
 {
     private const string KeyIntroSeen = "Progress_IntroSeen";
     private const string KeyCheckpoint = "Progress_CheckpointId";
+    private const string KeyProgressionStep = "Progress_StepIndex";
 
     /// <summary>ID последнего активированного чекпоинта. -1 = чекпоинта нет (старт игры).</summary>
     public static int SavedCheckpointId => PlayerPrefs.GetInt(KeyCheckpoint, -1);
@@ -68,7 +69,38 @@ public static class GameProgress
     {
         PlayerPrefs.DeleteKey(KeyIntroSeen);
         PlayerPrefs.DeleteKey(KeyCheckpoint);
+        PlayerPrefs.DeleteKey(KeyProgressionStep);
+        PlayerPrefs.DeleteKey("Progress_UnlockedTools");
+        
+        // Сбросить подбор инструментов
+        for (int i = 0; i < 4; i++)
+        {
+            PlayerPrefs.DeleteKey($"Progress_Tool_{i}_Picked");
+        }
+        
+        // Сбросить двери (по общему префиксу удалить не можем, но при новой игре они пересоздадутся)
+        
         TrashPersistence.ResetAllTrash();
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>Сохранить текущий шаг прогрессии.</summary>
+    public static void SaveProgressionStep(int stepIndex)
+    {
+        PlayerPrefs.SetInt(KeyProgressionStep, stepIndex);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>Загрузить сохранённый шаг прогрессии. Возвращает 0, если шаг не сохранён.</summary>
+    public static int LoadProgressionStep()
+    {
+        return PlayerPrefs.GetInt(KeyProgressionStep, 0);
+    }
+
+    /// <summary>Сбросить шаг прогрессии (вызывается при "Новой игре").</summary>
+    public static void ResetProgressionStep()
+    {
+        PlayerPrefs.DeleteKey(KeyProgressionStep);
         PlayerPrefs.Save();
     }
 }

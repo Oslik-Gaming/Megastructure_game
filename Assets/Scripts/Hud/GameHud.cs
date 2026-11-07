@@ -29,6 +29,25 @@ public sealed class GameHud : MonoBehaviour
             location.Changed += RefreshClean;
     }
 
+    /// <summary>Установить текст текущего задания.</summary>
+    public void SetTask(string taskText)
+    {
+        task = taskText;
+        if (taskLabel != null)
+            taskLabel.text = taskText;
+    }
+
+    /// <summary>Переключить отслеживание на новую локацию.</summary>
+    public void SwitchLocation(TrashLocation newLocation)
+    {
+        if (location != null)
+            location.Changed -= RefreshClean;
+        location = newLocation;
+        if (location != null)
+            location.Changed += RefreshClean;
+        RefreshClean();
+    }
+
     private void OnEnable()
     {
         if (location != null)
