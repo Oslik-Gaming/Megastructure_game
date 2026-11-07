@@ -19,6 +19,9 @@ public sealed class GameHud : MonoBehaviour
     private Label timeLabel;
     private bool outsideZone;
 
+    public TrashLocation CurrentLocation => location;
+    public event System.Action<TrashLocation> LocationChanged;
+
     public void Configure(UIDocument hudDocument, TrashLocation trashLocation)
     {
         if (location != null)
@@ -46,6 +49,7 @@ public sealed class GameHud : MonoBehaviour
         if (location != null)
             location.Changed += RefreshClean;
         RefreshClean();
+        LocationChanged?.Invoke(location);
     }
 
     private void OnEnable()

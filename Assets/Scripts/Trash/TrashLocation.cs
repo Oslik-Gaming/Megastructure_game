@@ -20,6 +20,7 @@ public class TrashLocation : MonoBehaviour
     public float CleanedPercent => 100f - RemainingPercent;
 
     public event Action Changed;
+    public IReadOnlyCollection<TrashItem> ActiveItems => activeItems;
 
     private void Awake()
     {

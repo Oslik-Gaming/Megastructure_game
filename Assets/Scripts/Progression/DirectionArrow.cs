@@ -14,6 +14,8 @@ namespace Progression
 
         private VisualElement arrowElement;
         private Transform target;
+        private Transform baseTarget;
+        private Transform overrideTarget;
         private bool isVisible = false;
 
         private void Start()
@@ -71,24 +73,38 @@ namespace Progression
 
         public void Show(Transform newTarget)
         {
+            baseTarget = newTarget;
+            if (overrideTarget == null)
+                SetTarget(newTarget);
+        }
+
+        public void ShowOverride(Transform newTarget)
+        {
+            overrideTarget = newTarget;
+            SetTarget(newTarget);
+        }
+
+        public void HideOverride()
+        {
+            overrideTarget = null;
+            SetTarget(baseTarget);
+        }
+
+        private void SetTarget(Transform newTarget)
+        {
             target = newTarget;
-            isVisible = true;
+            isVisible = newTarget != null;
 
             if (arrowElement != null)
             {
-                arrowElement.style.display = DisplayStyle.Flex;
+                arrowElement.style.display = isVisible ? DisplayStyle.Flex : DisplayStyle.None;
             }
         }
 
         public void Hide()
         {
-            isVisible = false;
-            target = null;
-
-            if (arrowElement != null)
-            {
-                arrowElement.style.display = DisplayStyle.None;
-            }
+            baseTarget = null;
+            if (overrideTarget == null) SetTarget(null);
         }
 
         private void UpdateArrowDirection()

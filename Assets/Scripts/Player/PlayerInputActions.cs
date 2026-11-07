@@ -190,6 +190,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HighlightTrash"",
+                    ""type"": ""Button"",
+                    ""id"": ""7f77e61f-1d1f-4a65-b8b6-5bdfc0e5d2e1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -256,6 +265,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f67af5e0-7b4c-4d5c-9d14-f0a8b6f923f3"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HighlightTrash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -421,6 +441,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_SelectTool4 = m_Player.FindAction("SelectTool4", throwIfNotFound: true);
         m_Player_ToolPrimary = m_Player.FindAction("ToolPrimary", throwIfNotFound: true);
         m_Player_ToolSecondary = m_Player.FindAction("ToolSecondary", throwIfNotFound: true);
+        m_Player_HighlightTrash = m_Player.FindAction("HighlightTrash", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_PauseMenu = m_UI.FindAction("PauseMenu", throwIfNotFound: true);
@@ -516,6 +537,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_SelectTool4;
     private readonly InputAction m_Player_ToolPrimary;
     private readonly InputAction m_Player_ToolSecondary;
+    private readonly InputAction m_Player_HighlightTrash;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -571,6 +593,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/ToolSecondary".
         /// </summary>
         public InputAction @ToolSecondary => m_Wrapper.m_Player_ToolSecondary;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/HighlightTrash".
+        /// </summary>
+        public InputAction @HighlightTrash => m_Wrapper.m_Player_HighlightTrash;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -630,6 +656,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToolSecondary.started += instance.OnToolSecondary;
             @ToolSecondary.performed += instance.OnToolSecondary;
             @ToolSecondary.canceled += instance.OnToolSecondary;
+            @HighlightTrash.started += instance.OnHighlightTrash;
+            @HighlightTrash.performed += instance.OnHighlightTrash;
+            @HighlightTrash.canceled += instance.OnHighlightTrash;
         }
 
         /// <summary>
@@ -674,6 +703,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ToolSecondary.started -= instance.OnToolSecondary;
             @ToolSecondary.performed -= instance.OnToolSecondary;
             @ToolSecondary.canceled -= instance.OnToolSecondary;
+            @HighlightTrash.started -= instance.OnHighlightTrash;
+            @HighlightTrash.performed -= instance.OnHighlightTrash;
+            @HighlightTrash.canceled -= instance.OnHighlightTrash;
         }
 
         /// <summary>
@@ -900,6 +932,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToolSecondary(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "HighlightTrash" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHighlightTrash(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
