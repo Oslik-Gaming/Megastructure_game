@@ -25,23 +25,43 @@ BigRock is a large, immovable trash item that requires the Destructor tool to br
   - Leave empty to disable persistence
   - When duplicating BigRock objects, always change this ID
 
-### Visual Stages
+### Visual Stages (list of any size)
 
-BigRock displays different meshes based on remaining health:
+BigRock displays different meshes based on remaining health. The **Destruction Stages** list in the BigRock component can contain **any number of stages**:
 
-- **Visual Full**: Active at 100% - 76% health
-- **Visual 75**: Active at 75% - 51% health
-- **Visual 50**: Active at 50% - 26% health
-- **Visual 25**: Active at 25% - 1% health
+- Order matters: **index 0 = pristine (100% health)**, last index = fully destroyed.
+- Thresholds are computed **automatically and evenly**: 4 stages → >75%, >50%, >25%, else; 3 stages → >66%, >33%, else; 2 stages → >50%, else.
+- When health reaches 0%, the entire BigRock is removed and destroyed.
 
-Assign child GameObjects with MeshRenderer for each stage. When health reaches 0%, the entire BigRock is removed and destroyed.
+Each stage entry can be either:
 
-**Placeholder Setup** (until final art is ready):
-1. Create 4 child objects: "Stage_Full", "Stage_75", "Stage_50", "Stage_25"
-2. Add Cube or Sphere meshes with different scales/materials to distinguish them
-3. Assign each to the corresponding Visual field in BigRock component
+1. **A prefab asset** (recommended) — assign it directly from the Project window. The script instantiates it under the rock at runtime, so **you don't need to create any stage objects on the scene at all**.
+2. **A scene child object** — a child GameObject of the rock. The script deactivates all of them and activates the right one.
+
+**Placeholder Setup** (until final art is ready, using prefabs — no scene objects needed):
+1. Create 4 prefab assets: "Stage_Full", "Stage_75", "Stage_50", "Stage_25" (each a cube/sphere with different scale/material)
+2. In the BigRock component, set **Destruction Stages → Size** to 4
+3. Drag each prefab into the list in order (full → destroyed)
+
+### Stage Transition Sound
+
+- **Stage Transition Sounds**: list of clips — a **random** one plays every time the rock changes stage (e.g., a crack when going from 75% to 50%).
+- **Stage Transition Volume**: clip volume.
+- **Stage Transition Audio Source**: optional. Leave empty to use an AudioSource on the same object, or to let the game play a temporary 3D source at the rock's position.
 
 ### Example Hierarchy
+
+With prefabs (recommended — no stage objects on the scene):
+
+```
+BigRock_01 (Layer: ToolTarget)
+├─ BigRock (component)
+├─ BoxCollider
+├─ Rigidbody (kinematic)
+└─ (stage instances are created automatically at runtime)
+```
+
+With scene children:
 
 ```
 BigRock_01 (Layer: ToolTarget)

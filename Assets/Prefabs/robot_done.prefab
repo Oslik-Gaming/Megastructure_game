@@ -618,6 +618,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e39f3d49fa867e046bbc20f4e30dd742, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6177034394688988059}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e39f3d49fa867e046bbc20f4e30dd742, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2901735235579420044}
   m_SourcePrefab: {fileID: 100100000, guid: e39f3d49fa867e046bbc20f4e30dd742, type: 3}
 --- !u!1 &372477840921730178 stripped
 GameObject:
@@ -681,6 +684,23 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2901735235579420044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 372477840921730178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fe14d736962e05a08947bb13dff0ef9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolSoundPlayer
+  useLoopSound: {fileID: 8300000, guid: a4b422f8149946342972b7ff4df7c767, type: 3}
+  useLoopVolume: 1
+  interactSounds: []
+  interactVolume: 1
+  audioSource: {fileID: 0}
 --- !u!4 &1036001860074882616 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e39f3d49fa867e046bbc20f4e30dd742, type: 3}

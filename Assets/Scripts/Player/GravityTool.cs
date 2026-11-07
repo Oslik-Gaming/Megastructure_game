@@ -41,52 +41,54 @@ public class GravityTool : MonoBehaviour
         if (toolBase == null || toolController == null || playerInteract == null)
             return;
 
+        bool isActiveTool = toolController.ActiveTool == toolBase && !toolController.IsSwitching;
+
         // Если гравизахват больше не активный инструмент (переключились на другой) —
         // удерживаемый предмет просто падает, а не остаётся висеть в воздухе.
-        if (playerInteract.HasCarriedItem &&
-            (toolController.ActiveTool != toolBase || toolController.IsSwitching))
+        if (playerInteract.HasCarriedItem && !isActiveTool)
         {
             playerInteract.DropHeldObject();
+        }
+
+        // Пока предмет удерживается — инструмент в состоянии Using,
+        // благодаря этому ToolSoundPlayer играет звук работы гравизахвата.
+        if (playerInteract.HasCarriedItem && isActiveTool)
+        {
+            if (toolBase.State == ToolState.Idle)
+                toolBase.TryStartUsing();
+        }
+        else if (toolBase.State == ToolState.Using)
+        {
+            toolBase.StopUsing();
         }
     }
 
     private bool IsActiveAndReady()
     {
+        // State.Using допустим: пока удерживается предмет, инструмент остаётся "в использовании",
+        // и ЛКМ/ПКМ должны продолжать работать (установка/бросок).
         return toolBase != null && toolController != null && playerInteract != null &&
                toolController.ActiveTool == toolBase &&
                !toolController.IsSwitching &&
-               toolBase.State == ToolState.Idle;
+               (toolBase.State == ToolState.Idle || toolBase.State == ToolState.Using);
     }
 
     private void OnPrimaryPerformed(InputAction.CallbackContext context)
     {
-        if (!IsActiveAndReady() || !toolBase.TryStartUsing())
+        if (!IsActiveAndReady())
             return;
 
-        try
-        {
-            // ЛКМ: захватить новый объект или установить удерживаемый.
-            playerInteract.TryGrabOrPlace();
-        }
-        finally
-        {
-            toolBase.StopUsing();
-        }
+        // ЛКМ: захватить новый объект или установить удерживаемый.
+        // Состоянием Using управляет Update, чтобы звучал звук работы.
+        playerInteract.TryGrabOrPlace();
     }
 
     private void OnSecondaryPerformed(InputAction.CallbackContext context)
     {
-        if (!IsActiveAndReady() || !toolBase.TryStartUsing())
+        if (!IsActiveAndReady())
             return;
 
-        try
-        {
-            // ПКМ: бросить удерживаемый объект.
-            playerInteract.ThrowHeldObject();
-        }
-        finally
-        {
-            toolBase.StopUsing();
-        }
+        // ПКМ: бросить удерживаемый объект.
+        playerInteract.ThrowHeldObject();
     }
 }

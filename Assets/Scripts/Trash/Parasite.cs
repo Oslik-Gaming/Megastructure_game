@@ -19,6 +19,18 @@ public class Parasite : DamageableTrashItem
     [Tooltip("Уменьшать ли масштаб по оси Z при потере здоровья.")]
     [SerializeField] private bool shrinkZ = true;
 
+    [Header("Burn Sound")]
+    [Tooltip("Список звуков сжигания. Играет случайный клип при получении урона, не чаще Burn Sound Interval.")]
+    [SerializeField] private AudioClip[] burnSounds;
+
+    [Tooltip("Минимальный интервал между звуками сжигания, в секундах (урон идёт каждый кадр — без этого звуки бы захлёбывались).")]
+    [SerializeField, Min(0.05f)] private float burnSoundInterval = 0.4f;
+
+    [Tooltip("AudioSource для звука сжигания. Пусто — берётся AudioSource с этого же объекта; если его нет — временный 3D-источник в точке паразита.")]
+    [SerializeField] private AudioSource burnAudioSource;
+
+    private float nextBurnSoundTime;
+
     private Vector3 initialScale;
 
     protected override void Awake()
@@ -37,6 +49,7 @@ public class Parasite : DamageableTrashItem
     {
         base.OnDamageApplied(damageAmount, remainingHealth);
         UpdateScale();
+        PlayBurnSound();
     }
 
     protected override void OnHealthRestored()
@@ -62,6 +75,29 @@ public class Parasite : DamageableTrashItem
         if (shrinkZ) scale.z = initialScale.z * healthPercent;
 
         visualRoot.localScale = scale;
+    }
+
+    private void PlayBurnSound()
+    {
+        if (burnSounds == null || burnSounds.Length == 0)
+            return;
+
+        if (Time.time < nextBurnSoundTime)
+            return;
+
+        AudioClip clip = burnSounds[UnityEngine.Random.Range(0, burnSounds.Length)];
+        if (clip == null)
+            return;
+
+        nextBurnSoundTime = Time.time + burnSoundInterval;
+
+        if (burnAudioSource == null)
+            burnAudioSource = GetComponent<AudioSource>();
+
+        if (burnAudioSource != null)
+            burnAudioSource.PlayOneShot(clip);
+        else
+            AudioSource.PlayClipAtPoint(clip, transform.position);
     }
 
 #if UNITY_EDITOR
