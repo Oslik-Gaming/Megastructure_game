@@ -63,12 +63,24 @@ namespace Progression
                 root.Add(arrowElement);
             }
 
-            arrowElement.style.display = DisplayStyle.None;
+            // Восстанавливаем актуальное состояние видимости: Show() мог быть
+            // вызван до инициализации (порядок Start() не гарантирован),
+            // поэтому нельзя безусловно скрывать элемент.
+            arrowElement.style.display = isVisible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         private void Update()
         {
-            if (isVisible && target != null && Reference != null && arrowElement != null)
+            if (arrowElement == null)
+                return;
+
+            // Синхронизируем видимость каждый кадр — это делает показ стрелки
+            // независимым от порядка вызова Start() у DirectionArrow и
+            // GameProgressionManager (Show() мог сработать до инициализации).
+            bool shouldBeVisible = isVisible && target != null && Reference != null;
+            arrowElement.style.display = shouldBeVisible ? DisplayStyle.Flex : DisplayStyle.None;
+
+            if (shouldBeVisible)
             {
                 UpdateArrowDirection();
             }
