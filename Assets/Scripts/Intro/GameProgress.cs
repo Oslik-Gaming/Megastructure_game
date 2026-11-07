@@ -13,8 +13,22 @@ public static class GameProgress
     private const string KeyCheckpoint = "Progress_CheckpointId";
     private const string KeyProgressionStep = "Progress_StepIndex";
     private const string KeyProgressGeneration = "Progress_Generation";
+    private const string KeyPlayerSave = "Progress_PlayerSave";
+    private const string KeyPlayerScene = "Progress_PlayerScene";
+    private const string KeyPlayerPosition = "Progress_PlayerPosition";
+    private const string KeyPlayerRotation = "Progress_PlayerRotation";
+    private const string KeyPlayerHeadRotation = "Progress_PlayerHeadRotation";
 
     public static int ProgressGeneration => PlayerPrefs.GetInt(KeyProgressGeneration, 0);
+
+    private static string GenerationKey(string key) =>
+        $"{key}_Gen{ProgressGeneration}";
+
+    public static bool HasSavedPlayerTransform =>
+        PlayerPrefs.GetInt(GenerationKey(KeyPlayerSave), 0) == 1;
+
+    public static string SavedPlayerScene =>
+        PlayerPrefs.GetString(GenerationKey(KeyPlayerScene), string.Empty);
 
     /// <summary>ID последнего активированного чекпоинта. -1 = чекпоинта нет (старт игры).</summary>
     public static int SavedCheckpointId => PlayerPrefs.GetInt(KeyCheckpoint, -1);
@@ -72,6 +86,67 @@ public static class GameProgress
     {
         PlayerPrefs.SetInt(KeyProgressGeneration, ProgressGeneration + 1);
         PlayerPrefs.Save();
+    }
+
+    /// <summary>Сохраняет положение игрока для текущего поколения игры.</summary>
+    public static void SavePlayerTransform(
+        string sceneName,
+        Vector3 position,
+        Quaternion rotation,
+        Quaternion headLocalRotation)
+    {
+        PlayerPrefs.SetInt(GenerationKey(KeyPlayerSave), 1);
+        PlayerPrefs.SetString(GenerationKey(KeyPlayerScene), sceneName);
+
+        SetVector3(KeyPlayerPosition, position);
+        SetQuaternion(KeyPlayerRotation, rotation);
+        SetQuaternion(KeyPlayerHeadRotation, headLocalRotation);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>Загружает сохранённое положение игрока текущего поколения.</summary>
+    public static bool TryLoadPlayerTransform(
+        out Vector3 position,
+        out Quaternion rotation,
+        out Quaternion headLocalRotation)
+    {
+        position = Vector3.zero;
+        rotation = Quaternion.identity;
+        headLocalRotation = Quaternion.identity;
+
+        if (!HasSavedPlayerTransform) return false;
+
+        position = new Vector3(
+            PlayerPrefs.GetFloat(GenerationKey(KeyPlayerPosition + "X")),
+            PlayerPrefs.GetFloat(GenerationKey(KeyPlayerPosition + "Y")),
+            PlayerPrefs.GetFloat(GenerationKey(KeyPlayerPosition + "Z")));
+        rotation = ReadQuaternion(KeyPlayerRotation);
+        headLocalRotation = ReadQuaternion(KeyPlayerHeadRotation);
+        return true;
+    }
+
+    private static void SetVector3(string key, Vector3 value)
+    {
+        PlayerPrefs.SetFloat(GenerationKey(key + "X"), value.x);
+        PlayerPrefs.SetFloat(GenerationKey(key + "Y"), value.y);
+        PlayerPrefs.SetFloat(GenerationKey(key + "Z"), value.z);
+    }
+
+    private static void SetQuaternion(string key, Quaternion value)
+    {
+        PlayerPrefs.SetFloat(GenerationKey(key + "X"), value.x);
+        PlayerPrefs.SetFloat(GenerationKey(key + "Y"), value.y);
+        PlayerPrefs.SetFloat(GenerationKey(key + "Z"), value.z);
+        PlayerPrefs.SetFloat(GenerationKey(key + "W"), value.w);
+    }
+
+    private static Quaternion ReadQuaternion(string key)
+    {
+        return new Quaternion(
+            PlayerPrefs.GetFloat(GenerationKey(key + "X")),
+            PlayerPrefs.GetFloat(GenerationKey(key + "Y")),
+            PlayerPrefs.GetFloat(GenerationKey(key + "Z")),
+            PlayerPrefs.GetFloat(GenerationKey(key + "W")));
     }
 
     /// <summary>Полный сброс прогресса (пригодится для отладки).</summary>

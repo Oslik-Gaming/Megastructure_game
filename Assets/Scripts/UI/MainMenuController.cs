@@ -190,18 +190,24 @@ public class MainMenuController : MonoBehaviour
     private void OnContinueClicked()
     {
         // Продолжить: интро пропускается, игрок сразу в игре
-        LoadGameScene();
+        string savedScene = GameProgress.SavedPlayerScene;
+        LoadGameScene(string.IsNullOrEmpty(savedScene) ? gameSceneName : savedScene);
     }
 
     private void LoadGameScene()
     {
-        if (Application.CanStreamedLevelBeLoaded(gameSceneName))
+        LoadGameScene(gameSceneName);
+    }
+
+    private void LoadGameScene(string sceneName)
+    {
+        if (Application.CanStreamedLevelBeLoaded(sceneName))
         {
-            SceneManager.LoadScene(gameSceneName);
+            SceneManager.LoadScene(sceneName);
         }
         else
         {
-            Debug.LogError($"Ошибка: Сцена с именем '{gameSceneName}' не найдена в Build Settings!");
+            Debug.LogError($"Ошибка: Сцена с именем '{sceneName}' не найдена в Build Settings!");
         }
     }
 

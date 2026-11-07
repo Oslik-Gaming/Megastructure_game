@@ -334,12 +334,29 @@ public class PauseMenuController : MonoBehaviour
         panel.Show();
     }
     protected virtual void OnRestart()  { Debug.Log("[PAUSE] RESTART TO CHECKPOINT — заглушка."); LoadCheckpoint(); }
-    protected virtual void OnExit()      { Debug.Log("[PAUSE] SAVE & EXIT — заглушка."); SaveGameStub(); LoadMainMenu(); }
+    protected virtual void OnExit()      { SaveGame(); LoadMainMenu(); }
 
-    private void SaveGameStub()
+    private void SaveGame()
     {
-        // TODO: реализуйте сериализацию прогресса (PlayerPrefs/JSON/ScriptableObjects).
-        Debug.Log("[PAUSE] SaveGameStub() — место для реального сохранения.");
+        PlayerMovements player = FindFirstObjectByType<PlayerMovements>();
+        if (player == null)
+        {
+            Debug.LogWarning("[PAUSE] Игрок не найден — положение не сохранено.");
+            return;
+        }
+
+        PlayerHeadLook headLook = player.GetComponent<PlayerHeadLook>();
+        Quaternion headRotation = headLook != null && headLook.headPoint != null
+            ? headLook.headPoint.localRotation
+            : Quaternion.identity;
+
+        GameProgress.SavePlayerTransform(
+            SceneManager.GetActiveScene().name,
+            player.transform.position,
+            player.transform.rotation,
+            headRotation);
+
+        Debug.Log($"[PAUSE] Сохранено положение игрока: {player.transform.position}.");
     }
 
     private void LoadCheckpoint()

@@ -118,6 +118,23 @@ public class PlayerHeadLook : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Восстанавливает локальный поворот головы вместе с внутренним накопленным
+    /// углом, чтобы следующий LateUpdate не перезаписал загруженное значение.
+    /// </summary>
+    public void RestoreHeadLocalRotation(Quaternion localRotation)
+    {
+        if (headPoint == null) return;
+
+        headPoint.localRotation = localRotation;
+        float angle = GetAxisValue(localRotation.eulerAngles, verticalAxis);
+        if (angle > 180f) angle -= 360f;
+        headRotationAngle = Mathf.Clamp(
+            Mathf.DeltaAngle(startAngle, angle),
+            minHeadRotationAngle,
+            maxHeadRotationAngle);
+    }
+
     // --- Вспомогательные методы для работы с выбранной осью ---
 
     private static Vector3 AxisVector(RotationAxis axis)
