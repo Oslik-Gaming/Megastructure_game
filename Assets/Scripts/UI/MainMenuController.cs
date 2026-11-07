@@ -172,6 +172,10 @@ public class MainMenuController : MonoBehaviour
         // Новая игра: сбрасываем сохранённый чекпоинт — игрок начнёт со старта
         GameProgress.ClearCheckpoint();
 
+        // Новая игра: переключаем поколение прогресса. Старые состояния
+        // инструментов, дверей и других одноразовых событий больше не читаются.
+        GameProgress.StartNewGame();
+
         // Новая игра: сбрасываем состояние мусора
         GameProgress.ResetTrash();
         

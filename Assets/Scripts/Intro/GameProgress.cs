@@ -12,6 +12,9 @@ public static class GameProgress
     private const string KeyIntroSeen = "Progress_IntroSeen";
     private const string KeyCheckpoint = "Progress_CheckpointId";
     private const string KeyProgressionStep = "Progress_StepIndex";
+    private const string KeyProgressGeneration = "Progress_Generation";
+
+    public static int ProgressGeneration => PlayerPrefs.GetInt(KeyProgressGeneration, 0);
 
     /// <summary>ID последнего активированного чекпоинта. -1 = чекпоинта нет (старт игры).</summary>
     public static int SavedCheckpointId => PlayerPrefs.GetInt(KeyCheckpoint, -1);
@@ -64,12 +67,20 @@ public static class GameProgress
         TrashPersistence.ResetAllTrash();
     }
 
+    /// <summary>Starts a new save generation without deleting old PlayerPrefs keys.</summary>
+    public static void StartNewGame()
+    {
+        PlayerPrefs.SetInt(KeyProgressGeneration, ProgressGeneration + 1);
+        PlayerPrefs.Save();
+    }
+
     /// <summary>Полный сброс прогресса (пригодится для отладки).</summary>
     public static void ResetProgress()
     {
         PlayerPrefs.DeleteKey(KeyIntroSeen);
         PlayerPrefs.DeleteKey(KeyCheckpoint);
         PlayerPrefs.DeleteKey(KeyProgressionStep);
+        PlayerPrefs.DeleteKey(KeyProgressGeneration);
         PlayerPrefs.DeleteKey("Progress_UnlockedTools");
         
         // Сбросить подбор инструментов

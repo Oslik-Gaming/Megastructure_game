@@ -89,7 +89,7 @@ namespace Progression
 
         private string GetPickupKey()
         {
-            return $"Progress_Tool_{toolType}_Picked";
+            return $"Progress_Tool_{toolType}_Picked_Gen{GameProgress.ProgressGeneration}";
         }
 
         private bool WasPickedUp()
@@ -106,6 +106,7 @@ namespace Progression
         public static void ResetPickup(ToolType toolType)
         {
             string key = $"Progress_Tool_{toolType}_Picked";
+            key += $"_Gen{GameProgress.ProgressGeneration}";
             PlayerPrefs.DeleteKey(key);
             PlayerPrefs.Save();
         }

@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using UnityEngine;
 
 namespace Progression
@@ -11,6 +12,7 @@ namespace Progression
         [SerializeField] private Transform doorModel;
         [SerializeField] private Vector3 openOffset = new Vector3(0, 3, 0);
         [SerializeField] private float openDuration = 1.5f;
+        [SerializeField, HideInInspector] private string persistentId;
 
         private Vector3 closedPosition;
         private Vector3 openPosition;
@@ -19,6 +21,8 @@ namespace Progression
 
         private void Start()
         {
+            EnsurePersistentId();
+
             if (doorModel != null)
             {
                 closedPosition = doorModel.position;
@@ -82,7 +86,7 @@ namespace Progression
 
         private string GetDoorKey()
         {
-            return $"Progress_Door_{gameObject.GetInstanceID()}_Opened";
+            return $"Progress_Door_{persistentId}_Opened_Gen{GameProgress.ProgressGeneration}";
         }
 
         private bool WasOpened()
@@ -98,9 +102,34 @@ namespace Progression
 
         public static void ResetDoor(GameObject doorObject)
         {
-            string key = $"Progress_Door_{doorObject.GetInstanceID()}_Opened";
-            PlayerPrefs.DeleteKey(key);
+            Door door = doorObject != null ? doorObject.GetComponent<Door>() : null;
+            if (door != null)
+            {
+                PlayerPrefs.DeleteKey(door.GetDoorKey());
+            }
             PlayerPrefs.Save();
         }
+
+        private void EnsurePersistentId()
+        {
+            if (!string.IsNullOrEmpty(persistentId))
+                return;
+
+            // Stable for this scene object once serialized by Unity.
+            persistentId = Guid.NewGuid().ToString("N");
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (string.IsNullOrEmpty(persistentId) &&
+                gameObject.scene.IsValid() &&
+                !UnityEditor.EditorUtility.IsPersistent(gameObject))
+            {
+                persistentId = Guid.NewGuid().ToString("N");
+                UnityEditor.EditorUtility.SetDirty(this);
+            }
+        }
+#endif
     }
 }

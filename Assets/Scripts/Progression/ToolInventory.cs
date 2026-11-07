@@ -10,7 +10,8 @@ namespace Progression
     /// </summary>
     public class ToolInventory : MonoBehaviour
     {
-        private const string KeyUnlockedTools = "Progress_UnlockedTools";
+        private string UnlockedToolsKey =>
+            $"Progress_UnlockedTools_Gen{GameProgress.ProgressGeneration}";
 
         private HashSet<ToolType> unlockedTools = new HashSet<ToolType>();
 
@@ -59,7 +60,7 @@ namespace Progression
 
         private void LoadUnlockedTools()
         {
-            int mask = PlayerPrefs.GetInt(KeyUnlockedTools, 0);
+            int mask = PlayerPrefs.GetInt(UnlockedToolsKey, 0);
             unlockedTools.Clear();
 
             for (int i = 0; i < 4; i++)
@@ -78,7 +79,7 @@ namespace Progression
             {
                 mask |= (1 << (int)tool);
             }
-            PlayerPrefs.SetInt(KeyUnlockedTools, mask);
+            PlayerPrefs.SetInt(UnlockedToolsKey, mask);
             PlayerPrefs.Save();
         }
     }
