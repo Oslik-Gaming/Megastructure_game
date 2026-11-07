@@ -101,8 +101,10 @@ public class Parasite : DamageableTrashItem
     }
 
 #if UNITY_EDITOR
-    private void OnValidate()
+    protected override void OnValidate()
     {
+        base.OnValidate();
+
         // Preview scale in editor
         if (!Application.isPlaying && visualRoot != null)
         {

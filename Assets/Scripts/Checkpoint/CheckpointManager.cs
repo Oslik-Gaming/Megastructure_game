@@ -72,7 +72,7 @@ public class CheckpointManager : MonoBehaviour
             Debug.LogWarning("[Checkpoints] Игрок (PlayerMovements) не найден на сцене — респавн работать не будет!", this);
 
         RestoreCheckpointFromSave();
-        PlacePlayerAtRestorePoint();
+        StartCoroutine(PlacePlayerAtRestorePointNextFrame());
         WarnDuplicateIds();
     }
 
@@ -82,6 +82,32 @@ public class CheckpointManager : MonoBehaviour
     }
 
     // ================= Восстановление =================
+
+    private IEnumerator PlacePlayerAtRestorePointNextFrame()
+    {
+        // Даём PlayerHeadLook и другим компонентам завершить Start().
+        yield return null;
+
+        if (player == null) yield break;
+
+        if (GameProgress.TryLoadPlayerTransform(
+                out Vector3 savedPosition,
+                out Quaternion savedRotation,
+                out Quaternion savedHeadRotation))
+        {
+            TeleportPlayer(savedPosition, savedRotation);
+
+            PlayerHeadLook headLook = player.GetComponent<PlayerHeadLook>();
+            if (headLook != null)
+                headLook.RestoreHeadLocalRotation(savedHeadRotation);
+
+            if (debugLog)
+                Debug.Log($"[Checkpoints] Восстановлено сохранённое положение игрока: {savedPosition}.", this);
+            yield break;
+        }
+
+        PlacePlayerAtRestorePoint();
+    }
 
     private void RestoreCheckpointFromSave()
     {

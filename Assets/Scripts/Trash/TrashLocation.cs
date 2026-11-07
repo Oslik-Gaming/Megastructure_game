@@ -20,6 +20,7 @@ public class TrashLocation : MonoBehaviour
     public float CleanedPercent => 100f - RemainingPercent;
 
     public event Action Changed;
+    public IReadOnlyCollection<TrashItem> ActiveItems => activeItems;
 
     private void Awake()
     {
@@ -52,6 +53,15 @@ public class TrashLocation : MonoBehaviour
 
         item.SetLocation(this);
         item.Removed += HandleTrashRemoved;
+
+        // Restore persistence here as well as in TrashItem.Awake(). Unity does
+        // not guarantee Awake order between the location and its trash items.
+        if (!item.IsRemoved &&
+            !string.IsNullOrEmpty(item.PersistentId) &&
+            TrashPersistence.IsRemoved(item.PersistentId))
+        {
+            item.RestoreRemovedState();
+        }
 
         InitialWeight += item.Weight;
         if (!item.IsRemoved)
