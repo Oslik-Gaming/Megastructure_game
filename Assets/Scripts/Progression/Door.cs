@@ -12,6 +12,13 @@ namespace Progression
         [SerializeField] private Transform doorModel;
         [SerializeField] private Vector3 openOffset = new Vector3(0, 3, 0);
         [SerializeField] private float openDuration = 1.5f;
+
+        [Header("Open Sound")]
+        [Tooltip("Один общий AudioSource для звука открытия дверей. Можно назначить один и тот же источник нескольким дверям. " +
+                 "Клип, громкость и настройки 3D-звука настраиваются на самом AudioSource. " +
+                 "Пусто — берётся AudioSource с двери или родителя; если его нет — звук не играет.")]
+        [SerializeField] private AudioSource openAudioSource;
+
         [SerializeField, HideInInspector] private string persistentId;
 
         private Vector3 closedPosition;
@@ -40,6 +47,11 @@ namespace Progression
         {
             if (isOpen) return;
 
+            // Если дверь уже числится открытой в сохранении — это восстановление
+            // состояния (например, OpenDoorAction.Restore при загрузке сцены),
+            // а не живое открытие игроком: звук не играем.
+            bool isRestore = WasOpened();
+
             isOpen = true;
             MarkAsOpened();
 
@@ -49,6 +61,28 @@ namespace Progression
             }
 
             openRoutine = StartCoroutine(OpenRoutine());
+
+            if (!isRestore)
+            {
+                PlayOpenSound();
+            }
+        }
+
+        private void PlayOpenSound()
+        {
+            if (openAudioSource == null)
+                openAudioSource = GetComponent<AudioSource>();
+            if (openAudioSource == null)
+                openAudioSource = GetComponentInParent<AudioSource>();
+
+            if (openAudioSource == null)
+            {
+                Debug.LogWarning($"[{name}] AudioSource для звука открытия двери не назначен и не найден.", this);
+                return;
+            }
+
+            // Клип и настройки задаются на самом AudioSource — просто запускаем проигрывание.
+            openAudioSource.Play();
         }
 
         public void OpenImmediate()
