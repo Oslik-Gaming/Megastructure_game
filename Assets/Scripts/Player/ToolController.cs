@@ -200,6 +200,31 @@ public class ToolController : MonoBehaviour
     }
 
     /// <summary>
+    /// Выбирает инструмент по его типу. Используется, например, после подбора
+    /// нового инструмента в мире.
+    /// </summary>
+    public void SelectTool(ToolType toolType)
+    {
+        for (int i = 0; i < toolTypes.Length; i++)
+        {
+            if (toolTypes[i] != toolType)
+                continue;
+
+            // Обычно слот уже разблокирован событием ToolUnlocked, но этот
+            // вызов делает метод безопасным и для уже разблокированного предмета.
+            if (!unlockedSlots.Contains(i))
+                UnlockSlot(i, false);
+
+            SelectTool(i);
+            return;
+        }
+
+        Debug.LogWarning(
+            $"[ToolController] Инструмент {toolType} отсутствует в массиве toolTypes.",
+            this);
+    }
+
+    /// <summary>
     /// Безопасная точка входа для будущих инструментов: только текущий инструмент
     /// может начать использование, и только когда не выполняется переключение.
     /// </summary>

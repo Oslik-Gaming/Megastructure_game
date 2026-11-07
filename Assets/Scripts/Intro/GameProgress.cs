@@ -18,6 +18,7 @@ public static class GameProgress
     private const string KeyPlayerPosition = "Progress_PlayerPosition";
     private const string KeyPlayerRotation = "Progress_PlayerRotation";
     private const string KeyPlayerHeadRotation = "Progress_PlayerHeadRotation";
+    private const string KeyGameCompleted = "Progress_GameCompleted";
 
     public static int ProgressGeneration => PlayerPrefs.GetInt(KeyProgressGeneration, 0);
 
@@ -29,6 +30,9 @@ public static class GameProgress
 
     public static string SavedPlayerScene =>
         PlayerPrefs.GetString(GenerationKey(KeyPlayerScene), string.Empty);
+
+    public static bool IsGameCompleted =>
+        PlayerPrefs.GetInt(GenerationKey(KeyGameCompleted), 0) == 1;
 
     /// <summary>ID последнего активированного чекпоинта. -1 = чекпоинта нет (старт игры).</summary>
     public static int SavedCheckpointId => PlayerPrefs.GetInt(KeyCheckpoint, -1);
@@ -104,6 +108,26 @@ public static class GameProgress
         PlayerPrefs.Save();
     }
 
+    /// <summary>Удаляет сохранённое положение игрока текущего поколения.</summary>
+    public static void ClearPlayerSave()
+    {
+        PlayerPrefs.DeleteKey(GenerationKey(KeyPlayerSave));
+        PlayerPrefs.DeleteKey(GenerationKey(KeyPlayerScene));
+
+        DeleteVector3(KeyPlayerPosition);
+        DeleteQuaternion(KeyPlayerRotation);
+        DeleteQuaternion(KeyPlayerHeadRotation);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>Помечает текущее прохождение завершённым.</summary>
+    public static void MarkGameCompleted()
+    {
+        PlayerPrefs.SetInt(GenerationKey(KeyGameCompleted), 1);
+        ClearPlayerSave();
+        PlayerPrefs.Save();
+    }
+
     /// <summary>Загружает сохранённое положение игрока текущего поколения.</summary>
     public static bool TryLoadPlayerTransform(
         out Vector3 position,
@@ -147,6 +171,19 @@ public static class GameProgress
             PlayerPrefs.GetFloat(GenerationKey(key + "Y")),
             PlayerPrefs.GetFloat(GenerationKey(key + "Z")),
             PlayerPrefs.GetFloat(GenerationKey(key + "W")));
+    }
+
+    private static void DeleteVector3(string key)
+    {
+        PlayerPrefs.DeleteKey(GenerationKey(key + "X"));
+        PlayerPrefs.DeleteKey(GenerationKey(key + "Y"));
+        PlayerPrefs.DeleteKey(GenerationKey(key + "Z"));
+    }
+
+    private static void DeleteQuaternion(string key)
+    {
+        DeleteVector3(key);
+        PlayerPrefs.DeleteKey(GenerationKey(key + "W"));
     }
 
     /// <summary>Полный сброс прогресса (пригодится для отладки).</summary>

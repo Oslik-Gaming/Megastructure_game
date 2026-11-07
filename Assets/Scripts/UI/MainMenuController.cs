@@ -45,8 +45,8 @@ public class MainMenuController : MonoBehaviour
         var exit     = root.Q<Button>("ExitButton");
         menuButtons  = new[] { play, continueBtn, settings, exit };
 
-        // "Продолжить" видна только если интро уже просмотрено
-        if (GameProgress.HasSeenIntro)
+        // "Продолжить" доступна только при наличии незавершённого сохранения.
+        if (GameProgress.HasSavedPlayerTransform && !GameProgress.IsGameCompleted)
         {
             continueBtn.style.display = DisplayStyle.Flex;
         }

@@ -54,6 +54,17 @@ namespace Progression
 
             isPickedUp = true;
             toolInventory.UnlockTool(toolType);
+
+            var toolController = FindFirstObjectByType<ToolController>();
+            if (toolController != null)
+            {
+                toolController.SelectTool(toolType);
+            }
+            else
+            {
+                Debug.LogWarning("[PickupableTool] ToolController не найден.");
+            }
+
             MarkAsPickedUp();
 
             StartCoroutine(PickupAnimation());
