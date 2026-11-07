@@ -11,6 +11,14 @@ public class Parasite : DamageableTrashItem
     [Tooltip("Transform to scale. If null, scales the root object.")]
     [SerializeField] private Transform visualRoot;
 
+    [Header("Shrink Axes")]
+    [Tooltip("Уменьшать ли масштаб по оси X при потере здоровья.")]
+    [SerializeField] private bool shrinkX = true;
+    [Tooltip("Уменьшать ли масштаб по оси Y при потере здоровья (выключите, чтобы паразит не сплющивался по высоте).")]
+    [SerializeField] private bool shrinkY = true;
+    [Tooltip("Уменьшать ли масштаб по оси Z при потере здоровья.")]
+    [SerializeField] private bool shrinkZ = true;
+
     private Vector3 initialScale;
 
     protected override void Awake()
@@ -39,6 +47,7 @@ public class Parasite : DamageableTrashItem
 
     /// <summary>
     /// Scale the visual proportionally to remaining health.
+    /// Только по осям, разрешённым в Shrink Axes — остальные оси сохраняют исходный масштаб.
     /// </summary>
     private void UpdateScale()
     {
@@ -46,7 +55,13 @@ public class Parasite : DamageableTrashItem
             return;
 
         float healthPercent = Mathf.Clamp01(CurrentHealth / MaxHealth);
-        visualRoot.localScale = initialScale * healthPercent;
+
+        Vector3 scale = initialScale;
+        if (shrinkX) scale.x = initialScale.x * healthPercent;
+        if (shrinkY) scale.y = initialScale.y * healthPercent;
+        if (shrinkZ) scale.z = initialScale.z * healthPercent;
+
+        visualRoot.localScale = scale;
     }
 
 #if UNITY_EDITOR
