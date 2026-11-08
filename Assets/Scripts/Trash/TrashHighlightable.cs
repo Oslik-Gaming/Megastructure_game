@@ -17,6 +17,7 @@ public sealed class TrashHighlightable : MonoBehaviour
     private Color color = Color.green;
     private float intensity;
     private float targetIntensity;
+    private bool persistentHighlight;
     private float fadeDuration = 0.3f;
 
     public void Initialize(Color outlineColor, float fadeOutDuration)
@@ -27,7 +28,14 @@ public sealed class TrashHighlightable : MonoBehaviour
         SetIntensity(0f);
     }
 
-    public void SetHighlighted(bool value) => targetIntensity = value ? 1f : 0f;
+    public void SetHighlighted(bool value) => targetIntensity = value || persistentHighlight ? 1f : 0f;
+
+    /// <summary>Подсветка, независимая от удержания кнопки выделения.</summary>
+    public void SetPersistentHighlighted(bool value)
+    {
+        persistentHighlight = value;
+        targetIntensity = value || targetIntensity > 0.001f ? 1f : 0f;
+    }
 
     private void Awake() => BuildProxies();
 

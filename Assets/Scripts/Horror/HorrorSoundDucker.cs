@@ -8,8 +8,7 @@ using UnityEngine;
 /// спряталось — звуки плавно возвращаются.
 ///
 /// Не приглушаются:
-///  - звуки игрока (шаги, инструменты) — флаг Exclude Player;
-///  - звук самого щупальца (ивент передаёт свою иерархию в Activate());
+///  - иерархия POINT_HORROR (ивент передаёт её в Activate());
 ///  - источники из списка Exclusions (интерфейс и т.п.).
 /// Музыка приглушается через MusicManager.SetDuck() (флаг Duck Music).
 ///
@@ -31,8 +30,8 @@ public sealed class HorrorSoundDucker : MonoBehaviour
     [Tooltip("Приглушать и музыку (MusicManager через SetDuck).")]
     [SerializeField] private bool duckMusic = true;
 
-    [Tooltip("Не приглушать звуки игрока (шаги, инструменты).")]
-    [SerializeField] private bool excludePlayer = true;
+    [Tooltip("Не приглушать звуки игрока (шаги, инструменты). Для HorrorTentacleEvent выключено, чтобы приглушались абсолютно все звуки вне POINT_HORROR.")]
+    [SerializeField] private bool excludePlayer = false;
 
     [Tooltip("AudioSource, которые не приглушать (интерфейс, свои эффекты и т.п.).")]
     [SerializeField] private List<AudioSource> exclusions = new();
@@ -42,7 +41,7 @@ public sealed class HorrorSoundDucker : MonoBehaviour
     private Transform ownHierarchy;
     private Coroutine duckRoutine;
 
-    /// <summary>Начать приглушение (щупальце вылезло). ownHierarchy — иерархия щупальца, её звук не глушим.</summary>
+    /// <summary>Начать приглушение. ownHierarchy — иерархия POINT_HORROR, её звуки не глушим.</summary>
     public void Activate(Transform ownHierarchyToExclude = null)
     {
         ownHierarchy = ownHierarchyToExclude;

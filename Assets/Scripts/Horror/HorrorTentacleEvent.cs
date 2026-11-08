@@ -45,6 +45,10 @@ public class HorrorTentacleEvent : MonoBehaviour
     [Tooltip("Дополнительный звук ухода под пол. Пусто — не играет.")]
     [SerializeField] private AudioClip retreatSound;
 
+    [Header("Приглушение звуков")]
+    [Tooltip("SoundDucker на дочернем объекте POINT_HORROR. На время ивента приглушает все звуки, кроме звуков этой точки.")]
+    [SerializeField] private HorrorSoundDucker soundDucker;
+
     [Header("Анимация")]
     [Tooltip("На какую высоту щупальце вылезает из тоннеля (скрытая позиция + это значение = рабочая позиция).")]
     [SerializeField, Min(0.1f)] private float emergeHeight = 2.9f;
@@ -101,6 +105,8 @@ public class HorrorTentacleEvent : MonoBehaviour
     private float lookTimer;
     private float currentYaw;
     private float loopStartVolume = 1f;
+    private AudioSource eventSoundSource;
+    private TrashHighlightable animationHighlight;
     private Vector3 hiddenLocalPos;
     private Vector3 shownLocalPos;
     private Vector3 initialScale;
@@ -135,8 +141,20 @@ public class HorrorTentacleEvent : MonoBehaviour
 
     private void Awake()
     {
+        if (soundDucker == null)
+            soundDucker = GetComponentInChildren<HorrorSoundDucker>(true);
+
         if (audioSource == null && tentacleRoot != null)
             audioSource = tentacleRoot.GetComponentInChildren<AudioSource>(true);
+
+        // Emerge/retreat sounds должны быть слышны из всей зоны появления.
+        // Основной AudioSource щупальца оставляем 3D-источником с его исходной
+        // дистанцией для зацикленного звука слизи.
+        eventSoundSource = gameObject.AddComponent<AudioSource>();
+        eventSoundSource.playOnAwake = false;
+        eventSoundSource.loop = false;
+        eventSoundSource.spatialBlend = 0f;
+        eventSoundSource.volume = audioSource != null ? audioSource.volume : 1f;
 
         if (homeLocation == null)
         {
@@ -224,6 +242,15 @@ public class HorrorTentacleEvent : MonoBehaviour
         // Щупальце появляется «с самых глубин»: включается только сейчас,
         // когда игрок вошёл в зону.
         tentacleRoot.gameObject.SetActive(true);
+
+        // Постоянная красная подсветка щупальца на всём протяжении ивента.
+        if (animationHighlight == null)
+            animationHighlight = tentacleRoot.GetComponent<TrashHighlightable>();
+        if (animationHighlight == null)
+            animationHighlight = tentacleRoot.gameObject.AddComponent<TrashHighlightable>();
+        animationHighlight.Initialize(new Color(1f, 0.1f, 0.1f), 0.05f);
+        animationHighlight.SetPersistentHighlighted(true);
+
         if (useScaleGrowth)
         {
             tentacleRoot.localPosition = shownLocalPos;
@@ -239,6 +266,11 @@ public class HorrorTentacleEvent : MonoBehaviour
         if (dangerZone != null)
             dangerZone.Activate();
 
+        // Приглушаем звуки сразу при входе в триггер, ещё до начала вылезания.
+        // Вся иерархия POINT_HORROR остаётся исключённой из приглушения.
+        if (soundDucker != null)
+            soundDucker.Activate(transform);
+
         if (audioSource != null && audioSource.clip != null)
         {
             loopStartVolume = audioSource.volume;
@@ -246,10 +278,7 @@ public class HorrorTentacleEvent : MonoBehaviour
         }
 
         if (emergeSound != null)
-        {
-            if (audioSource != null) audioSource.PlayOneShot(emergeSound);
-            else AudioSource.PlayClipAtPoint(emergeSound, transform.position);
-        }
+            PlayEventSound(emergeSound);
     }
 
     /// <summary>
@@ -445,10 +474,7 @@ public class HorrorTentacleEvent : MonoBehaviour
             dangerZone.Deactivate();
 
         if (retreatSound != null)
-        {
-            if (audioSource != null) audioSource.PlayOneShot(retreatSound);
-            else AudioSource.PlayClipAtPoint(retreatSound, tentacleRoot.position);
-        }
+            PlayEventSound(retreatSound);
 
         state = State.Retreating;
         timer = 0f;
@@ -456,6 +482,13 @@ public class HorrorTentacleEvent : MonoBehaviour
 
     private void FinishRetreat()
     {
+        // Щупальце полностью ушло — возвращаем звуки к исходной громкости.
+        if (soundDucker != null)
+            soundDucker.Deactivate();
+
+        if (animationHighlight != null)
+            animationHighlight.SetPersistentHighlighted(false);
+
         if (audioSource != null)
         {
             audioSource.Stop();
@@ -469,6 +502,23 @@ public class HorrorTentacleEvent : MonoBehaviour
         // Возвращаем согнутую позу, чтобы следующее появление снова было «знаком вопроса».
         RestoreCurledPose();
         state = State.Done;
+    }
+
+    private void PlayEventSound(AudioClip clip)
+    {
+        if (clip == null)
+            return;
+
+        if (eventSoundSource == null)
+        {
+            eventSoundSource = gameObject.AddComponent<AudioSource>();
+            eventSoundSource.playOnAwake = false;
+            eventSoundSource.loop = false;
+            eventSoundSource.spatialBlend = 0f;
+        }
+
+        eventSoundSource.volume = audioSource != null ? audioSource.volume : 1f;
+        eventSoundSource.PlayOneShot(clip);
     }
 
     private static float EaseOutCubic(float t) => 1f - Mathf.Pow(1f - t, 3f);
