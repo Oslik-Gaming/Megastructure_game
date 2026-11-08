@@ -11,28 +11,28 @@
             <ui:VisualElement class="meter">
                 <ui:VisualElement name="clean-fill" class="fill"/>
             </ui:VisualElement>
-            <ui:Label text="PAINT" class="meter-label"/>
-            <ui:VisualElement class="meter">
+            <ui:Label text="PAINT" class="meter-label" style="visibility: hidden;"/>
+            <ui:VisualElement class="meter" style="visibility: hidden;">
                 <ui:VisualElement name="paint-fill" class="fill"/>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="tool-panel" class="tool-panel panel">
-            <ui:Label text="TOOLS" class="caption tool-heading" />
+            <ui:Label text="TOOLS" class="caption tool-heading"/>
             <ui:VisualElement name="tool-slot-0" class="tool-slot">
-                <ui:Label text="1" class="tool-key" />
-                <ui:Label name="tool-name-0" class="tool-name" />
+                <ui:Label text="1" class="tool-key"/>
+                <ui:Label name="tool-name-0" class="tool-name"/>
             </ui:VisualElement>
             <ui:VisualElement name="tool-slot-1" class="tool-slot">
-                <ui:Label text="2" class="tool-key" />
-                <ui:Label name="tool-name-1" class="tool-name" />
+                <ui:Label text="2" class="tool-key"/>
+                <ui:Label name="tool-name-1" class="tool-name"/>
             </ui:VisualElement>
             <ui:VisualElement name="tool-slot-2" class="tool-slot">
-                <ui:Label text="3" class="tool-key" />
-                <ui:Label name="tool-name-2" class="tool-name" />
+                <ui:Label text="3" class="tool-key"/>
+                <ui:Label name="tool-name-2" class="tool-name"/>
             </ui:VisualElement>
             <ui:VisualElement name="tool-slot-3" class="tool-slot">
-                <ui:Label text="4" class="tool-key" />
-                <ui:Label name="tool-name-3" class="tool-name" />
+                <ui:Label text="4" class="tool-key"/>
+                <ui:Label name="tool-name-3" class="tool-name"/>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="object-card" class="object-card panel">
@@ -48,10 +48,10 @@
         <ui:Label name="time" text="TIME  00:00" class="time"/>
         <ui:Label name="critical-warning" class="critical-warning"/>
         <ui:VisualElement name="direction-arrow" class="direction-arrow" style="display: none;">
-            <ui:VisualElement name="direction-arrow-body" class="arrow-body" />
-            <ui:Label name="direction-distance" class="direction-distance" text="" />
+            <ui:VisualElement name="direction-arrow-body" class="arrow-body"/>
+            <ui:Label name="direction-distance" text="" class="direction-distance"/>
         </ui:VisualElement>
-        <ui:VisualElement name="hud-root" class="crosshair-host">
+        <ui:VisualElement name="hud-root" class="crosshair-host" style="top: 2px; left: 0;">
             <ui:VisualElement name="crosshair"/>
         </ui:VisualElement>
     </ui:VisualElement>
