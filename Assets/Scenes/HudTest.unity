@@ -453,7 +453,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3530ae1c1e4d4f4399e8284bf5c5c784, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrashItem
+  removalSounds: []
+  removalAudioSource: {fileID: 0}
   weight: 1
+  persistentId: 1b754a6ece6f4f7ba75acd030eeca8da
 --- !u!114 &899255655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,9 +469,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc323d701ed88c77b30c825bbad2bbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Grabable
-  weight: 1
   grabSides: []
   bounceFactor: 0.25
+  impactSounds: []
+  impactMinSpeed: 1
+  impactAudioSource: {fileID: 0}
 --- !u!54 &899255656
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -619,6 +624,338 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1071383837
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1071383839}
+  - component: {fileID: 1071383838}
+  m_Layer: 0
+  m_Name: GameProgressionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1071383838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071383837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42b6f1b10356420c18e89a41f4069c16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Progression.GameProgressionManager
+  steps:
+  - stepId: pickup_heater
+    taskText: '-'
+    entryActions:
+    - rid: 4472115237123522874
+    - rid: 4472115237123522875
+    - rid: 4472115276450103525
+    conditions:
+    - rid: 4472115237123522876
+  - stepId: clean_location1
+    taskText: "\u041E\u0447\u0438\u0441\u0442\u0438 \u043B\u043E\u043A\u0430\u0446\u0438\u044E
+      \"\u0412\u0435\u043D\u0442\u0438\u043B\u044F\u0446\u0438\u0438\""
+    entryActions:
+    - rid: 4472115237123522877
+    - rid: 4472115276450103526
+    conditions:
+    - rid: 4472115237123522878
+  - stepId: pickup_destructor
+    taskText: "\u0412\u043E\u0437\u044C\u043C\u0438 \u0414\u0435\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440"
+    entryActions:
+    - rid: 4472115237123522928
+    - rid: 4472115276450103296
+    - rid: 4472115276450103527
+    conditions:
+    - rid: 4472115276450103298
+  - stepId: destroy_rock
+    taskText: "\u0420\u0430\u0437\u0440\u0443\u0448\u044C \u0431\u043E\u043B\u044C\u0448\u043E\u0439
+      \u043A\u0430\u043C\u0435\u043D\u044C"
+    entryActions:
+    - rid: 4472115276450103299
+    - rid: 4472115276450103528
+    - rid: 4472115276450103536
+    conditions:
+    - rid: 4472115276450103300
+  - stepId: enter_location2
+    taskText: "\u041F\u0435\u0440\u0435\u0439\u0434\u0438 \u0432 \u043B\u043E\u043A\u0430\u0446\u0438\u044E
+      2"
+    entryActions:
+    - rid: 4472115276450103301
+    - rid: 4472115276450103302
+    conditions:
+    - rid: 4472115276450103303
+  - stepId: clean_location2
+    taskText: "\u041E\u0447\u0438\u0441\u0442\u0438 \"\u0411\u0438\u043E\u043B\u043E\u0433\u0438\u0447\u0435\u0441\u043A\u0438\u0439
+      \u0411\u0430\u0440\u044C\u0435\u0440\""
+    entryActions:
+    - rid: 4472115276450103304
+    - rid: 4472115276450103305
+    - rid: 4472115276450103306
+    conditions:
+    - rid: 4472115276450103307
+  - stepId: walk_to_doors
+    taskText: "\u0414\u043E\u0439\u0442\u0438 \u0434\u043E \u0434\u0432\u0435\u0440\u0435\u0439
+      \"\u0412\u0435\u043D\u0442\u0435\u043B\u044F\u0446\u0438\u0438\""
+    entryActions:
+    - rid: 4994844003033154284
+    - rid: 4994844003033154285
+    conditions:
+    - rid: 4994844003033154286
+  - stepId: enter_location3
+    taskText: "\u041F\u0435\u0440\u0435\u0439\u0434\u0438 \u0432 \"\u042D\u043D\u0435\u0440\u0433\u0438\u044F
+      \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u044B\""
+    entryActions:
+    - rid: 4472115276450103311
+    - rid: 4472115276450103312
+    - rid: 4994844003033154287
+    - rid: 4994844003033154288
+    conditions:
+    - rid: 4472115276450103314
+  - stepId: clean_location3
+    taskText: "\u041E\u0447\u0438\u0441\u0442\u0438 \u043F\u043E\u043C\u0435\u0449\u0435\u043D\u0438\u0435
+      \"\u042D\u043D\u0435\u0440\u0433\u0438\u044F \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u044B\""
+    entryActions:
+    - rid: 4472115276450103315
+    - rid: 4472115276450103316
+    - rid: 4472115276450103317
+    conditions:
+    - rid: 4472115276450103318
+  - stepId: something_strange
+    taskText: "\u0427\u0442\u043E \u0442\u043E \u0441\u0442\u0440\u0430\u043D\u043D\u043E\u0435,
+      \u0417\u0430\u0434\u0430\u043D\u0438\u0435 - \u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C"
+    entryActions:
+    - rid: 4994844028991963153
+    - rid: 4994844028991963154
+    conditions:
+    - rid: 4994844028991963155
+  - stepId: PressButton
+    taskText: "\u042D\u041A\u0421\u0422\u0420\u0415\u041D\u041D\u041E\u0415 \u0417\u0410\u0414\u0410\u041D\u0418\u0415,
+      \u0411\u0415\u0413\u0418 \u0418 \u041D\u0410\u0416\u041C\u0418 \u041D\u0410
+      \u041A\u041D\u041E\u041F\u041A\u0423 \u041B\u0418\u041A\u0412\u0418\u0414\u0410\u0426\u0418\u0418"
+    entryActions:
+    - rid: 4994844028991963156
+    - rid: 4994844028991963157
+    conditions:
+    - rid: 4994844028991963214
+  - stepId: Ending
+    taskText: engind
+    entryActions:
+    - rid: 4994844028991963173
+    - rid: 4994844028991963174
+    conditions: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 4472115237123522874
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "AI: \u0414\u043E\u0431\u0440\u043E \u043F\u043E\u0436\u0430\u043B\u043E\u0432\u0430\u0442\u044C.
+          \u0412\u043E\u0437\u044C\u043C\u0438 \u0412\u044B\u0436\u0438\u0433\u0430\u0442\u0435\u043B\u044C."
+    - rid: 4472115237123522875
+      type: {class: SpawnToolAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        toolType: 1
+        spawnPoint: {fileID: 0}
+        pickupPrefab: {fileID: 4988748894122444259, guid: c7b73d61793eaa3468aaf103937aab2c, type: 3}
+    - rid: 4472115237123522876
+      type: {class: ToolPickedCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        toolType: 1
+    - rid: 4472115237123522877
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "\u041E\u0447\u0438\u0441\u0442\u0438 \u043B\u043E\u043A\u0430\u0446\u0438\u044E
+          \"\u0412\u0435\u043D\u0442\u0438\u043B\u044F\u0446\u0438\u0438\""
+    - rid: 4472115237123522878
+      type: {class: LocationCleanedCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        location: {fileID: 0}
+    - rid: 4472115237123522928
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "\u0412\u043E\u0437\u044C\u043C\u0438 \u0414\u0435\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440
+          \u0432\u043D\u0438\u0437\u0443 \u043B\u0435\u0441\u0442\u043D\u0438\u0446\u044B"
+    - rid: 4472115276450103296
+      type: {class: SpawnToolAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        toolType: 2
+        spawnPoint: {fileID: 0}
+        pickupPrefab: {fileID: 3309413367187410921, guid: 66282fe43fe79754385d95f1527284cc, type: 3}
+    - rid: 4472115276450103298
+      type: {class: ToolPickedCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        toolType: 2
+    - rid: 4472115276450103299
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "\u0420\u0430\u0437\u0440\u0443\u0448\u044C \u0431\u0435\u0442\u043E\u043D\u043D\u044B\u0435
+          \u043E\u0431\u043B\u043E\u043C\u043A\u0438 \u043D\u0430 \u043C\u043E\u0441\u0442\u0443"
+    - rid: 4472115276450103300
+      type: {class: ObjectDestroyedCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 0}
+    - rid: 4472115276450103301
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "\u041F\u0435\u0440\u0435\u0439\u0434\u0438\u0442\u0435 \u0432
+          \"\u0411\u0438\u043E\u043B\u043E\u0433\u0438\u0447\u0435\u0441\u0435\u0438\u0439
+          \u0411\u0430\u0440\u044C\u0435\u0440\""
+    - rid: 4472115276450103302
+      type: {class: ShowDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 0}
+    - rid: 4472115276450103303
+      type: {class: ZoneEnteredCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        triggerZone: {fileID: 0}
+    - rid: 4472115276450103304
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "\u041E\u0447\u0438\u0441\u0442\u0438 \"\u0411\u0438\u043E\u043B\u043E\u0433\u0438\u0447\u0435\u0441\u043A\u0438\u0439
+          \u0411\u0430\u0440\u044C\u0435\u0440\""
+    - rid: 4472115276450103305
+      type: {class: SwitchLocationTrackingAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        newLocation: {fileID: 0}
+    - rid: 4472115276450103306
+      type: {class: HideDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data: 
+    - rid: 4472115276450103307
+      type: {class: LocationCleanedCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        location: {fileID: 0}
+    - rid: 4472115276450103311
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "\u041F\u0435\u0440\u0435\u0439\u0434\u0438 \u0432 \"\u042D\u043D\u0435\u0440\u0433\u0438\u044F
+          \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u044B\""
+    - rid: 4472115276450103312
+      type: {class: OpenDoorAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        door: {fileID: 0}
+    - rid: 4472115276450103314
+      type: {class: ZoneEnteredCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        triggerZone: {fileID: 0}
+    - rid: 4472115276450103315
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "\u041E\u0447\u0438\u0441\u0442\u0438 \u043F\u043E\u043C\u0435\u0449\u0435\u043D\u0438\u0435
+          \"\u042D\u043D\u0435\u0440\u0433\u0438\u044F \u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u044B\""
+    - rid: 4472115276450103316
+      type: {class: SwitchLocationTrackingAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        newLocation: {fileID: 0}
+    - rid: 4472115276450103317
+      type: {class: HideDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data: 
+    - rid: 4472115276450103318
+      type: {class: LocationCleanedCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        location: {fileID: 0}
+    - rid: 4472115276450103525
+      type: {class: ShowDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 0}
+    - rid: 4472115276450103526
+      type: {class: HideDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data: 
+    - rid: 4472115276450103527
+      type: {class: ShowDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 0}
+    - rid: 4472115276450103528
+      type: {class: HideDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data: 
+    - rid: 4472115276450103536
+      type: {class: ShowDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 0}
+    - rid: 4994844003033154284
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "\u0414\u043E\u0439\u0434\u0438 \u0434\u043E \u0434\u0432\u0435\u0440\u0435\u0439
+          \"\u0412\u0435\u043D\u0442\u0435\u043B\u044F\u0446\u0438\u0438\""
+    - rid: 4994844003033154285
+      type: {class: ShowDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 0}
+    - rid: 4994844003033154286
+      type: {class: ZoneEnteredCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        triggerZone: {fileID: 0}
+    - rid: 4994844003033154287
+      type: {class: OpenDoorAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        door: {fileID: 0}
+    - rid: 4994844003033154288
+      type: {class: ShowDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 0}
+    - rid: 4994844028991963153
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "\u0427\u0442\u043E \u0442\u043E \u0441\u0442\u0440\u0430\u043D\u043D\u043E\u0435,
+          \u0417\u0430\u0434\u0430\u043D\u0438\u0435 - \u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C"
+    - rid: 4994844028991963154
+      type: {class: ShowDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 0}
+    - rid: 4994844028991963155
+      type: {class: ZoneEnteredCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        triggerZone: {fileID: 0}
+    - rid: 4994844028991963156
+      type: {class: ShowTaskAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        taskText: "\u042D\u041A\u0421\u0422\u0420\u0415\u041D\u041D\u041E\u0415 \u0417\u0410\u0414\u0410\u041D\u0418\u0415,
+          \u0411\u0415\u0413\u0418 \u0418 \u041D\u0410\u0416\u041C\u0418 \u041D\u0410
+          \u041A\u041D\u041E\u041F\u041A\u0423 \u041B\u0418\u041A\u0412\u0418\u0414\u0410\u0426\u0418\u0418"
+    - rid: 4994844028991963157
+      type: {class: ShowDirectionArrowAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        target: {fileID: 0}
+    - rid: 4994844028991963173
+      type: {class: MarkGameCompletedAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data: 
+    - rid: 4994844028991963174
+      type: {class: PlayCutsceneAction, ns: Progression.Actions, asm: Assembly-CSharp}
+      data:
+        video: {fileID: 0}
+        endMessage: "\u0421\u043F\u0430\u0441\u0438\u0431\u043E \u0437\u0430 \u0438\u0433\u0440\u0443"
+        endMessageDuration: 3
+        nextSceneName: MainGameMenu
+        delayBeforePlay: 3
+    - rid: 4994844028991963214
+      type: {class: ButtonPressedCondition, ns: Progression.Conditions, asm: Assembly-CSharp}
+      data:
+        button: {fileID: 0}
+--- !u!4 &1071383839
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071383837}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 23.69576, y: 11.23158, z: 31.96364}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1344776619
 GameObject:
   m_ObjectHideFlags: 0
@@ -683,7 +1020,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3530ae1c1e4d4f4399e8284bf5c5c784, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrashItem
+  removalSounds: []
+  removalAudioSource: {fileID: 0}
   weight: 1
+  persistentId: 8fd60f7836f04fd7a9b6b67f1542c35d
 --- !u!114 &1344776623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -696,9 +1036,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc323d701ed88c77b30c825bbad2bbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Grabable
-  weight: 1
   grabSides: []
   bounceFactor: 0.25
+  impactSounds: []
+  impactMinSpeed: 1
+  impactAudioSource: {fileID: 0}
 --- !u!54 &1344776624
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -868,7 +1210,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3530ae1c1e4d4f4399e8284bf5c5c784, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrashItem
+  removalSounds: []
+  removalAudioSource: {fileID: 0}
   weight: 1
+  persistentId: 4e048877981a4e05a88aa99f3b080910
 --- !u!114 &1357229538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -881,9 +1226,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc323d701ed88c77b30c825bbad2bbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Grabable
-  weight: 1
   grabSides: []
   bounceFactor: 0.25
+  impactSounds: []
+  impactMinSpeed: 1
+  impactAudioSource: {fileID: 0}
 --- !u!54 &1357229539
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1020,6 +1367,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HudWarningZone
   hud: {fileID: 278765587}
+  warnInside: 0
+  warningText: 
 --- !u!65 &1650966567
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1159,6 +1508,7 @@ MonoBehaviour:
   placeVelocityTransfer: 0.2
   throwSpin: 2
   animator: {fileID: 0}
+  grabAnimationEnabled: 0
 --- !u!114 &1773250850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1234,9 +1584,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc323d701ed88c77b30c825bbad2bbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Grabable
-  weight: 1
   grabSides: []
   bounceFactor: 0.25
+  impactSounds: []
+  impactMinSpeed: 1
+  impactAudioSource: {fileID: 0}
 --- !u!54 &1906762424
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1354,7 +1706,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3530ae1c1e4d4f4399e8284bf5c5c784, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrashItem
+  removalSounds: []
+  removalAudioSource: {fileID: 0}
   weight: 1
+  persistentId: 0e3fde718ad6431a9410905e7660dae3
 --- !u!114 &1906762429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1543,3 +1898,4 @@ SceneRoots:
   - {fileID: 1650966568}
   - {fileID: 2127544317}
   - {fileID: 984590970}
+  - {fileID: 1071383839}

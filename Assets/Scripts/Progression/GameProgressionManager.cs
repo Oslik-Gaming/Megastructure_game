@@ -27,6 +27,18 @@ namespace Progression
         {
             if (isInitialized) return;
 
+            // Отпечаток цепочки шагов: если список шагов менялся с прошлой сессии,
+            // сохранённый индекс указывает на другой шаг — сбрасываем прогрессию.
+            string chainHash = BuildChainHash();
+            string savedChain = GameProgress.LoadProgressionChain();
+            if (savedChain != chainHash)
+            {
+                if (!string.IsNullOrEmpty(savedChain))
+                    Debug.LogWarning("[GameProgressionManager] Цепочка шагов изменилась — сохранённый шаг относился к другому списку. Прогрессия сброшена на 0.");
+                GameProgress.SaveProgressionChain(chainHash);
+                GameProgress.SaveProgressionStep(0);
+            }
+
             // Загрузить сохранённый шаг
             currentStepIndex = GameProgress.LoadProgressionStep();
             
@@ -111,8 +123,33 @@ namespace Progression
         {
             currentStepIndex = 0;
             GameProgress.ResetProgressionStep();
+            GameProgress.SaveProgressionChain(BuildChainHash());
             isInitialized = false;
             Initialize();
+        }
+
+        /// <summary>
+        /// Стабильный отпечаток цепочки шагов (FNV-1a по stepId в порядке следования).
+        /// Меняется при добавлении/удалении/переименовании/перестановке шагов.
+        /// </summary>
+        private string BuildChainHash()
+        {
+            unchecked
+            {
+                uint hash = 2166136261;
+                foreach (var step in steps)
+                {
+                    string id = step != null ? step.stepId : "<null>";
+                    foreach (char c in id)
+                    {
+                        hash ^= c;
+                        hash *= 16777619;
+                    }
+                    hash ^= '|';
+                    hash *= 16777619;
+                }
+                return hash.ToString("X8");
+            }
         }
     }
 }

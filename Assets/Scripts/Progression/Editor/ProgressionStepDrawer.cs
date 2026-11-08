@@ -193,7 +193,8 @@ namespace ProgressionEditor
                 typeof(ToolPickedCondition),
                 typeof(LocationCleanedCondition),
                 typeof(ObjectDestroyedCondition),
-                typeof(ZoneEnteredCondition)
+                typeof(ZoneEnteredCondition),
+                typeof(ButtonPressedCondition)
             };
         }
     }

@@ -7,6 +7,9 @@ public class CubeInteract : MonoBehaviour, IInteractable
  [Header("Настройки цвета")]
     [SerializeField] private Color targetColor = Color.red;
 
+    /// <summary>Событие: игрок нажал кнопку (вызывается при каждом Interact).</summary>
+    public event Action Pressed;
+
     private Renderer cubeRenderer;
     private Color originalColor;
 
@@ -32,5 +35,8 @@ public class CubeInteract : MonoBehaviour, IInteractable
             targetColor = originalColor;
             originalColor = temp;
         }
+
+        // Сообщаем подписчикам (например, ButtonPressedCondition), что кнопка нажата
+        Pressed?.Invoke();
     }
 }

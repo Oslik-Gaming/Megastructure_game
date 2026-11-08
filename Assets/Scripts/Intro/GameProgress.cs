@@ -192,6 +192,7 @@ public static class GameProgress
         PlayerPrefs.DeleteKey(KeyIntroSeen);
         PlayerPrefs.DeleteKey(KeyCheckpoint);
         PlayerPrefs.DeleteKey(KeyProgressionStep);
+        PlayerPrefs.DeleteKey(KeyProgressionChain);
         PlayerPrefs.DeleteKey(KeyProgressGeneration);
         PlayerPrefs.DeleteKey("Progress_UnlockedTools");
         
@@ -205,6 +206,22 @@ public static class GameProgress
         
         TrashPersistence.ResetAllTrash();
         PlayerPrefs.Save();
+    }
+
+    /// <summary>Отпечаток цепочки шагов прогрессии (чтобы сейв старого списка не подменял шаги нового).</summary>
+    private const string KeyProgressionChain = "Progress_StepsHash";
+
+    /// <summary>Сохранить отпечаток цепочки шагов (вызывается вместе с шагом).</summary>
+    public static void SaveProgressionChain(string chainHash)
+    {
+        PlayerPrefs.SetString(KeyProgressionChain, chainHash ?? "");
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>Загрузить отпечаток цепочки шагов. Пустая строка — не сохранялся.</summary>
+    public static string LoadProgressionChain()
+    {
+        return PlayerPrefs.GetString(KeyProgressionChain, "");
     }
 
     /// <summary>Сохранить текущий шаг прогрессии.</summary>
@@ -224,6 +241,7 @@ public static class GameProgress
     public static void ResetProgressionStep()
     {
         PlayerPrefs.DeleteKey(KeyProgressionStep);
+        PlayerPrefs.DeleteKey(KeyProgressionChain);
         PlayerPrefs.Save();
     }
 }
