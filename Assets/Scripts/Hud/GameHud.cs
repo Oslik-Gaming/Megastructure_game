@@ -7,6 +7,7 @@ public sealed class GameHud : MonoBehaviour
     [SerializeField] private TrashLocation location;
     [SerializeField, Range(0f, 100f)] private float paintPercent = 100f;
     [SerializeField] private string task = "CLEAN SECTOR 01:\nGET RID OF MOSS AND DEBRIS";
+    [SerializeField, Min(1)] private int taskCharacterIntervalMs = 28;
 
     private VisualElement root;
     private VisualElement paintFill;
@@ -18,6 +19,8 @@ public sealed class GameHud : MonoBehaviour
     private Label taskLabel;
     private Label timeLabel;
     private bool outsideZone;
+    private IVisualElementScheduledItem taskAnimation;
+    private int taskAnimationVersion;
 
     public TrashLocation CurrentLocation => location;
     public event System.Action<TrashLocation> LocationChanged;
@@ -35,9 +38,9 @@ public sealed class GameHud : MonoBehaviour
     /// <summary>Установить текст текущего задания.</summary>
     public void SetTask(string taskText)
     {
-        task = taskText;
+        task = taskText ?? string.Empty;
         if (taskLabel != null)
-            taskLabel.text = taskText;
+            AnimateTaskText();
     }
 
     /// <summary>Переключить отслеживание на новую локацию.</summary>
@@ -91,7 +94,7 @@ public sealed class GameHud : MonoBehaviour
             return;
         }
 
-        taskLabel.text = task;
+        AnimateTaskText();
         RefreshPaint();
         RefreshClean();
         HideObject();
@@ -151,5 +154,35 @@ public sealed class GameHud : MonoBehaviour
     {
         if (fill != null)
             fill.style.width = Length.Percent(Mathf.Clamp(percent, 0f, 100f));
+    }
+
+    private void AnimateTaskText()
+    {
+        if (taskLabel == null)
+            return;
+
+        taskAnimation?.Pause();
+        int animationVersion = ++taskAnimationVersion;
+        int visibleCharacters = 0;
+        string textToDisplay = task ?? string.Empty;
+
+        taskLabel.text = string.Empty;
+        taskAnimation = taskLabel.schedule.Execute(() =>
+        {
+            if (animationVersion != taskAnimationVersion)
+            {
+                taskAnimation?.Pause();
+                return;
+            }
+
+            visibleCharacters = Mathf.Min(visibleCharacters + 1, textToDisplay.Length);
+            taskLabel.text = textToDisplay.Substring(0, visibleCharacters);
+
+            if (visibleCharacters >= textToDisplay.Length)
+            {
+                taskAnimation?.Pause();
+                taskAnimation = null;
+            }
+        }).Every(Mathf.Max(1, taskCharacterIntervalMs));
     }
 }

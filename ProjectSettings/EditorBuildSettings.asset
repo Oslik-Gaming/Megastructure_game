@@ -11,10 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainGameMenu.unity
     guid: ec3d17e6cd54b9a47ac5151f7f957da8
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/GameStateMachineTest.unity
     guid: d28133691f24397e4afbd58299b1a1bc
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleSceneCopy.unity
     guid: da9ad288ac574130d9cde89fd9edad55
   m_configObjects:
