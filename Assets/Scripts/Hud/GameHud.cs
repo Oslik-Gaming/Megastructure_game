@@ -127,7 +127,7 @@ public sealed class GameHud : MonoBehaviour
             objectCard.style.display = DisplayStyle.None;
     }
 
-    public void SetOutsideZone(bool value)
+    public void SetOutsideZone(bool value, string text = null)
     {
         outsideZone = value;
         if (root == null)
@@ -135,7 +135,7 @@ public sealed class GameHud : MonoBehaviour
         root.EnableInClassList("critical", value);
         if (warning != null)
         {
-            warning.text = "CRITICAL WARNING";
+            warning.text = string.IsNullOrEmpty(text) ? "CRITICAL WARNING" : text;
             warning.style.display = value ? DisplayStyle.Flex : DisplayStyle.None;
         }
     }

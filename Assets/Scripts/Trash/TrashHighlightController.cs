@@ -22,6 +22,7 @@ public sealed class TrashHighlightController : MonoBehaviour
     private PlayerInputActions input;
     private bool held;
     private readonly Dictionary<TrashItem, TrashHighlightable> highlights = new();
+    private readonly Dictionary<HorrorTentacleEvent, TrashHighlightable> horrorHighlights = new();
 
     private void Awake()
     {
@@ -87,6 +88,7 @@ public sealed class TrashHighlightController : MonoBehaviour
             }
             highlight.SetHighlighted(true);
         }
+        RefreshHorrorHighlights();
         TrashItem nearest = FindNearest(current);
         if (directionArrow != null)
         {
@@ -115,12 +117,52 @@ public sealed class TrashHighlightController : MonoBehaviour
         _ => trashColor
     };
 
+    // Хоррор-щупальца подсвечиваются тем же красным, что и паразиты.
+    private Color GetColor(HorrorTentacleEvent _) => parasiteColor;
+
+    /// <summary>
+    /// Хоррор-щупальца (HorrorTentacleEvent) тоже выделяются по Q, пока они видны
+    /// (вылезли из тоннеля). Привязка к локации не нужна: щупальце существует
+    /// только во время своего ивента и физически находится в одной локе.
+    /// </summary>
+    private void RefreshHorrorHighlights()
+    {
+        foreach (var ev in new List<HorrorTentacleEvent>(horrorHighlights.Keys))
+        {
+            if (ev == null || !ev.HighlightVisible)
+            {
+                var stale = horrorHighlights[ev];
+                if (stale != null) stale.SetHighlighted(false);
+                horrorHighlights.Remove(ev);
+            }
+        }
+
+        foreach (var ev in HorrorTentacleEvent.Instances)
+        {
+            if (ev == null || !ev.HighlightVisible)
+                continue;
+            if (horrorHighlights.ContainsKey(ev))
+                continue;
+            var target = ev.HighlightTarget;
+            if (target == null)
+                continue;
+            var highlightable = target.GetComponent<TrashHighlightable>();
+            if (highlightable == null) highlightable = target.AddComponent<TrashHighlightable>();
+            highlightable.Initialize(GetColor(ev), fadeOutDuration);
+            highlightable.SetHighlighted(true); // иначе прокси остаются с нулевой интенсивностью
+            horrorHighlights.Add(ev, highlightable);
+        }
+    }
+
     private void StopHighlight()
     {
         held = false;
         foreach (var highlight in highlights.Values)
             if (highlight != null) highlight.SetHighlighted(false);
         highlights.Clear();
+        foreach (var highlight in horrorHighlights.Values)
+            if (highlight != null) highlight.SetHighlighted(false);
+        horrorHighlights.Clear();
         directionArrow?.HideOverride();
     }
 }
