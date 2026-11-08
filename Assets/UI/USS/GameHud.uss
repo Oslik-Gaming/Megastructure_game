@@ -94,6 +94,61 @@
     margin-bottom: 8px;
 }
 
+/* Tool slots, right side under the meters. */
+.tool-panel {
+    right: 30px;
+    top: 122px;
+    width: 190px;
+}
+
+.tool-heading {
+    margin-bottom: 4px;
+}
+
+.tool-slot {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 6px;
+    padding-left: 6px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-width: 1px;
+    border-color: rgba(0, 255, 110, 0.35);
+    background-color: rgba(0, 45, 20, 0.55);
+    transition-property: border-color, background-color, opacity;
+    transition-duration: 0.12s;
+    transition-timing-function: ease-out;
+}
+
+.tool-key {
+    width: 18px;
+    height: 18px;
+    border-width: 1px;
+    border-color: rgb(0, 255, 110);
+    font-size: 10px;
+    -unity-text-align: middle-center;
+    margin-right: 8px;
+}
+
+.tool-name {
+    flex-grow: 1;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: rgb(0, 255, 110);
+}
+
+/* Unlocked tool that is not currently held. */
+.tool-slot.unlocked {
+    border-color: rgba(0, 255, 110, 0.7);
+}
+
+/* Tool the player is holding right now. */
+.tool-slot.active {
+    border-color: rgb(0, 255, 110);
+    background-color: rgba(0, 255, 110, 0.18);
+}
+
 /* Inspectable object information. */
 .object-card {
     left: 58%;
@@ -195,8 +250,20 @@
 .critical .task-text,
 .critical .meter-label,
 .critical .object-title,
-.critical .object-description {
+.critical .object-description,
+.critical .tool-name,
+.critical .tool-key {
     color: rgb(255, 35, 60);
+    border-color: rgb(255, 35, 60);
+}
+
+.critical .tool-slot {
+    border-color: rgba(255, 35, 60, 0.5);
+}
+
+.critical .tool-slot.active {
+    border-color: rgb(255, 35, 60);
+    background-color: rgba(255, 35, 60, 0.15);
 }
 
 .critical #crosshair {

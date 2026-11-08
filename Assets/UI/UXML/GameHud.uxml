@@ -16,6 +16,25 @@
                 <ui:VisualElement name="paint-fill" class="fill"/>
             </ui:VisualElement>
         </ui:VisualElement>
+        <ui:VisualElement name="tool-panel" class="tool-panel panel">
+            <ui:Label text="TOOLS" class="caption tool-heading" />
+            <ui:VisualElement name="tool-slot-0" class="tool-slot">
+                <ui:Label text="1" class="tool-key" />
+                <ui:Label name="tool-name-0" class="tool-name" />
+            </ui:VisualElement>
+            <ui:VisualElement name="tool-slot-1" class="tool-slot">
+                <ui:Label text="2" class="tool-key" />
+                <ui:Label name="tool-name-1" class="tool-name" />
+            </ui:VisualElement>
+            <ui:VisualElement name="tool-slot-2" class="tool-slot">
+                <ui:Label text="3" class="tool-key" />
+                <ui:Label name="tool-name-2" class="tool-name" />
+            </ui:VisualElement>
+            <ui:VisualElement name="tool-slot-3" class="tool-slot">
+                <ui:Label text="4" class="tool-key" />
+                <ui:Label name="tool-name-3" class="tool-name" />
+            </ui:VisualElement>
+        </ui:VisualElement>
         <ui:VisualElement name="object-card" class="object-card panel">
             <ui:Label name="object-title" class="object-title"/>
             <ui:Label name="object-description" class="object-description"/>

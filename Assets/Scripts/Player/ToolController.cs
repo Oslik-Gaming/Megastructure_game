@@ -23,6 +23,12 @@ public class ToolController : MonoBehaviour
 
     /// <summary>Инструмент, который сейчас видим и принимает команды использования.</summary>
     public ToolBase ActiveTool { get; private set; }
+    /// <summary>Индекс слота активного инструмента или -1, если ничего не выбрано.</summary>
+    public int ActiveToolIndex => activeToolIndex;
+    /// <summary>Вызывается при смене активного инструмента; аргумент — индекс слота.</summary>
+    public event System.Action<int> ActiveToolChanged;
+    /// <summary>Вызывается при разблокировке нового слота инструмента.</summary>
+    public event System.Action UnlockedSlotsChanged;
     /// <summary>True между началом скрытия старого и завершением появления нового инструмента.</summary>
     public bool IsSwitching { get; private set; }
     public bool CanUseActiveTool => !IsSwitching && ActiveTool != null && ActiveTool.CanUse;
@@ -32,6 +38,12 @@ public class ToolController : MonoBehaviour
     private Coroutine switchRoutine;
     private ToolInventory toolInventory;
     private HashSet<int> unlockedSlots = new HashSet<int>();
+
+    /// <summary>Проверить, разблокирован ли слот по индексу (0–3).</summary>
+    public bool IsSlotUnlocked(int slotIndex) => unlockedSlots.Contains(slotIndex);
+
+    /// <summary>Получить тип инструмента, назначенного слоту (0–3).</summary>
+    public ToolType GetToolType(int slotIndex) => toolTypes[slotIndex];
 
     private void Awake()
     {
@@ -104,6 +116,7 @@ public class ToolController : MonoBehaviour
         if (unlockedSlots.Add(slotIndex))
         {
             Debug.Log($"[ToolController] Разблокирован слот {slotIndex + 1}: {toolTypes[slotIndex]}");
+            UnlockedSlotsChanged?.Invoke();
 
             // Если нет активного инструмента, выбрать этот автоматически
             if (autoSelect && ActiveTool == null)
@@ -131,6 +144,7 @@ public class ToolController : MonoBehaviour
         activeToolIndex = toolIndex;
         ActiveTool = tools[activeToolIndex];
         ActiveTool.SetVisibleImmediate();
+        ActiveToolChanged?.Invoke(activeToolIndex);
     }
 
     private void HideAllToolsImmediately()
@@ -193,6 +207,7 @@ public class ToolController : MonoBehaviour
             activeToolIndex = toolIndex;
             ActiveTool = tools[toolIndex];
             ActiveTool.Show();
+            ActiveToolChanged?.Invoke(activeToolIndex);
             return;
         }
 
@@ -249,6 +264,7 @@ public class ToolController : MonoBehaviour
 
         activeToolIndex = nextToolIndex;
         ActiveTool = tools[activeToolIndex];
+        ActiveToolChanged?.Invoke(activeToolIndex);
         ActiveTool.Show();
         yield return new WaitUntil(() => ActiveTool == null || ActiveTool.State == ToolState.Idle || ActiveTool.State == ToolState.NoPaint);
 
