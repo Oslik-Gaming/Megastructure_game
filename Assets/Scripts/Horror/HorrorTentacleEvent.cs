@@ -64,6 +64,13 @@ public class HorrorTentacleEvent : MonoBehaviour
     [Tooltip("Скорость покачивания щупальца.")]
     [SerializeField, Min(0.1f)] private float swaySpeed = 1.5f;
 
+    [Header("Уход: выпрямление в прямую линию")]
+    [Tooltip("Выпрямлять ли щупальце в вертикальную линию при уходе под пол (как настоящее щупальце).")]
+    [SerializeField] private bool straightenOnRetreat = true;
+
+    [Tooltip("Сколько секунд занимает выпрямление. 0 — выпрямляется одновременно со спуском.")]
+    [SerializeField, Min(0f)] private float straightenDuration = 0.45f;
+
     [Header("Когда щупальце прячется (обнаружение игроком)")]
     [Tooltip("Щупальце прячет себя и гасит баннер, когда игрок СМОТРИТ на его кончик одновременно при двух условиях:\n1) дистанция до кончика <= Notice Distance;\n2) кончик в пределах угла обзора камеры <= Notice Angle\nв течение Look Time To Notice секунд подряд.")]
     [SerializeField, Min(0.5f)] private float noticeDistance = 12f;
@@ -100,6 +107,11 @@ public class HorrorTentacleEvent : MonoBehaviour
     private readonly List<Bounds> renderBounds = new();
     private readonly Plane[] frustumPlanes = new Plane[6];
     private int boundsFrame = -1;
+
+    // Согнутая (авторская) поза сегментов — запоминается при старте ивента,
+    // к ней щупальце возвращается после ухода, чтобы снова вылезти «знаком вопроса».
+    private readonly List<Transform> spineTransforms = new();
+    private readonly List<Quaternion> curledRotations = new();
     private Transform playerTransform;
     private Camera playerCamera;
 
@@ -143,8 +155,48 @@ public class HorrorTentacleEvent : MonoBehaviour
             initialScale = tentacleRoot.localScale;
             currentYaw = transform.eulerAngles.y;
 
+            // Запоминаем согнутую позу («знак вопроса») — она собрана поворотами сегментов.
+            CacheCurledPose();
+
             // В покое щупальца нет вообще — игрок не должен видеть его до входа в зону.
             tentacleRoot.gameObject.SetActive(false);
+        }
+    }
+
+    /// <summary>Запомнить позу щупальца (повороты всех сегментов) как «согнутую».</summary>
+    private void CacheCurledPose()
+    {
+        spineTransforms.Clear();
+        curledRotations.Clear();
+        foreach (Transform t in tentacleRoot.GetComponentsInChildren<Transform>(true))
+        {
+            if (t == tentacleRoot)
+                continue; // корень вращается кодом (на игрока) — его не трогаем
+            spineTransforms.Add(t);
+            curledRotations.Add(t.localRotation);
+        }
+    }
+
+    /// <summary>Выпрямить щупальце в вертикальную линию (k: 0 — согнуто, 1 — прямое).</summary>
+    private void ApplyStraightenedPose(float k)
+    {
+        k = Mathf.Clamp01(k);
+        for (int i = 0; i < spineTransforms.Count; i++)
+        {
+            if (spineTransforms[i] == null)
+                continue;
+            spineTransforms[i].localRotation = Quaternion.Slerp(curledRotations[i], Quaternion.identity, k);
+        }
+    }
+
+    /// <summary>Вернуть согнутую позу (после ухода под пол, перед следующим появлением).</summary>
+    private void RestoreCurledPose()
+    {
+        for (int i = 0; i < spineTransforms.Count; i++)
+        {
+            if (spineTransforms[i] == null)
+                continue;
+            spineTransforms[i].localRotation = curledRotations[i];
         }
     }
 
@@ -179,6 +231,9 @@ public class HorrorTentacleEvent : MonoBehaviour
         }
         else
             tentacleRoot.localPosition = hiddenLocalPos;
+
+        // Сегменты должны быть в согнутой позе (после прошлого ухода они выпрямлялись).
+        RestoreCurledPose();
 
         // Вошли в триггер-зону → активируем опасную зону: баннер появляется сразу.
         if (dangerZone != null)
@@ -249,6 +304,13 @@ public class HorrorTentacleEvent : MonoBehaviour
                     tentacleRoot.localScale = Vector3.Lerp(initialScale, initialScale * 0.01f, EaseInCubic(r));
                 else
                     tentacleRoot.localPosition = Vector3.Lerp(shownLocalPos, hiddenLocalPos, EaseInCubic(r));
+                // Выпрямление в прямую линию по мере ухода (как настоящее щупальце).
+                if (straightenOnRetreat && curledRotations.Count > 0)
+                {
+                    float sk = straightenDuration <= 0f ? r : Mathf.Clamp01(timer / straightenDuration);
+                    ApplyStraightenedPose(sk);
+                }
+
                 if (audioSource != null && audioSource.isPlaying)
                     audioSource.volume = loopStartVolume * (1f - r);
                 if (r >= 1f)
@@ -404,6 +466,8 @@ public class HorrorTentacleEvent : MonoBehaviour
             tentacleRoot.localScale = initialScale;
         else
             tentacleRoot.localPosition = hiddenLocalPos;
+        // Возвращаем согнутую позу, чтобы следующее появление снова было «знаком вопроса».
+        RestoreCurledPose();
         state = State.Done;
     }
 
