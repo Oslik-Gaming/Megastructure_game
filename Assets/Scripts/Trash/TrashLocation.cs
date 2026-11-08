@@ -56,9 +56,7 @@ public class TrashLocation : MonoBehaviour
 
         // Restore persistence here as well as in TrashItem.Awake(). Unity does
         // not guarantee Awake order between the location and its trash items.
-        if (!item.IsRemoved &&
-            !string.IsNullOrEmpty(item.PersistentId) &&
-            TrashPersistence.IsRemoved(item.PersistentId))
+        if (!item.IsRemoved && TrashPersistence.IsRemoved(item.PersistenceKey))
         {
             item.RestoreRemovedState();
         }

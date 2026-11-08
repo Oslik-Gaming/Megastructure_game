@@ -176,6 +176,7 @@ namespace ProgressionEditor
             {
                 typeof(ShowTaskAction),
                 typeof(SpawnToolAction),
+                typeof(SpawnTrashAction),
                 typeof(SwitchLocationTrackingAction),
                 typeof(ShowDirectionArrowAction),
                 typeof(HideDirectionArrowAction),

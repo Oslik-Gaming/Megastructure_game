@@ -19,6 +19,8 @@ public static class GameProgress
     private const string KeyPlayerRotation = "Progress_PlayerRotation";
     private const string KeyPlayerHeadRotation = "Progress_PlayerHeadRotation";
     private const string KeyGameCompleted = "Progress_GameCompleted";
+    private const string KeyInitialTrashSpawned = "Progress_InitialTrashSpawned";
+    private const string KeyInitialTrashSeed = "Progress_InitialTrashSeed";
 
     public static int ProgressGeneration => PlayerPrefs.GetInt(KeyProgressGeneration, 0);
 
@@ -33,6 +35,30 @@ public static class GameProgress
 
     public static bool IsGameCompleted =>
         PlayerPrefs.GetInt(GenerationKey(KeyGameCompleted), 0) == 1;
+
+    public static bool InitialTrashSpawned =>
+        PlayerPrefs.GetInt(GenerationKey(KeyInitialTrashSpawned), 0) == 1;
+
+    public static void MarkInitialTrashSpawned()
+    {
+        PlayerPrefs.SetInt(GenerationKey(KeyInitialTrashSpawned), 1);
+        PlayerPrefs.Save();
+    }
+
+    public static int GetOrCreateInitialTrashSeed()
+    {
+        string key = GenerationKey(KeyInitialTrashSeed);
+        if (!PlayerPrefs.HasKey(key))
+        {
+            PlayerPrefs.SetInt(key, Random.Range(int.MinValue, int.MaxValue));
+            PlayerPrefs.Save();
+        }
+
+        return PlayerPrefs.GetInt(key);
+    }
+
+    public static int InitialTrashSeed =>
+        PlayerPrefs.GetInt(GenerationKey(KeyInitialTrashSeed), 0);
 
     /// <summary>ID последнего активированного чекпоинта. -1 = чекпоинта нет (старт игры).</summary>
     public static int SavedCheckpointId => PlayerPrefs.GetInt(KeyCheckpoint, -1);

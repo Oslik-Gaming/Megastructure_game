@@ -26,7 +26,7 @@ public class TrashItem : MonoBehaviour
         if (removalAudioSource == null)
             removalAudioSource = GetComponent<AudioSource>();
 
-        if (!string.IsNullOrEmpty(persistentId) && TrashPersistence.IsRemoved(persistentId))
+        if (TrashPersistence.IsRemoved(PersistenceKey))
         {
             // Keep the object in the hierarchy long enough for TrashLocation
             // to register it and include its original weight in the total.
@@ -37,6 +37,13 @@ public class TrashItem : MonoBehaviour
     }
 
     public string PersistentId => persistentId;
+    /// <summary>
+    /// Ключ сохранения экземпляра мусора. Старые префабы могут иметь общий
+    /// persistentId, поэтому добавляем путь объекта в иерархии сцены.
+    /// </summary>
+    public string PersistenceKey => string.IsNullOrEmpty(persistentId)
+        ? GetHierarchyPath()
+        : $"{persistentId}_{GetHierarchyPath()}";
     public TrashLocation HomeLocation { get; private set; }
     public bool IsRemoved { get; private set; }
 
@@ -92,12 +99,25 @@ public class TrashItem : MonoBehaviour
     /// <summary>Called after the item has been removed. Override to add cleanup logic.</summary>
     protected virtual void OnAfterRemoved()
     {
-        if (!string.IsNullOrEmpty(persistentId))
-            TrashPersistence.MarkAsRemoved(persistentId);
+        TrashPersistence.MarkAsRemoved(PersistenceKey);
     }
 
     /// <summary>Called when the item is reset for reuse. Override to restore initial state.</summary>
     protected virtual void OnResetForReuse() { }
+
+    private string GetHierarchyPath()
+    {
+        string path = transform.name;
+        Transform current = transform.parent;
+
+        while (current != null)
+        {
+            path = $"{current.name}[{current.GetSiblingIndex()}]/{path}";
+            current = current.parent;
+        }
+
+        return path;
+    }
 
 #if UNITY_EDITOR
     protected virtual void OnValidate()
