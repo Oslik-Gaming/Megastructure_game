@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Зона-триггер, проигрывающая звук ОДИН раз при входе игрока (хоррор-события).
+/// Зона-триггер, проигрывающая звук ОДИН раз за текущую игру при входе игрока (хоррор-события).
 ///
 /// Как пользоваться:
 ///  1. ПКМ в иерархии → "Звук" → "One-Shot Trigger" (или повесь скрипт на Empty вручную —
@@ -12,7 +12,7 @@ using UnityEngine;
 ///     Скрипт не трогает настройки звука — он только запускает проигрывание.
 ///  3. Если AudioSource на другом объекте — перетащи его в поле Source.
 ///
-/// Звук играется один раз за сессию. Опция Rearm On Respawn позволяет проиграть его снова
+/// Звук играется один раз за прохождение. Опция Rearm On Respawn позволяет проиграть его снова
 /// после смерти игрока (для скримеров, которые должны срабатывать при каждом заходе в зону
 /// после возрождения).
 /// </summary>
@@ -32,6 +32,9 @@ public class OneShotSoundTrigger : MonoBehaviour
     [Header("Правила срабатывания")]
     [Tooltip("Проиграть только один раз за игровую сессию")]
     [SerializeField] private bool playOncePerSession = true;
+
+    [Tooltip("Уникальный идентификатор триггера. Если пусто, используется имя объекта и сцены.")]
+    [SerializeField] private string persistentId;
 
     [Tooltip("После респавна игрока снова разрешить проигрывание (для повторных хоррор-событий после смерти)")]
     [SerializeField] private bool rearmOnRespawn = false;
@@ -69,6 +72,14 @@ public class OneShotSoundTrigger : MonoBehaviour
         }
 
         if (source != null) source.playOnAwake = false;
+
+        HasPlayed = playOncePerSession && GameProgress.HasPlayedOneShotSound(GetPersistentId());
+
+        if (HasPlayed && disableTriggerAfterPlay)
+        {
+            BoxCollider col = GetComponent<BoxCollider>();
+            if (col != null) col.enabled = false;
+        }
     }
 
     private void OnEnable()
@@ -84,6 +95,13 @@ public class OneShotSoundTrigger : MonoBehaviour
     private void OnPlayerRespawned()
     {
         if (!rearmOnRespawn) return;
+
+        // Постоянно одноразовый звук нельзя повторно включить респавном.
+        if (playOncePerSession && GameProgress.HasPlayedOneShotSound(GetPersistentId()))
+        {
+            HasPlayed = true;
+            return;
+        }
 
         HasPlayed = false;
         if (disableTriggerAfterPlay)
@@ -101,6 +119,8 @@ public class OneShotSoundTrigger : MonoBehaviour
         if (playOncePerSession && HasPlayed) return;
 
         HasPlayed = true;
+        if (playOncePerSession)
+            GameProgress.MarkOneShotSoundPlayed(GetPersistentId());
 
         if (disableTriggerAfterPlay)
         {
@@ -110,6 +130,14 @@ public class OneShotSoundTrigger : MonoBehaviour
 
         if (playRoutine != null) StopCoroutine(playRoutine);
         playRoutine = StartCoroutine(PlayDelayed());
+    }
+
+    private string GetPersistentId()
+    {
+        if (!string.IsNullOrWhiteSpace(persistentId))
+            return persistentId.Trim();
+
+        return $"{gameObject.scene.name}:{gameObject.name}";
     }
 
     private IEnumerator PlayDelayed()

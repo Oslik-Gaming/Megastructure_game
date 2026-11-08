@@ -365,6 +365,10 @@ public class PauseMenuController : MonoBehaviour
             ? SceneManager.GetActiveScene().name
             : checkpointSceneName;
 
+        // Рестарт должен использовать игровой чекпоинт,
+        // а не сохранённую позицию для кнопки «Продолжить».
+        GameProgress.ClearPlayerSave();
+
         Time.timeScale = 1f;
         GamePaused = false;
         if (Application.CanStreamedLevelBeLoaded(scene))

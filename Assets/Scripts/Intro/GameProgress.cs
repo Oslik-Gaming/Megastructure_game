@@ -21,6 +21,7 @@ public static class GameProgress
     private const string KeyGameCompleted = "Progress_GameCompleted";
     private const string KeyInitialTrashSpawned = "Progress_InitialTrashSpawned";
     private const string KeyInitialTrashSeed = "Progress_InitialTrashSeed";
+    private const string KeyOneShotSound = "Progress_OneShotSound_";
 
     public static int ProgressGeneration => PlayerPrefs.GetInt(KeyProgressGeneration, 0);
 
@@ -59,6 +60,22 @@ public static class GameProgress
 
     public static int InitialTrashSeed =>
         PlayerPrefs.GetInt(GenerationKey(KeyInitialTrashSeed), 0);
+
+    /// <summary>Проверяет, проигрывался ли одноразовый звук в текущей игре.</summary>
+    public static bool HasPlayedOneShotSound(string triggerId)
+    {
+        return !string.IsNullOrEmpty(triggerId) &&
+               PlayerPrefs.GetInt(GenerationKey(KeyOneShotSound + triggerId), 0) == 1;
+    }
+
+    /// <summary>Помечает одноразовый звук проигранным в текущей игре.</summary>
+    public static void MarkOneShotSoundPlayed(string triggerId)
+    {
+        if (string.IsNullOrEmpty(triggerId)) return;
+
+        PlayerPrefs.SetInt(GenerationKey(KeyOneShotSound + triggerId), 1);
+        PlayerPrefs.Save();
+    }
 
     /// <summary>ID последнего активированного чекпоинта. -1 = чекпоинта нет (старт игры).</summary>
     public static int SavedCheckpointId => PlayerPrefs.GetInt(KeyCheckpoint, -1);

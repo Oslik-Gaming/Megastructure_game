@@ -49,6 +49,7 @@ public class CheckpointManager : MonoBehaviour
 
     private CheckPoint activeCheckpoint;
     private bool respawning;
+    private bool restoringInitialCheckpoint;
 
     /// <summary>Последний активированный чекпоинт (может быть null в начале игры).</summary>
     public CheckPoint ActiveCheckpoint => activeCheckpoint;
@@ -103,10 +104,12 @@ public class CheckpointManager : MonoBehaviour
 
             if (debugLog)
                 Debug.Log($"[Checkpoints] Восстановлено сохранённое положение игрока: {savedPosition}.", this);
+            restoringInitialCheckpoint = false;
             yield break;
         }
 
         PlacePlayerAtRestorePoint();
+        restoringInitialCheckpoint = false;
     }
 
     private void RestoreCheckpointFromSave()
@@ -119,6 +122,9 @@ public class CheckpointManager : MonoBehaviour
             if (cp.checkpointId != savedId) continue;
 
             activeCheckpoint = cp;
+            // Игрок может начать сцену внутри стартового триггера. Не позволяем
+            // ему перезаписать сохранённый чекпоинт до завершения восстановления.
+            restoringInitialCheckpoint = true;
             if (debugLog)
                 Debug.Log($"[Checkpoints] Загружен сохранённый чекпоинт ID {savedId} ('{cp.name}').", this);
             return;
@@ -161,6 +167,7 @@ public class CheckpointManager : MonoBehaviour
     public static void Activate(CheckPoint checkpoint)
     {
         if (Instance == null || checkpoint == null) return;
+        if (Instance.restoringInitialCheckpoint) return;
         if (Instance.activeCheckpoint == checkpoint) return; // уже активен (защита от повторного входа)
 
         Instance.activeCheckpoint = checkpoint;
