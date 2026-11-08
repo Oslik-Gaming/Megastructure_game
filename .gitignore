@@ -12,6 +12,9 @@ ProjectSettings/
 plans/
 opencode.json
 summaryes/
+Assets/Prefabs
+Assets/Prefabs.meta
+Assets/_Recovery
 
 # TextMeshPro
 /[Aa]ssets/TextMesh Pro

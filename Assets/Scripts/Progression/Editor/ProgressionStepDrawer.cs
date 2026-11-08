@@ -182,6 +182,7 @@ namespace ProgressionEditor
                 typeof(HideDirectionArrowAction),
                 typeof(OpenDoorAction),
                 typeof(PlayCutsceneAction),
+                typeof(TriggerReactorExplosionAction),
                 typeof(MarkGameCompletedAction),
                 typeof(LoadSceneAction)
             };
