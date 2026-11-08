@@ -18,27 +18,36 @@
             <ui:VisualElement name="ContentContainer" class="settings-content">
                 <ui:Label text="НАСТРОЙКИ" class="settings-title"/>
 
-                <!-- Громкость -->
-                <ui:VisualElement name="VolumeRow" class="settings-row">
-                    <ui:VisualElement name="VolumeHeader" class="row-header">
-                        <ui:Label text="ГРОМКОСТЬ" name="VolumeLabel" class="row-label"/>
-                        <ui:Label text="100" name="VolumeValue" class="row-value"/>
-                    </ui:VisualElement>
-                    <ui:Slider name="VolumeSlider" class="settings-slider" low-value="0" high-value="100" value="100"/>
-                </ui:VisualElement>
+                <!-- Прокручиваемый контент: слайдеры + список управления.
+                     ScrollView возвращает вертикальную прокрутку, когда контент
+                     не влезает по высоте — надписи больше не сжимаются. -->
+                <ui:ScrollView name="SettingsScroll" class="settings-scroll"
+                               mode="Vertical"
+                               horizontal-scroller-visibility="Hidden"
+                               vertical-scroller-visibility="Auto">
 
-                <!-- Чувствительность мыши -->
-                <ui:VisualElement name="SensitivityRow" class="settings-row">
-                    <ui:VisualElement name="SensitivityHeader" class="row-header">
-                        <ui:Label text="ЧУВСТВИТЕЛЬНОСТЬ МЫШИ" name="SensitivityLabel" class="row-label"/>
-                        <ui:Label text="40" name="SensitivityValue" class="row-value"/>
+                    <!-- Громкость -->
+                    <ui:VisualElement name="VolumeRow" class="settings-row">
+                        <ui:VisualElement name="VolumeHeader" class="row-header">
+                            <ui:Label text="ГРОМКОСТЬ" name="VolumeLabel" class="row-label"/>
+                            <ui:Label text="100" name="VolumeValue" class="row-value"/>
+                        </ui:VisualElement>
+                        <ui:Slider name="VolumeSlider" class="settings-slider" low-value="0" high-value="100" value="100"/>
                     </ui:VisualElement>
-                    <ui:Slider name="SensitivitySlider" class="settings-slider" low-value="0" high-value="100" value="40"/>
-                </ui:VisualElement>
 
-                <!-- Управление (только просмотр, бинды менять нельзя) -->
-                <ui:Label text="УПРАВЛЕНИЕ" class="section-label"/>
-                <ui:VisualElement name="ControlsList" class="controls-list"/>
+                    <!-- Чувствительность мыши -->
+                    <ui:VisualElement name="SensitivityRow" class="settings-row">
+                        <ui:VisualElement name="SensitivityHeader" class="row-header">
+                            <ui:Label text="ЧУВСТВИТЕЛЬНОСТЬ МЫШИ" name="SensitivityLabel" class="row-label"/>
+                            <ui:Label text="40" name="SensitivityValue" class="row-value"/>
+                        </ui:VisualElement>
+                        <ui:Slider name="SensitivitySlider" class="settings-slider" low-value="0" high-value="100" value="40"/>
+                    </ui:VisualElement>
+
+                    <!-- Управление (только просмотр, бинды менять нельзя) -->
+                    <ui:Label text="УПРАВЛЕНИЕ" class="section-label"/>
+                    <ui:VisualElement name="ControlsList" class="controls-list"/>
+                </ui:ScrollView>
 
                 <ui:Button text="    НАЗАД" name="BackButton" class="menu-button back-button"/>
             </ui:VisualElement>
