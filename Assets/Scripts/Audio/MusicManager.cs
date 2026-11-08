@@ -52,6 +52,10 @@ public class MusicManager : MonoBehaviour
     [Tooltip("Общая громкость музыки (удобно для настроек звука).")]
     [Range(0f, 1f)] [SerializeField] private float masterVolume = 1f;
 
+    [Header("Приглушение (хоррор-ивенты)")]
+    [Tooltip("Множитель громкости музыки: 1 — обычная громкость, 0 — тишина. Управляется кодом через SetDuck() (хоррор-ивенты).")]
+    [Range(0f, 1f)] [SerializeField] private float duckFactor = 1f;
+
     [Header("Отладка")]
     [SerializeField] private bool debugLog = false;
 
@@ -108,7 +112,7 @@ public class MusicManager : MonoBehaviour
         if (def != null && def.clip != null && mainSource != null)
         {
             mainSource.clip = def.clip;
-            mainSource.volume = def.volume * masterVolume;
+            mainSource.volume = def.volume * EffectiveMaster;
             mainSource.loop = true;
             mainSource.Play();
             CurrentTrack = def;
@@ -266,7 +270,7 @@ public class MusicManager : MonoBehaviour
         AudioSource to = fadeSource;
         if (from == null || to == null) yield break;
 
-        float targetVolume = target.volume * masterVolume;
+        float targetVolume = target.volume * EffectiveMaster;
         float fromStartVolume = from.isPlaying ? from.volume : 0f;
 
         // Новый трек всегда стартует во "втором" источнике с нулевой громкости
@@ -347,7 +351,21 @@ public class MusicManager : MonoBehaviour
     {
         masterVolume = Mathf.Clamp01(volume);
         if (mainSource != null && CurrentTrack != null && mainSource.isPlaying)
-            mainSource.volume = CurrentTrack.volume * masterVolume;
+            mainSource.volume = CurrentTrack.volume * EffectiveMaster;
+    }
+
+    /// <summary>Итоговый множитель громкости: настройка звука × приглушение хоррор-ивента.</summary>
+    public float EffectiveMaster => masterVolume * duckFactor;
+
+    /// <summary>
+    /// Приглушить музыку на время хоррор-ивента (duck 0..1; 1 — вернуть как было).
+    /// Влияет и на текущий трек, и на будущие кроссфейды.
+    /// </summary>
+    public void SetDuck(float duck)
+    {
+        duckFactor = Mathf.Clamp01(duck);
+        if (mainSource != null && CurrentTrack != null && mainSource.isPlaying)
+            mainSource.volume = CurrentTrack.volume * EffectiveMaster;
     }
 
     private void OnValidate()
