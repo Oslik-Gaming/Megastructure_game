@@ -6,8 +6,11 @@ Shader "Megastructure/TrashOutline"
         Tags { "Queue"="Transparent+100" "RenderType"="Transparent" }
         Pass
         {
-            Cull Front
-            ZTest Always
+            // This proxy is used as a solid highlight layer. Rendering the
+            // front faces avoids the hollow halo produced by the old inverted
+            // silhouette pass (Cull Front + normal extrusion).
+            Cull Back
+            ZTest LEqual
             ZWrite Off
             Blend SrcAlpha OneMinusSrcAlpha
             HLSLPROGRAM
@@ -20,7 +23,7 @@ Shader "Megastructure/TrashOutline"
             Varyings vert(Attributes input)
             {
                 Varyings output;
-                float3 pos = input.positionOS.xyz + input.normalOS * 0.025;
+                float3 pos = input.positionOS.xyz;
                 output.positionHCS = TransformObjectToHClip(pos);
                 return output;
             }
