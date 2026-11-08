@@ -39,11 +39,11 @@
             <ui:Label name="object-title" class="object-title"/>
             <ui:Label name="object-description" class="object-description"/>
         </ui:VisualElement>
-        <ui:VisualElement class="controls panel" style="visibility: hidden;">
-            <ui:Label text="[WASD]  MOVE"/>
-            <ui:Label text="[SHIFT] SPRINT"/>
-            <ui:Label text="[SPACE] JUMP"/>
-            <ui:Label text="[E]     INTERACT"/>
+        <ui:VisualElement class="controls panel" style="visibility: visible; width: 259px;">
+            <ui:Label text="ВЫБРАСЫВАЙ МУСОР В БЕЗДНУ "/>
+            <ui:Label text="[Q] ПОДВЕТИТЬ МУСОР"/>
+            <ui:Label text="[SHIFT] БЕГАТЬ"/>
+            <ui:Label text="[SPACE] ПРЫГАТЬ"/>
         </ui:VisualElement>
         <ui:Label name="time" text="TIME  00:00" class="time"/>
         <ui:Label name="critical-warning" class="critical-warning"/>
