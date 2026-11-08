@@ -80,6 +80,9 @@ public class HorrorTentacleEvent : MonoBehaviour
     [Tooltip("Анимировать рост МАСШТАБОМ вместо подъёма из-под пола. Включите, если ставите свою модель щупальца — оно будет расти от пивота, как из глубины.")]
     [SerializeField] private bool useScaleGrowth = false;
 
+    [Tooltip("Проверять замечание по кончику щупальца (Tentacle Tip). Выкл — по ближайшей точке bounding box модели (работает с любой формой).")]
+    [SerializeField] private bool checkTipPoint = false;
+
     [Tooltip("Камера игрока. Пусто — берётся Camera.main, а если она не помечена тегом MainCamera — первая включённая камера на сцене.")]
     [SerializeField] private Camera viewCamera;
 
@@ -94,6 +97,9 @@ public class HorrorTentacleEvent : MonoBehaviour
     private Vector3 hiddenLocalPos;
     private Vector3 shownLocalPos;
     private Vector3 initialScale;
+    private readonly List<Bounds> renderBounds = new();
+    private readonly Plane[] frustumPlanes = new Plane[6];
+    private int boundsFrame = -1;
     private Transform playerTransform;
     private Camera playerCamera;
 
@@ -159,6 +165,7 @@ public class HorrorTentacleEvent : MonoBehaviour
         state = State.Emerging;
         timer = 0f;
         lookTimer = 0f;
+        boundsFrame = -1; // пересчитать bounding box модели
         playerCamera = ResolveCamera();
         playerTransform = FindFirstObjectByType<PlayerMovements>()?.transform;
 
@@ -270,27 +277,68 @@ public class HorrorTentacleEvent : MonoBehaviour
         tentacleRoot.rotation = Quaternion.Euler(swayX, currentYaw, swayZ);
     }
 
-    /// <summary>Проверка: заметил ли игрок щупальце (дистанция + угол обзора + линия взгляда).</summary>
+    /// <summary>
+    /// Проверка: заметил ли игрок щупальце. Три условия:
+    /// 1) дистанция от камеры до ближайшей точки модели (по bounding box рендереров)
+    ///    ≤ Notice Distance;
+    /// 2) камера ВИДИТ хоть какую-то часть щупальца (frustum-тест по bounding box —
+    ///    надёжно для любых размеров модели, в отличие от угла к углу бокса);
+    /// 3) линия взгляда до ближайшей точки не перекрыта стенами.
+    /// </summary>
     private void UpdateNoticeCheck()
     {
         if (playerCamera == null)
             playerCamera = ResolveCamera();
-        if (playerCamera == null)
+        if (playerCamera == null || tentacleRoot == null)
+            return;
+        if (Time.frameCount != boundsFrame)
+            CacheBounds();
+        if (renderBounds.Count == 0)
             return;
 
-        Vector3 tipPos = GetTipPosition();
-        Vector3 toTip = tipPos - playerCamera.transform.position;
-        float distance = toTip.magnitude;
+        Vector3 camPos = playerCamera.transform.position;
 
-        if (distance <= noticeDistance)
+        // 1) Дистанция до ближайшей точки модели.
+        float nearestDist = float.MaxValue;
+        Vector3 nearestPoint = tentacleRoot.position;
+        foreach (Bounds b in renderBounds)
         {
-            float angle = Vector3.Angle(playerCamera.transform.forward, toTip);
-            if (angle <= noticeAngle && HasLineOfSight(playerCamera.transform.position, tipPos, distance))
-                lookTimer += Time.deltaTime;
+            Vector3 p = b.ClosestPoint(camPos);
+            float d = (p - camPos).magnitude;
+            if (d < nearestDist) { nearestDist = d; nearestPoint = p; }
         }
+        if (nearestDist > noticeDistance)
+            return;
 
+        // 2) Видит ли камера хоть какую-то часть щупальца.
+        GeometryUtility.CalculateFrustumPlanes(playerCamera, frustumPlanes);
+        bool anyVisible = false;
+        foreach (Bounds b in renderBounds)
+        {
+            if (GeometryUtility.TestPlanesAABB(frustumPlanes, b))
+            {
+                anyVisible = true;
+                break;
+            }
+        }
+        if (!anyVisible)
+            return;
+
+        // 3) Линия взгляда не перекрыта стенами.
+        if (!HasLineOfSight(camPos, nearestPoint, nearestDist))
+            return;
+
+        lookTimer += Time.deltaTime;
         if (lookTimer >= lookTimeToNotice)
             OnNoticed();
+    }
+
+    private void CacheBounds()
+    {
+        renderBounds.Clear();
+        foreach (Renderer r in tentacleRoot.GetComponentsInChildren<Renderer>(true))
+            renderBounds.Add(r.bounds);
+        boundsFrame = Time.frameCount;
     }
 
     private Vector3 GetTipPosition()
@@ -305,15 +353,21 @@ public class HorrorTentacleEvent : MonoBehaviour
     private bool HasLineOfSight(Vector3 from, Vector3 to, float distance)
     {
         Vector3 dir = (to - from) / Mathf.Max(0.001f, distance);
-        if (Physics.Raycast(from, dir, out RaycastHit hit, Mathf.Max(0.05f, distance - 0.05f),
+        // Луч пускаем чуть ДАЛЬШЕ цели: если у щупальца нет коллайдеров, луч может
+        // пройти сквозь него и попасть в фон — такое попадание ЗА целью линией
+        // взгляда не считается. Перекрытием считается только то, что ДО цели.
+        if (Physics.Raycast(from, dir, out RaycastHit hit, distance + 0.5f,
                 sightBlockMask.value, QueryTriggerInteraction.Ignore))
         {
-            // Попадание в само щупальце или в игрока линию взгляда не блокирует.
-            if (tentacleRoot != null && hit.collider.transform.IsChildOf(tentacleRoot))
-                return true;
-            if (playerTransform != null && hit.collider.transform.IsChildOf(playerTransform))
-                return true;
-            return false;
+            if (hit.distance <= distance - 0.05f)
+            {
+                // Попадание в само щупальце или в игрока линию взгляда не блокирует.
+                if (tentacleRoot != null && hit.collider.transform.IsChildOf(tentacleRoot))
+                    return true;
+                if (playerTransform != null && hit.collider.transform.IsChildOf(playerTransform))
+                    return true;
+                return false;
+            }
         }
         return true;
     }
@@ -357,6 +411,61 @@ public class HorrorTentacleEvent : MonoBehaviour
     private static float EaseInCubic(float t) => t * t * t;
 
 #if UNITY_EDITOR
+    /// <summary>
+    /// Кликнуть правой по компоненту в инспекторе → «Подогнать высоту вылезания».
+    /// Ставит Emerge Height так, чтобы стык Seg0_Mesh/Seg1_Mesh оказался на уровне
+    /// точки появления (дыры), когда щупальце полностью вылезло.
+    /// Использовать после любых правок модели щупальца.
+    /// </summary>
+    [ContextMenu("Подогнать высоту вылезания по стыку Seg0/Seg1")]
+    private void FitEmergeHeightToJoint()
+    {
+        if (tentacleRoot == null)
+        {
+            Debug.LogWarning("[HorrorTentacle] Tentacle Root не назначен.", this);
+            return;
+        }
+
+        var seg0 = FindDeepChild(tentacleRoot, "Seg0_Mesh");
+        var seg1 = FindDeepChild(tentacleRoot, "Seg1_Mesh");
+        if (seg0 == null || seg1 == null)
+        {
+            Debug.LogWarning("[HorrorTentacle] Не найдены Seg0_Mesh/Seg1_Mesh внутри Tentacle.", this);
+            return;
+        }
+
+        Renderer r0 = seg0.GetComponentInChildren<Renderer>(true);
+        Renderer r1 = seg1.GetComponentInChildren<Renderer>(true);
+        if (r0 == null || r1 == null)
+        {
+            Debug.LogWarning("[HorrorTentacle] У Seg0_Mesh/Seg1_Mesh нет рендереров.", this);
+            return;
+        }
+
+        // Текущая высота стыка в мире (с учётом всей иерархии и масштабов).
+        float jointNow = (r0.bounds.max.y + r1.bounds.min.y) * 0.5f;
+
+        // Уровень «дыры» = уровень корня точки, на котором стоит Tentacle.
+        float rootY = tentacleRoot.parent != null ? tentacleRoot.parent.position.y : transform.position.y;
+
+        // В редакторе щупальце стоит в авторской (спрятанной) позе. При полном
+        // вылезании оно поднимется ровно на emergeHeight, поэтому стык окажется
+        // на jointNow + emergeHeight. Подбираем значение так, чтобы стык встал
+        // на уровень дыры: jointNow + emergeHeight = rootY.
+        float old = emergeHeight;
+        emergeHeight = rootY - jointNow;
+        UnityEditor.EditorUtility.SetDirty(this);
+        Debug.Log($"[HorrorTentacle] Emerge Height: {old:F2} → {emergeHeight:F2} (стык Seg0/Seg1 на уровне дыры).", this);
+    }
+
+    private static Transform FindDeepChild(Transform parent, string name)
+    {
+        foreach (Transform t in parent.GetComponentsInChildren<Transform>(true))
+            if (t.name == name)
+                return t;
+        return null;
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (debugDraw)

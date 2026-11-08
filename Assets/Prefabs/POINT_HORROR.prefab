@@ -245,7 +245,7 @@ Transform:
   m_GameObject: {fileID: 899245948914191145}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.55, z: 0}
+  m_LocalPosition: {x: 0, y: 1.61, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -934,7 +934,7 @@ MonoBehaviour:
   audioSource: {fileID: 3833977218495715010}
   emergeSound: {fileID: 0}
   retreatSound: {fileID: 0}
-  emergeHeight: 5.7465734
+  emergeHeight: 21.031
   emergeDuration: 1.6
   retreatDuration: 0.8
   aimTurnSpeed: 3
@@ -947,6 +947,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   useScaleGrowth: 0
+  checkTipPoint: 0
   viewCamera: {fileID: 0}
   debugDraw: 0
 --- !u!1 &6484404707021674412
