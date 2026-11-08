@@ -200,6 +200,46 @@
     letter-spacing: 3px;
 }
 
+/* Flat green direction arrow, bottom center of the screen.
+   Само изображение стрелки назначается кодом. */
+.direction-arrow {
+    position: absolute;
+    left: 50%;
+    bottom: 40px;
+    width: 58px;
+    height: 58px;
+    translate: -50% 0;
+}
+
+/* Rotating arrow body: procedural texture is assigned from code. */
+.arrow-body {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 58px;
+    height: 58px;
+}
+
+/* Distance readout, to the right of the arrow. */
+.direction-distance {
+    position: absolute;
+    left: 70px;
+    top: 50%;
+    translate: 0 -50%;
+    font-size: 19px;
+    letter-spacing: 2px;
+    color: rgb(0, 255, 110);
+    white-space: nowrap;
+    -unity-text-align: middle-left;
+    border-width: 1px;
+    border-color: rgba(0, 255, 110, 0.5);
+    background-color: rgba(0, 18, 10, 0.72);
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
 /* Crosshair. */
 .crosshair-host {
     position: absolute;
@@ -264,6 +304,12 @@
 .critical .tool-slot.active {
     border-color: rgb(255, 35, 60);
     background-color: rgba(255, 35, 60, 0.15);
+}
+
+.critical .direction-distance {
+    color: rgb(255, 35, 60);
+    border-color: rgba(255, 35, 60, 0.5);
+    background-color: rgba(55, 0, 8, 0.78);
 }
 
 .critical #crosshair {
