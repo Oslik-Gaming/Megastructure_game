@@ -203,7 +203,7 @@ Material:
     m_Colors:
     - _BaseColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
     - _Color: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
-    - _Colour: {r: 0.25097978, g: 0.25882292, b: 0.34117585, a: 1}
+    - _Colour: {r: 0.2509777, g: 0.25882083, b: 0.3411738, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Height_Gradient_Colour_Bottom: {r: 0, g: 0.7329502, b: 1, a: 1}
     - _Height_Gradient_Colour_Top: {r: 1, g: 0, b: 0.6922989, a: 1}
