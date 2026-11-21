@@ -76,6 +76,7 @@ public class PlayerHeadLook : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (VRPlayerRig.Current != null && VRPlayerRig.Current.transform == transform) return;
         // На паузе (меню ESC) ввод мыши полностью игнорируем —
         // голова не должна реагировать на движение мыши.
         if (Time.timeScale <= 0f) return;
