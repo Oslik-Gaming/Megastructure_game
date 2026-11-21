@@ -50,6 +50,8 @@ public class CheckpointManager : MonoBehaviour
     private CheckPoint activeCheckpoint;
     private bool respawning;
     private bool restoringInitialCheckpoint;
+    private Vector3 sceneSpawnPosition;
+    private Quaternion sceneSpawnRotation;
 
     /// <summary>Последний активированный чекпоинт (может быть null в начале игры).</summary>
     public CheckPoint ActiveCheckpoint => activeCheckpoint;
@@ -71,6 +73,11 @@ public class CheckpointManager : MonoBehaviour
         if (player == null) player = FindFirstObjectByType<PlayerMovements>();
         if (player == null)
             Debug.LogWarning("[Checkpoints] Игрок (PlayerMovements) не найден на сцене — респавн работать не будет!", this);
+        else
+        {
+            sceneSpawnPosition = player.transform.position;
+            sceneSpawnRotation = player.transform.rotation;
+        }
 
         RestoreCheckpointFromSave();
         StartCoroutine(PlacePlayerAtRestorePointNextFrame());
@@ -203,29 +210,43 @@ public class CheckpointManager : MonoBehaviour
     {
         if (respawning || player == null) yield break;
         respawning = true;
+        var vr = VRPlayerRig.Current;
+        if (vr != null && vr.transform != player.transform) vr = null;
+        if (vr != null) vr.SetTransitioning(true);
 
         // 1. Замораживаем игрока: отключаем управление и гасим скорости
         player.enabled = false;
         Rigidbody rb = player.GetComponent<Rigidbody>();
+        bool restoreGravity = rb != null && rb.useGravity;
         if (rb != null)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+            if (vr != null) rb.useGravity = false;
         }
 
         // 2. Затемняем экран
-        if (screenFader != null)
+        if (vr != null) yield return vr.FadeTo(1f);
+        else if (screenFader != null)
             yield return screenFader.FadeOut();
 
         // 3. Телепортируем на последний чекпоинт
         if (TryGetRestorePoint(out Vector3 pos, out Quaternion rot))
             TeleportPlayer(pos + Vector3.up * respawnLift, rot);
+        else if (vr != null)
+            TeleportPlayer(sceneSpawnPosition + Vector3.up * respawnLift, sceneSpawnRotation);
 
         // 4. Возвращаем управление
         player.enabled = true;
 
         // 5. Проявляем экран
-        if (screenFader != null)
+        if (vr != null)
+        {
+            if (rb != null) rb.useGravity = restoreGravity;
+            yield return vr.FadeTo(0f);
+            vr.SetTransitioning(false);
+        }
+        else if (screenFader != null)
             yield return screenFader.FadeIn();
 
         respawning = false;

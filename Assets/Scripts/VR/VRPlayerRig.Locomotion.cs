@@ -64,7 +64,7 @@ public sealed partial class VRPlayerRig
         float allowed = shift.magnitude;
         int mask = roomCollisionLayers;
         float castRadius = Mathf.Max(0.001f, radius - collisionSkin);
-        if (allowed > collisionSkin)
+        if (allowed > 0.0001f)
         {
             int hits = Physics.CapsuleCastNonAlloc(bottom, top, castRadius, shift.normalized,
                 roomHits, allowed + collisionSkin, mask, QueryTriggerInteraction.Ignore);
@@ -85,9 +85,15 @@ public sealed partial class VRPlayerRig
         newCenter += up * (height * 0.5f - Vector3.Dot(newCenter - foot, up));
         capsule.height = height / scale;
         capsule.center = ct.InverseTransformPoint(newCenter);
-        int count = Physics.OverlapSphereNonAlloc(head, headClearance, headHits, mask, QueryTriggerInteraction.Ignore);
-        headObstructed = count == headHits.Length;
-        for (int i = 0; i < count && !headObstructed; i++) headObstructed = IsRoomObstacle(headHits[i]);
+        headObstructed = IsHeadObstructed(head);
+    }
+
+    private bool IsHeadObstructed(Vector3 head)
+    {
+        int count = Physics.OverlapSphereNonAlloc(head, headClearance, headHits, roomCollisionLayers, QueryTriggerInteraction.Ignore);
+        if (count == headHits.Length) return true;
+        for (int i = 0; i < count; i++) if (IsRoomObstacle(headHits[i])) return true;
+        return false;
     }
 
     private float LimitRoomShift(float distance, int count)
