@@ -120,6 +120,7 @@ public class ToolBase : MonoBehaviour
 
         State = ToolState.Using;
         OnUseStarted();
+        if (GetComponentInParent<VRPlayerRig>() is VRPlayerRig rig && rig == VRPlayerRig.Current) rig.PulseTool();
         return true;
     }
 

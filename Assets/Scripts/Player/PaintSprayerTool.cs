@@ -40,7 +40,7 @@ public class PaintSprayerTool : MonoBehaviour
     {
         toolBase = GetComponent<ToolBase>();
         toolController = GetComponentInParent<ToolController>();
-        input = new PlayerInputActions();
+        input = VRMode.CreateInput();
         CurrentPaint = Mathf.Clamp(initialPaint, 0f, maxPaint);
 
         if (toolBase == null)
@@ -87,7 +87,7 @@ public class PaintSprayerTool : MonoBehaviour
 
         // Если кнопка была зажата до выбора инструмента, не начинаем действие
         // автоматически после его появления. Ожидаем отпускания и нового нажатия.
-        if (toolController.ActiveTool != toolBase || toolController.IsSwitching)
+        if (VRMode.GameplayBlocked || toolController.ActiveTool != toolBase || toolController.IsSwitching)
         {
             if (primaryHeld) primaryBlockedUntilRelease = true;
             if (secondaryHeld) secondaryBlockedUntilRelease = true;

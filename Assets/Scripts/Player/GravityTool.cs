@@ -17,7 +17,7 @@ public class GravityTool : MonoBehaviour
         toolBase = GetComponent<ToolBase>();
         toolController = GetComponentInParent<ToolController>();
         playerInteract = GetComponentInParent<PlayerRaycastInteract>();
-        input = new PlayerInputActions();
+        input = VRMode.CreateInput();
     }
 
     private void OnEnable()
@@ -75,7 +75,7 @@ public class GravityTool : MonoBehaviour
 
     private void OnPrimaryPerformed(InputAction.CallbackContext context)
     {
-        if (!IsActiveAndReady())
+        if (VRMode.GameplayBlocked || !IsActiveAndReady())
             return;
 
         // ЛКМ: захватить новый объект или установить удерживаемый.
@@ -85,10 +85,11 @@ public class GravityTool : MonoBehaviour
 
     private void OnSecondaryPerformed(InputAction.CallbackContext context)
     {
-        if (!IsActiveAndReady())
+        if (VRMode.GameplayBlocked || !IsActiveAndReady())
             return;
 
         // ПКМ: бросить удерживаемый объект.
+        if (playerInteract.HasCarriedItem) VRPlayerRig.Current?.PulseTool();
         playerInteract.ThrowHeldObject();
     }
 }

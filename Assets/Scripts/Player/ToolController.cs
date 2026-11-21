@@ -47,7 +47,7 @@ public class ToolController : MonoBehaviour
 
     private void Awake()
     {
-        input = new PlayerInputActions();
+        input = VRMode.CreateInput();
         toolInventory = FindFirstObjectByType<ToolInventory>();
     }
 
@@ -167,6 +167,7 @@ public class ToolController : MonoBehaviour
         input.Player.SelectTool2.performed += OnSelectTool2;
         input.Player.SelectTool3.performed += OnSelectTool3;
         input.Player.SelectTool4.performed += OnSelectTool4;
+        input.Player.NextTool.performed += OnNextTool;
     }
 
     private void OnDisable()
@@ -175,6 +176,7 @@ public class ToolController : MonoBehaviour
         input.Player.SelectTool2.performed -= OnSelectTool2;
         input.Player.SelectTool3.performed -= OnSelectTool3;
         input.Player.SelectTool4.performed -= OnSelectTool4;
+        input.Player.NextTool.performed -= OnNextTool;
         input.Player.Disable();
 
         if (switchRoutine != null)
@@ -290,4 +292,16 @@ public class ToolController : MonoBehaviour
     private void OnSelectTool2(InputAction.CallbackContext context) => SelectTool(1);
     private void OnSelectTool3(InputAction.CallbackContext context) => SelectTool(2);
     private void OnSelectTool4(InputAction.CallbackContext context) => SelectTool(3);
+
+    private void OnNextTool(InputAction.CallbackContext context)
+    {
+        if (VRMode.GameplayBlocked || IsSwitching) return;
+        for (int i = 1; i <= tools.Length; ++i)
+        {
+            int next = (activeToolIndex + i) % tools.Length;
+            if (!IsSlotUnlocked(next)) continue;
+            SelectTool(next);
+            break;
+        }
+    }
 }

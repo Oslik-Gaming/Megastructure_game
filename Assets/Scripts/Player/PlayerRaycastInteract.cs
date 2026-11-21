@@ -59,7 +59,7 @@ public class PlayerRaycastInteract : MonoBehaviour
     private void Awake()
     {
         // Создаем экземпляр сгенерированного класса
-        inputActions = new PlayerInputActions();
+        inputActions = VRMode.CreateInput();
         playerBody = GetComponent<Rigidbody>();
         playerColliders = GetComponentsInChildren<Collider>();
 
@@ -119,13 +119,14 @@ public class PlayerRaycastInteract : MonoBehaviour
     // Этот метод вызывается каждый раз, когда нажимается кнопка Interact
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
+        if (VRMode.GameplayBlocked) return;
         TryInteract();
     }
 
     private void TryInteract()
     {
-        Vector3 origin = rayOrigin != null ? rayOrigin.position : transform.position;
-        Vector3 direction = rayOrigin != null ? rayOrigin.forward : transform.forward;
+        Vector3 origin = GetRayOrigin();
+        Vector3 direction = GetRayDirection();
 
         if (Physics.Raycast(origin, direction, out RaycastHit hit, interactDistance, interactLayer))
         {
@@ -153,8 +154,8 @@ public class PlayerRaycastInteract : MonoBehaviour
             return;
         }
 
-        Vector3 origin = rayOrigin != null ? rayOrigin.position : transform.position;
-        Vector3 direction = rayOrigin != null ? rayOrigin.forward : transform.forward;
+        Vector3 origin = GetRayOrigin();
+        Vector3 direction = GetRayDirection();
 
         if (!Physics.Raycast(origin, direction, out RaycastHit hit, interactDistance, interactLayer))
             return;
@@ -208,7 +209,9 @@ public class PlayerRaycastInteract : MonoBehaviour
     private void ThrowCurrent()
     {
         float throwSpeed = baseThrowSpeed / (1f + carriedItem.Weight * throwWeightSlowdown);
-        Release(GetPlayerVelocity() * playerVelocityTransfer + GetRayDirection() * throwSpeed, true);
+        var rig = Rig;
+        Vector3 impulse = rig == null ? GetRayDirection() * throwSpeed : rig.HandVelocity / (1f + carriedItem.Weight * throwWeightSlowdown);
+        Release(GetPlayerVelocity() * playerVelocityTransfer + impulse, true);
     }
 
     private void PlaceCurrent()
@@ -345,7 +348,7 @@ public class PlayerRaycastInteract : MonoBehaviour
     private Vector3 GetHoldTargetPosition()
     {
         Vector3 velocity = GetPlayerVelocity();
-        velocity.y = 0f;
+        velocity = Vector3.ProjectOnPlane(velocity, Rig == null ? Vector3.up : transform.up);
         Vector3 desiredOffset = velocity.sqrMagnitude > 0.001f
             ? -velocity.normalized * movementOffsetDistance * Mathf.Clamp01(velocity.magnitude / maxSpeedForOffset)
             : Vector3.zero;
@@ -357,14 +360,15 @@ public class PlayerRaycastInteract : MonoBehaviour
     private Quaternion GetHoldTargetRotation()
     {
         Vector3 directionToPlayer = GetRayOrigin() - carriedItem.Body.position;
-        directionToPlayer.y = 0f;
+        Vector3 up = Rig == null ? Vector3.up : transform.up;
+        directionToPlayer = Vector3.ProjectOnPlane(directionToPlayer, up);
         if (directionToPlayer.sqrMagnitude < 0.001f)
         {
-            directionToPlayer = GetRayDirection();
-            directionToPlayer.y = 0f;
+            directionToPlayer = Vector3.ProjectOnPlane(GetRayDirection(), up);
+            if (directionToPlayer.sqrMagnitude < 0.001f) directionToPlayer = transform.forward;
         }
 
-        Quaternion sideRotation = Quaternion.LookRotation(directionToPlayer.normalized, Vector3.up);
+        Quaternion sideRotation = Quaternion.LookRotation(directionToPlayer.normalized, up);
         return grabSide == null || grabSide == carriedItem.transform
             ? sideRotation
             : sideRotation * Quaternion.Inverse(grabSide.localRotation);
@@ -402,13 +406,15 @@ public class PlayerRaycastInteract : MonoBehaviour
 
     private Vector3 GetRayOrigin()
     {
-        return rayOrigin != null ? rayOrigin.position : transform.position;
+        return (Rig?.Aim ?? rayOrigin ?? transform).position;
     }
 
     private Vector3 GetRayDirection()
     {
-        return rayOrigin != null ? rayOrigin.forward : transform.forward;
+        return (Rig?.Aim ?? rayOrigin ?? transform).forward;
     }
+
+    private VRPlayerRig Rig => VRPlayerRig.Current != null && VRPlayerRig.Current.transform == transform ? VRPlayerRig.Current : null;
 
     private void OnDrawGizmosSelected()
     {

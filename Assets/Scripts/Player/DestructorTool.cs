@@ -30,7 +30,7 @@ public class DestructorTool : MonoBehaviour
         toolController = GetComponentInParent<ToolController>();
         if (beamRenderer == null)
             beamRenderer = GetComponent<LineRenderer>();
-        input = new PlayerInputActions();
+        input = VRMode.CreateInput();
 
         if (toolBase == null)
             Debug.LogError("[DestructorTool] На объекте не найден ToolBase.", this);
@@ -65,7 +65,7 @@ public class DestructorTool : MonoBehaviour
         if (toolBase == null || toolController == null)
             return;
 
-        if (toolController.ActiveTool != toolBase || toolController.IsSwitching)
+        if (VRMode.GameplayBlocked || toolController.ActiveTool != toolBase || toolController.IsSwitching)
         {
             if (primaryHeld)
                 primaryBlockedUntilRelease = true;

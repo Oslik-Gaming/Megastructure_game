@@ -31,7 +31,7 @@ public class HeaterTool : MonoBehaviour
     {
         toolBase = GetComponent<ToolBase>();
         toolController = GetComponentInParent<ToolController>();
-        input = new PlayerInputActions();
+        input = VRMode.CreateInput();
 
         if (toolBase == null)
             Debug.LogError("[HeaterTool] На объекте не найден ToolBase.", this);
@@ -69,7 +69,7 @@ public class HeaterTool : MonoBehaviour
         if (toolBase == null || toolController == null)
             return;
 
-        if (toolController.ActiveTool != toolBase || toolController.IsSwitching)
+        if (VRMode.GameplayBlocked || toolController.ActiveTool != toolBase || toolController.IsSwitching)
         {
             if (primaryHeld)
                 primaryBlockedUntilRelease = true;

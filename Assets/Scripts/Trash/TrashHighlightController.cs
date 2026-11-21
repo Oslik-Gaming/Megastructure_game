@@ -29,12 +29,12 @@ public sealed class TrashHighlightController : MonoBehaviour
         if (hud == null) hud = FindFirstObjectByType<GameHud>();
         if (directionArrow == null) directionArrow = FindFirstObjectByType<DirectionArrow>();
         if (distanceOrigin == null) distanceOrigin = transform;
-        input = new PlayerInputActions();
+        input = VRMode.CreateInput();
     }
 
     private void OnEnable()
     {
-        if (input == null) input = new PlayerInputActions();
+        if (input == null) input = VRMode.CreateInput();
         input.Player.HighlightTrash.started += OnStarted;
         input.Player.HighlightTrash.canceled += OnCanceled;
         input.Player.Enable();
