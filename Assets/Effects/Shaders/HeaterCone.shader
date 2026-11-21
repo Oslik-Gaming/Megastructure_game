@@ -32,12 +32,14 @@ Shader "Tool Effects/Heater Cone"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_instancing
             #pragma multi_compile_fog
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             struct Attributes
             {
+                UNITY_VERTEX_INPUT_INSTANCE_ID
                 float4 positionOS : POSITION;
                 float2 uv : TEXCOORD0;
                 float3 normalOS : NORMAL;
@@ -45,6 +47,7 @@ Shader "Tool Effects/Heater Cone"
 
             struct Varyings
             {
+                UNITY_VERTEX_OUTPUT_STEREO
                 float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
                 float3 normalWS : TEXCOORD1;
@@ -70,6 +73,8 @@ Shader "Tool Effects/Heater Cone"
             Varyings vert(Attributes input)
             {
                 Varyings output;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
                 output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
                 output.uv = input.uv;
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
@@ -79,6 +84,7 @@ Shader "Tool Effects/Heater Cone"
 
             half4 frag(Varyings input) : SV_Target
             {
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 // Gradient from tip (0) to base (1)
                 half gradient = input.uv.y;
                 

@@ -28,18 +28,21 @@ Shader "Tool Effects/Beam Additive"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_instancing
             #pragma multi_compile_fog
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             struct Attributes
             {
+                UNITY_VERTEX_INPUT_INSTANCE_ID
                 float4 positionOS : POSITION;
                 float2 uv : TEXCOORD0;
             };
 
             struct Varyings
             {
+                UNITY_VERTEX_OUTPUT_STEREO
                 float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
                 float fogFactor : TEXCOORD1;
@@ -54,6 +57,8 @@ Shader "Tool Effects/Beam Additive"
             Varyings vert(Attributes input)
             {
                 Varyings output;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
                 output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
                 output.uv = input.uv;
                 output.fogFactor = ComputeFogFactor(output.positionCS.z);
@@ -62,6 +67,7 @@ Shader "Tool Effects/Beam Additive"
 
             half4 frag(Varyings input) : SV_Target
             {
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 // Simple gradient from center to edge
                 half distFromCenter = abs(input.uv.y - 0.5) * 2.0;
                 half alpha = (1.0 - distFromCenter) * _Alpha;

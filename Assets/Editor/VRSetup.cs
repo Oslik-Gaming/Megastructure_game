@@ -6,6 +6,7 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using UnityEngine.XR.OpenXR;
+using UnityEngine.XR.OpenXR.Features.MetaQuestSupport;
 using Unity.XR.CoreUtils;
 
 public static class VRSetup
@@ -35,7 +36,8 @@ public static class VRSetup
         var pause = InScene<PauseMenuController>(scene).FirstOrDefault();
         var worldUI = player.GetComponent<VRWorldUI>() ?? Undo.AddComponent<VRWorldUI>(player.gameObject);
         var ui = new SerializedObject(worldUI);
-        Reference(ui, "hud", hud != null ? new SerializedObject(hud).FindProperty("document").objectReferenceValue : null);
+        var hudDocument = hud != null ? new SerializedObject(hud).FindProperty("document").objectReferenceValue as UIDocument : null;
+        Reference(ui, "hud", hudDocument);
         Reference(ui, "pause", pause);
         ui.ApplyModifiedProperties();
         EditorSceneManager.MarkSceneDirty(scene);
@@ -45,6 +47,11 @@ public static class VRSetup
             var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(target);
             if (settings == null) continue;
             settings.renderMode = OpenXRSettings.RenderMode.SinglePassInstanced;
+            if (target == BuildTargetGroup.Android && settings.GetFeature<MetaQuestFeature>() is { } quest)
+            {
+                quest.enabled = true;
+                EditorUtility.SetDirty(quest);
+            }
             EditorUtility.SetDirty(settings);
         }
         AssetDatabase.SaveAssets();
@@ -93,6 +100,29 @@ public static class VRSetup
         return renderer;
     }
 
+    [MenuItem("Tools/VR/Create Quest Pipeline")]
+    public static void CreateQuestPipeline()
+    {
+        if (!AssetDatabase.IsValidFolder(Output)) AssetDatabase.CreateFolder("Assets", "VRGenerated");
+        const string path = Output + "/Quest_RPAsset.asset";
+        if (AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(path) != null) return;
+        if (!AssetDatabase.CopyAsset("Assets/Settings/Mobile_RPAsset.asset", path))
+        {
+            Debug.LogError("Could not create Quest pipeline from Mobile_RPAsset.");
+            return;
+        }
+        var pipeline = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(path);
+        var settings = new SerializedObject(pipeline);
+        settings.FindProperty("m_MainLightShadowsSupported").boolValue = false;
+        settings.FindProperty("m_AdditionalLightShadowsSupported").boolValue = false;
+        settings.FindProperty("m_SupportsHDR").boolValue = false;
+        settings.FindProperty("m_MSAA").intValue = 4;
+        settings.ApplyModifiedProperties();
+        AssetDatabase.SaveAssets();
+        Selection.activeObject = pipeline;
+        Debug.Log("Quest pipeline created. Assign it to a dedicated Android Quality level.");
+    }
+
     private static bool WirePlayer(PlayerMovements player, VRRigReferences rig, UniversalRendererData renderer, bool simulation)
     {
         var cameras = player.GetComponentsInChildren<Camera>(true);
@@ -111,7 +141,10 @@ public static class VRSetup
         Reference(so, "vrRenderer", renderer);
         Reference(so, "tools", player.GetComponentInChildren<ToolController>(true));
         so.FindProperty("simulatorOnly").boolValue = simulation;
-        var hidden = cameras.Where(c => c != main).Select(c => c.gameObject).Distinct().ToArray();
+        var hidden = cameras.Where(c => c != main).Select(c => c.gameObject)
+            .Concat(simulation ? Enumerable.Empty<GameObject>() : InScene<Camera>(player.gameObject.scene)
+                .Where(c => c.transform.root.name == "DevCamera").Select(c => c.transform.root.gameObject))
+            .Distinct().ToArray();
         var array = so.FindProperty("hideInVR");
         array.arraySize = hidden.Length;
         for (int i = 0; i < hidden.Length; ++i) array.GetArrayElementAtIndex(i).objectReferenceValue = hidden[i];
@@ -129,8 +162,8 @@ public static class VRSetup
             return;
         }
         if (!AssetDatabase.IsValidFolder(Output)) AssetDatabase.CreateFolder("Assets", "VRGenerated");
-        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
         Scene previous = SceneManager.GetActiveScene();
+        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
         SceneManager.SetActiveScene(scene);
         try
         {
