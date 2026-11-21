@@ -1,0 +1,4 @@
+{
+    "name": "Megastructure.VR.PlayMode",
+    "optionalUnityReferences": ["TestAssemblies"]
+}

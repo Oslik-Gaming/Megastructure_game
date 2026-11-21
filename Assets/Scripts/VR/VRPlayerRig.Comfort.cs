@@ -89,7 +89,7 @@ public sealed partial class VRPlayerRig
         if (comfortMaterial == null) return;
         // Just before rendering the driver may supply a newer pose than LateUpdate saw.
         // Never replace the physical pose; hide geometry if it overlaps the tracked eye.
-        bool obstructed = headObstructed || IsHeadObstructed(Head.position);
+        bool obstructed = !HeadPositionTracked || headObstructed || IsHeadObstructed(Head.position);
         comfortMaterial.SetFloat(FadeProperty, obstructed ? 1f : fade);
         if (obstructed) comfortRenderer.enabled = true;
     }

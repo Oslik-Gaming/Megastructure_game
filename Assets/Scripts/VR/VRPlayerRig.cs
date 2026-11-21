@@ -19,6 +19,7 @@ public sealed partial class VRPlayerRig : MonoBehaviour
     private Rigidbody body;
     private float floorY;
     private float scale;
+    private TrackedPoseDriver headTracking;
 
     public static VRPlayerRig Current { get; private set; }
     public Transform Head => gameplayCamera.transform;
@@ -36,9 +37,17 @@ public sealed partial class VRPlayerRig : MonoBehaviour
             return;
         }
 
+        Vector3 worldScale = transform.lossyScale;
+        if (worldScale.y <= 0f || !Mathf.Approximately(worldScale.x, worldScale.y) || !Mathf.Approximately(worldScale.z, worldScale.y))
+        {
+            Debug.LogError("VRPlayerRig requires a uniformly scaled player transform.", this);
+            enabled = false;
+            return;
+        }
+
         Current = this;
         body = GetComponent<Rigidbody>();
-        scale = Mathf.Abs(transform.lossyScale.y);
+        scale = worldScale.y;
         floorY = transform.InverseTransformPoint(capsule.transform.TransformPoint(capsule.center - Vector3.up * (capsule.height * 0.5f))).y;
         rig = Instantiate(rigPrefab, transform, false);
         rig.transform.localPosition = Vector3.up * floorY;
@@ -52,11 +61,12 @@ public sealed partial class VRPlayerRig : MonoBehaviour
         gameplayCamera.cullingMask = ~0;
         gameplayCamera.targetTexture = null;
         gameplayCamera.stereoTargetEye = StereoTargetEyeMask.Both;
-        AddTracking(Head, "<XRHMD>", "centerEye");
+        headTracking = AddTracking(Head, "<XRHMD>", "centerEye");
         rig.origin.Camera = gameplayCamera;
         ConfigureHeight(seated);
-        foreach (var item in hideInVR)
-            if (item != null) item.SetActive(false);
+        if (hideInVR != null)
+            foreach (var item in hideInVR)
+                if (item != null) item.SetActive(false);
         // Renderers on the robot body are not first-person assets. Tool renderers are preserved.
         MountTools();
         foreach (var renderer in GetComponentsInChildren<SkinnedMeshRenderer>(true))
@@ -71,7 +81,7 @@ public sealed partial class VRPlayerRig : MonoBehaviour
     private void LateUpdate()
     {
         UpdateTurn();
-        SyncRoomScale();
+        if (HeadPositionTracked) SyncRoomScale();
         UpdateHand();
         UpdateComfort();
     }
@@ -85,7 +95,9 @@ public sealed partial class VRPlayerRig : MonoBehaviour
         rig.cameraOffset.localPosition = device ? Vector3.up * deviceEyeHeight : Vector3.zero;
     }
 
-    public static void AddTracking(Transform target, string device, string posePrefix)
+    private bool HeadPositionTracked => (headTracking.trackingStateInput.action.ReadValue<int>() & 1) != 0;
+
+    public static TrackedPoseDriver AddTracking(Transform target, string device, string posePrefix)
     {
         var driver = target.gameObject.AddComponent<TrackedPoseDriver>();
         driver.positionInput = new InputActionProperty(new InputAction("Position", InputActionType.Value,
@@ -95,6 +107,7 @@ public sealed partial class VRPlayerRig : MonoBehaviour
         driver.trackingStateInput = new InputActionProperty(new InputAction("Tracking State", InputActionType.Value,
             device + "/trackingState", expectedControlType: "Integer"));
         driver.updateType = TrackedPoseDriver.UpdateType.UpdateAndBeforeRender;
+        return driver;
     }
 
     private void OnDestroy()

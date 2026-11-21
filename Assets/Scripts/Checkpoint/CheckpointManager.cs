@@ -242,6 +242,7 @@ public class CheckpointManager : MonoBehaviour
         // 5. Проявляем экран
         if (vr != null)
         {
+            vr.ResetAfterTeleport();
             if (rb != null) rb.useGravity = restoreGravity;
             yield return vr.FadeTo(0f);
             vr.SetTransitioning(false);

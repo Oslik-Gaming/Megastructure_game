@@ -12,6 +12,7 @@ public sealed partial class VRPlayerRig
         data.renderPostProcessing = false;
         data.allowXRRendering = !VRMode.Simulated;
         data.renderShadows = Application.platform != RuntimePlatform.Android;
+        data.antialiasing = AntialiasingMode.None;
         data.requiresColorOption = CameraOverrideOption.Off;
         data.requiresDepthOption = CameraOverrideOption.Off;
         gameplayCamera.allowHDR = false;

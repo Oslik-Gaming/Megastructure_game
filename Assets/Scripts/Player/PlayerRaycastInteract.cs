@@ -406,15 +406,16 @@ public class PlayerRaycastInteract : MonoBehaviour
 
     private Vector3 GetRayOrigin()
     {
-        return (Rig?.Aim ?? rayOrigin ?? transform).position;
+        return RayTransform.position;
     }
 
     private Vector3 GetRayDirection()
     {
-        return (Rig?.Aim ?? rayOrigin ?? transform).forward;
+        return RayTransform.forward;
     }
 
     private VRPlayerRig Rig => VRPlayerRig.Current != null && VRPlayerRig.Current.transform == transform ? VRPlayerRig.Current : null;
+    private Transform RayTransform => Rig != null && Rig.Aim != null ? Rig.Aim : rayOrigin != null ? rayOrigin : transform;
 
     private void OnDrawGizmosSelected()
     {

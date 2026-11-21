@@ -1,0 +1,6 @@
+{
+    "name": "Megastructure.VR.EditMode",
+    "includePlatforms": ["Editor"],
+    "references": ["Unity.InputSystem", "Unity.InputSystem.TestFramework", "Unity.XR.Interaction.Toolkit"],
+    "optionalUnityReferences": ["TestAssemblies"]
+}

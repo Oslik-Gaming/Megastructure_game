@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Inputs.Readers;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.UI;
 using Image = UnityEngine.UI.Image;
@@ -22,6 +21,7 @@ public sealed class VRWorldUI : MonoBehaviour
     [SerializeField, Min(0.1f)] private float panelWidth = 0.95f;
     [SerializeField, Min(0.1f)] private float followSpeed = 7f;
     [SerializeField, Range(0f, 1f)] private float horrorIntensity = 0.35f;
+    [SerializeField, Range(0.01f, 1f)] private float glitchIntensityStep = 0.35f;
 
     private VRPlayerRig rig;
     private Canvas hudCanvas, terminal;
@@ -111,7 +111,7 @@ public sealed class VRWorldUI : MonoBehaviour
 
     private void CycleGlitch()
     {
-        horrorIntensity = horrorIntensity >= 0.7f ? 0f : horrorIntensity + 0.35f;
+        horrorIntensity = horrorIntensity + glitchIntensityStep > 1f ? 0f : horrorIntensity + glitchIntensityStep;
         if (glitch != null) glitch.Intensity = horrorIntensity;
     }
 

@@ -9,6 +9,8 @@ public sealed partial class VRPlayerRig
     [SerializeField] private Transform muzzle;
     [SerializeField] private Vector3 handOffset;
     [SerializeField] private Vector3 handEuler;
+    [SerializeField] private Vector3 aimOffset = new(0f, 0f, 0.12f);
+    [SerializeField] private Vector3 aimEuler;
     [SerializeField] private bool leftHanded;
     [SerializeField, Range(0f, 1f)] private float hapticAmplitude = 0.25f;
     [SerializeField, Min(0f)] private float hapticSeconds = 0.06f;
@@ -21,11 +23,21 @@ public sealed partial class VRPlayerRig
     public Transform Grip => leftHanded ? Left : Right;
     public Vector3 HandVelocity { get; private set; }
 
+    public void ResetAfterTeleport()
+    {
+        rig.transform.SetLocalPositionAndRotation(Vector3.up * floorY, Quaternion.identity);
+        hasHandSample = false;
+        HandVelocity = Vector3.zero;
+    }
+
     private void MountTools()
     {
         hand = new GameObject("Robot Manipulator").transform;
         SetLeftHanded(leftHanded);
-        Aim = muzzle == null ? hand : muzzle;
+        var aim = new GameObject("Manipulator Muzzle").transform;
+        aim.SetParent(hand, false);
+        aim.SetLocalPositionAndRotation(aimOffset, Quaternion.Euler(aimEuler));
+        Aim = aim;
         if (tools == null) return;
 
         // Preserve the model's scale and alignment relative to the original view axes.
@@ -34,6 +46,7 @@ public sealed partial class VRPlayerRig
         anchor.SetParent(hand, false);
         anchor.SetLocalPositionAndRotation(Vector3.zero, toolAlignment);
         anchor.localScale = originalScale;
+        if (muzzle != null && muzzle.IsChildOf(hand)) Aim = muzzle;
         var bob = tools.GetComponent<ToolBobbing>();
         if (bob != null) bob.enabled = false;
     }
