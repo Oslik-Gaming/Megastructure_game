@@ -65,7 +65,7 @@ public class DestructorTool : MonoBehaviour
         if (toolBase == null || toolController == null)
             return;
 
-        if (toolController.ActiveTool != toolBase || toolController.IsSwitching)
+        if (TesterConsole.IsOpen || toolController.ActiveTool != toolBase || toolController.IsSwitching)
         {
             if (primaryHeld)
                 primaryBlockedUntilRelease = true;
@@ -102,7 +102,7 @@ public class DestructorTool : MonoBehaviour
 
     private bool IsActiveAndReady()
     {
-        return toolBase != null && toolController != null &&
+        return !TesterConsole.IsOpen && toolBase != null && toolController != null &&
                toolController.ActiveTool == toolBase &&
                !toolController.IsSwitching &&
                toolBase.State == ToolState.Idle;

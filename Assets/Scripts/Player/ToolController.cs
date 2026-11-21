@@ -286,8 +286,13 @@ public class ToolController : MonoBehaviour
         return true;
     }
 
-    private void OnSelectTool1(InputAction.CallbackContext context) => SelectTool(0);
-    private void OnSelectTool2(InputAction.CallbackContext context) => SelectTool(1);
-    private void OnSelectTool3(InputAction.CallbackContext context) => SelectTool(2);
-    private void OnSelectTool4(InputAction.CallbackContext context) => SelectTool(3);
+    private void OnSelectTool1(InputAction.CallbackContext context) => SelectToolFromInput(0);
+    private void OnSelectTool2(InputAction.CallbackContext context) => SelectToolFromInput(1);
+    private void OnSelectTool3(InputAction.CallbackContext context) => SelectToolFromInput(2);
+    private void OnSelectTool4(InputAction.CallbackContext context) => SelectToolFromInput(3);
+
+    private void SelectToolFromInput(int index)
+    {
+        if (!TesterConsole.IsOpen) SelectTool(index);
+    }
 }

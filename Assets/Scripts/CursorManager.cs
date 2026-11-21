@@ -48,7 +48,7 @@ public class CursorManager : MonoBehaviour
         // Пока игра НЕ на паузе — принудительно держим курсор захваченным.
         // Лечит случай, когда Cursor.lockState = Locked из кода "откладывается"
         // до возврата фокуса у Game view (в Editor курсор пропадает только после клика).
-        if (!PauseMenuController.GamePaused &&
+        if (!PauseMenuController.GamePaused && !TesterConsole.IsOpen &&
             (Cursor.lockState != CursorLockMode.Locked || Cursor.visible))
         {
             LockCursor();
@@ -62,7 +62,7 @@ public class CursorManager : MonoBehaviour
     private void OnApplicationFocus(bool hasFocus)
     {
         // Если игра на паузе — курсор нужен свободным для меню.
-        if (PauseMenuController.GamePaused)
+        if (PauseMenuController.GamePaused || TesterConsole.IsOpen)
         {
             UnlockCursor();
             return;

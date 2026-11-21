@@ -55,12 +55,13 @@ public sealed class TrashHighlightController : MonoBehaviour
         StopHighlight();
     }
 
-    private void OnStarted(UnityEngine.InputSystem.InputAction.CallbackContext _) { if (!PauseMenuController.GamePaused) { held = true; Refresh(); } }
+    private void OnStarted(UnityEngine.InputSystem.InputAction.CallbackContext _) { if (!PauseMenuController.GamePaused && !TesterConsole.IsOpen) { held = true; Refresh(); } }
     private void OnCanceled(UnityEngine.InputSystem.InputAction.CallbackContext _) { StopHighlight(); }
     private void OnLocationChanged(TrashLocation _) { if (held) Refresh(); }
 
     private void Update()
     {
+        if (held && TesterConsole.IsOpen) StopHighlight();
         if (!held || PauseMenuController.GamePaused) return;
         Refresh();
     }

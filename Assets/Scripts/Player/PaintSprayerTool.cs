@@ -87,7 +87,7 @@ public class PaintSprayerTool : MonoBehaviour
 
         // Если кнопка была зажата до выбора инструмента, не начинаем действие
         // автоматически после его появления. Ожидаем отпускания и нового нажатия.
-        if (toolController.ActiveTool != toolBase || toolController.IsSwitching)
+        if (TesterConsole.IsOpen || toolController.ActiveTool != toolBase || toolController.IsSwitching)
         {
             if (primaryHeld) primaryBlockedUntilRelease = true;
             if (secondaryHeld) secondaryBlockedUntilRelease = true;
@@ -165,7 +165,7 @@ public class PaintSprayerTool : MonoBehaviour
 
     private bool IsActiveAndReady()
     {
-        return toolBase != null && toolController != null &&
+        return !TesterConsole.IsOpen && toolBase != null && toolController != null &&
                toolController.ActiveTool == toolBase &&
                !toolController.IsSwitching &&
                (toolBase.State == ToolState.Idle || toolBase.State == ToolState.NoPaint);

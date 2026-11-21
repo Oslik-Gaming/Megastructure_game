@@ -67,7 +67,7 @@ public class GravityTool : MonoBehaviour
     {
         // State.Using допустим: пока удерживается предмет, инструмент остаётся "в использовании",
         // и ЛКМ/ПКМ должны продолжать работать (установка/бросок).
-        return toolBase != null && toolController != null && playerInteract != null &&
+        return !TesterConsole.IsOpen && toolBase != null && toolController != null && playerInteract != null &&
                toolController.ActiveTool == toolBase &&
                !toolController.IsSwitching &&
                (toolBase.State == ToolState.Idle || toolBase.State == ToolState.Using);
