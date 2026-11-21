@@ -56,7 +56,7 @@ public class PlayerMovements : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        input = new PlayerInputActions();
+        input = VRMode.CreateInput();
 
         if (animator == null) animator = GetComponentInChildren<Animator>();
 
@@ -101,6 +101,18 @@ public class PlayerMovements : MonoBehaviour
     private void FixedUpdate()
     {
         Vector2 moveDirection = input.@Player.@Movement.ReadValue<Vector2>();
+        var vr = VRPlayerRig.Current;
+        if (vr != null && vr.transform == transform)
+        {
+            Vector3 up = transform.up;
+            Vector3 move = VRMode.GameplayBlocked ? Vector3.zero : VRMath.Move(moveDirection, vr.Head.forward, vr.Head.right, up);
+            IsOnGround = IsGrounded();
+            IsSprinting = move.sqrMagnitude > 0f && input.Player.Sprint.IsPressed();
+            float speed = GetPushLimitedSpeed(move.normalized, vr.MoveSpeed(IsSprinting));
+            rb.linearVelocity = move * speed + Vector3.Project(rb.linearVelocity, up);
+            if (animator != null) animator.SetFloat(SpeedParam, move.magnitude * speed);
+            return;
+        }
 
         // 1. Считываем, нажата ли кнопка бега. 
         // Для типа Button значение равно 1f при нажатии и 0f при отпускании.
@@ -263,10 +275,13 @@ public class PlayerMovements : MonoBehaviour
     /// </summary>
     private bool IsGrounded()
     {
-        Vector3 origin = transform.position + Vector3.down * (capsuleBottomOffset - 0.1f);
+        var vr = VRPlayerRig.Current;
+        bool vrPlayer = vr != null && vr.transform == transform;
+        Vector3 down = vrPlayer ? -transform.up : Vector3.down;
+        Vector3 origin = vrPlayer ? vr.Foot - down * 0.1f : transform.position + down * (capsuleBottomOffset - 0.1f);
         float rayLength = 0.1f + groundSkin;
 
-        int count = Physics.RaycastNonAlloc(origin, Vector3.down, groundHits, rayLength, groundLayers, QueryTriggerInteraction.Ignore);
+        int count = Physics.RaycastNonAlloc(origin, down, groundHits, rayLength, groundLayers, QueryTriggerInteraction.Ignore);
         for (int i = 0; i < count; i++)
         {
             Collider col = groundHits[i].collider;
