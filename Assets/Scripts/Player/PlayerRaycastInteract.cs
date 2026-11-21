@@ -119,6 +119,7 @@ public class PlayerRaycastInteract : MonoBehaviour
     // Этот метод вызывается каждый раз, когда нажимается кнопка Interact
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
+        if (TesterConsole.IsOpen) return;
         TryInteract();
     }
 

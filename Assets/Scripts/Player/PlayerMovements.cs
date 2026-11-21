@@ -53,6 +53,34 @@ public class PlayerMovements : MonoBehaviour
     // Совершён ли прыжок в текущем/прошлом кадре (чтобы не гасить собственный прыжок)
     private bool justJumped;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private const float FlySpeed = 16f;
+    private const float FlyBoostSpeed = 30f;
+    private bool gravityBeforeFlight;
+    private CollisionDetectionMode collisionBeforeFlight;
+    internal bool IsFlying { get; private set; }
+
+    internal void SetFlying(bool flying)
+    {
+        if (flying == IsFlying) return;
+
+        if (flying)
+        {
+            gravityBeforeFlight = rb.useGravity;
+            collisionBeforeFlight = rb.collisionDetectionMode;
+        }
+        rb.useGravity = !flying && gravityBeforeFlight;
+        rb.collisionDetectionMode = flying ? CollisionDetectionMode.ContinuousDynamic : collisionBeforeFlight;
+        rb.linearVelocity = Vector3.zero;
+        IsFlying = flying;
+
+        jumpRequested = justJumped = wasGrounded = false;
+        IsOnGround = IsSprinting = false;
+        airPeakFallSpeed = 0f;
+        if (animator != null) animator.SetFloat(SpeedParam, 0f);
+    }
+#endif
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -62,10 +90,14 @@ public class PlayerMovements : MonoBehaviour
 
         // Подписываемся на событие прыжка.
         // Это сработает МГНОВЕННО в момент нажатия, независимо от FixedUpdate.
-        input.@Player.@Jump.performed += ctx => jumpRequested = true;
+        input.@Player.@Jump.performed += ctx => jumpRequested = !TesterConsole.IsOpen;
 
         AutoDetectCapsuleBottom();
     }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void Start() => gameObject.AddComponent<TesterConsole>();
+#endif
 
     /// <summary>
     /// Автоматически вычисляем расстояние от пивота до низа коллайдера.
@@ -95,18 +127,45 @@ public class PlayerMovements : MonoBehaviour
     }
 
     private void OnEnable() => input.@Player.Enable();
-    private void OnDisable() => input.@Player.Disable();
+    private void OnDisable()
+    {
+        input.@Player.Disable();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        SetFlying(false);
+#endif
+    }
     private void OnDestroy() => input.Dispose();
 
     private void FixedUpdate()
     {
-        Vector2 moveDirection = input.@Player.@Movement.ReadValue<Vector2>();
+        bool consoleOpen = TesterConsole.IsOpen;
+        Vector2 moveDirection = consoleOpen ? Vector2.zero : input.@Player.@Movement.ReadValue<Vector2>();
 
         // 1. Считываем, нажата ли кнопка бега. 
         // Для типа Button значение равно 1f при нажатии и 0f при отпускании.
-        bool isSprinting = input.@Player.@Sprint.ReadValue<float>() > 0f;
+        bool isSprinting = !consoleOpen && input.@Player.@Sprint.ReadValue<float>() > 0f;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if (IsFlying)
+        {
+            var keyboard = UnityEngine.InputSystem.Keyboard.current;
+            bool goUp = !consoleOpen && keyboard != null && keyboard.spaceKey.isPressed;
+            bool goDown = !consoleOpen && keyboard != null && keyboard.ctrlKey.isPressed;
+            float vertical = (goUp ? 1f : 0f) - (goDown ? 1f : 0f);
+            Vector3 direction = transform.forward * moveDirection.y + transform.right * moveDirection.x + Vector3.up * vertical;
+            rb.linearVelocity = Vector3.ClampMagnitude(direction, 1f) * (isSprinting ? FlyBoostSpeed : FlySpeed);
+            jumpRequested = false;
+            return;
+        }
+#endif
 
         Vector3 currentLinearVelocity = rb.linearVelocity;
+        if (consoleOpen)
+        {
+            jumpRequested = false;
+            currentLinearVelocity.x = currentLinearVelocity.z = 0f;
+            rb.linearVelocity = currentLinearVelocity;
+        }
 
         Vector3 forward = transform.forward;
         Vector3 right = transform.right;

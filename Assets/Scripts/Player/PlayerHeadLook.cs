@@ -78,7 +78,7 @@ public class PlayerHeadLook : MonoBehaviour
     {
         // На паузе (меню ESC) ввод мыши полностью игнорируем —
         // голова не должна реагировать на движение мыши.
-        if (Time.timeScale <= 0f) return;
+        if (Time.timeScale <= 0f || TesterConsole.IsOpen) return;
 
         // LateUpdate: применяем поворот ПОСЛЕ Animator,
         // иначе анимация каждый кадр перезаписывает наклон головы.

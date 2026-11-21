@@ -220,6 +220,7 @@ public class PauseMenuController : MonoBehaviour
 
     private void OnPausePerformed(InputAction.CallbackContext ctx)
     {
+        if (TesterConsole.CloseIfOpen()) return;
         // Вызывается и при Time.timeScale = 0 — Input System не зависит от масштаба времени.
         if (isShown)
         {
@@ -257,6 +258,7 @@ public class PauseMenuController : MonoBehaviour
         }
 
         GamePaused = true;
+        TesterConsole.CloseIfOpen();
         CursorManager.Instance?.UnlockCursor();
 
         SelectButton(0);
