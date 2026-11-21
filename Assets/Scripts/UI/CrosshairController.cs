@@ -42,7 +42,7 @@ public class CrosshairController : MonoBehaviour
     {
         // На паузе прицел не нужен — меню его перекрывает,
         // но явно прячем для надёжности.
-        if (PauseMenuController.GamePaused)
+        if (PauseMenuController.GamePaused || VRPlayerRig.Current != null)
         {
             if (_crosshair != null && _crosshair.style.display != DisplayStyle.None)
                 _crosshair.style.display = DisplayStyle.None;

@@ -319,7 +319,7 @@ public class SettingsPanelController : MonoBehaviour
         var parts = new List<string>();
         foreach (var binding in action.bindings)
         {
-            if (binding.isComposite) continue; // саму группу "2D Vector" не показываем
+            if (binding.isComposite || !InputBinding.MaskByGroup(VRMode.BindingGroup).Matches(binding)) continue;
             string s = binding.ToDisplayString();
             if (!string.IsNullOrEmpty(s) && !parts.Contains(s))
                 parts.Add(s);

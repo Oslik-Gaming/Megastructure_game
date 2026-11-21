@@ -206,6 +206,7 @@ public class PauseMenuController : MonoBehaviour
             return;
         }
 
+        pauseAction.bindingMask = InputBinding.MaskByGroup(VRMode.BindingGroup);
         pauseAction.performed += OnPausePerformed;
         pauseAction.Enable();
     }
@@ -215,6 +216,7 @@ public class PauseMenuController : MonoBehaviour
         if (pauseAction == null) return;
         pauseAction.performed -= OnPausePerformed;
         pauseAction.Disable();
+        pauseAction.bindingMask = null;
         pauseAction = null;
     }
 
@@ -250,7 +252,7 @@ public class PauseMenuController : MonoBehaviour
             Time.timeScale = 0f;
         }
 
-        if (scaleContainer != null)
+        if (scaleContainer != null && VRPlayerRig.Current == null)
         {
             scaleContainer.style.display = DisplayStyle.Flex;
             scaleContainer.RemoveFromClassList("hidden");
@@ -283,6 +285,14 @@ public class PauseMenuController : MonoBehaviour
 
     public void Toggle() { if (isShown) Hide(); else Show(); }
     public void ResumeGame() => Hide();
+    public void RestartFromVR() => LoadCheckpoint();
+    public void ExitFromVR()
+    {
+        SaveGame();
+        // The flat-only main menu has no tracked input. VR builds start in gameplay.
+        ResumeGame();
+        Application.Quit();
+    }
     public bool IsShown => isShown;
 
     /// <summary>Вернуть клавиатурный фокус в меню (вызывается при закрытии настроек).</summary>

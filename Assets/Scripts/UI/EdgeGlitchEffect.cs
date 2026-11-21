@@ -23,6 +23,7 @@ public class EdgeGlitchEffect : MonoBehaviour
 
     private VisualElement host;
     private VisualElement[] bands;
+    public float Intensity { get; set; } = 1f;
 
     private const float FIELD_HEIGHT = 1080f; // MainContainer фиксированный 1920x1080
 
@@ -97,7 +98,7 @@ public class EdgeGlitchEffect : MonoBehaviour
             for (int i = 0; i < bands.Length; i++)
             {
                 var b = bands[i];
-                if (Random.value > activity) { b.style.opacity = 0f; continue; }
+                if (Random.value > activity * Intensity) { b.style.opacity = 0f; continue; }
 
                 b.style.top = Random.Range(0f, FIELD_HEIGHT - maxHeight);
                 b.style.height = Random.Range(minHeight, maxHeight);
@@ -108,7 +109,7 @@ public class EdgeGlitchEffect : MonoBehaviour
                 var c = Palette[Random.Range(0, Palette.Length)];
                 c.a = Random.Range(0.35f, 0.95f);
                 b.style.backgroundColor = c;
-                b.style.opacity = 1f;
+                b.style.opacity = Intensity;
             }
             yield return wait;
         }

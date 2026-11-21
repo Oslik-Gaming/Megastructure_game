@@ -114,6 +114,14 @@ public class IntroCutsceneController : MonoBehaviour
 
         // Решаем: показывать интро или сразу играть
         bool newGame = GameProgress.ConsumeNewGameRequest();
+        if (VRPlayerRig.Current != null)
+        {
+            // The desktop intro requires a mouse/key press; do not trap controller-only players.
+            Finish(skipUiEvents: GameProgress.HasSeenIntro && !newGame);
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = false;
+            return;
+        }
         bool showIntro = debugAlwaysShowIntro || newGame || !GameProgress.HasSeenIntro;
 
         Debug.Log($"[Intro] newGame={newGame}, seen={GameProgress.HasSeenIntro}, debugAlwaysShowIntro={debugAlwaysShowIntro} => showIntro={showIntro}");
